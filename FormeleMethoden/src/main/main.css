@@ -1,0 +1,33 @@
+.root {
+    -fx-font-size: 14px;
+    -fx-font-family: arial;
+    -fx-background-color: #ffffff;
+}
+
+.tab {
+    -fx-pref-width: 169;
+}
+.tab-header-background {
+    -fx-background-color:transparent;
+}
+
+.tab-pane{
+    -fx-padding: 0 -1 -1 -1;
+}
+
+.choice-box {
+    -fx-pref-width: 175;
+}
+
+.text-area {
+    -fx-pref-width: 350;
+    -fx-pref-height: 125;
+}
+
+.button {
+    -fx-padding: 8 15 15 15;
+    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 1 0;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
+}

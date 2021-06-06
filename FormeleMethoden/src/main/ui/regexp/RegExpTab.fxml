@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import main.common.views.EnumChoiceBox?>
+<GridPane
+        fx:controller="main.ui.regexp.RegExpTabController"
+        xmlns:fx="http://javafx.com/fxml"
+        hgap="15"
+        vgap="15"
+        styleClass="root">
+
+    <Text id="header-text"
+          text="Vul hier de waarden in"
+          GridPane.columnIndex="1"
+          GridPane.rowIndex="1"
+          GridPane.columnSpan="2"/>
+
+    <Label text="Input:"
+           GridPane.columnIndex="1"
+           GridPane.rowIndex="2"/>
+
+    <TextField fx:id="inputText"
+               text="pizza"
+               GridPane.columnIndex="2"
+               GridPane.rowIndex="2"/>
+
+    <Label text="Match:"
+           GridPane.columnIndex="1"
+           GridPane.rowIndex="3"/>
+
+    <TextField fx:id="matchText"
+               text="p"
+               GridPane.columnIndex="2"
+               GridPane.rowIndex="3"/>
+
+    <Label text="Operator:"
+           GridPane.columnIndex="1"
+           GridPane.rowIndex="4"/>
+
+    <EnumChoiceBox fx:id="operatorCb"
+                   enumType="main.operator.regex.RegExpOperatorType"
+                   prefHeight="21.0"
+                   prefWidth="105.0"
+                   GridPane.columnIndex="2"
+                   GridPane.rowIndex="4"
+                   GridPane.columnSpan="2"/>
+
+    <Label text="Output:"
+           GridPane.columnIndex="1"
+           GridPane.rowIndex="5"/>
+
+    <TextArea fx:id="outputText"
+              id="output-text"
+              editable="false"
+              GridPane.columnIndex="2"
+              GridPane.rowIndex="5"
+              GridPane.columnSpan="2"/>
+
+    <Button fx:id="runButton"
+            text="Uitvoeren"
+            onAction="#onResultButton"
+            GridPane.columnIndex="3"
+            GridPane.rowIndex="3"
+            GridPane.columnSpan="2"/>
+
+</GridPane>

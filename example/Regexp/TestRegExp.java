@@ -31,12 +31,18 @@ public class TestRegExp
     
     public void testLanguage()
     {
-        System.out.println("taal van (baa):\n" + expr1.getLanguage(5));
-        System.out.println("taal van (bb):\n" + expr2.getLanguage(5));
-        System.out.println("taal van (baa | bb):\n" + expr3.getLanguage(5));
+        Integer steps = 3;
+        System.out.println("taal van (baa):\n" + expr1.getLanguage(steps));
+        System.out.println("taal van (bb):\n" + expr2.getLanguage(steps));
+        System.out.println("taal van (baa | bb):\n" + expr3.getLanguage(steps));
 
-        System.out.println("taal van (a|b)*:\n" + all.getLanguage(5));
-        System.out.println("taal van (baa | bb)+:\n" + expr4.getLanguage(5));
-        System.out.println("taal van (baa | bb)+ (a|b)*:\n" + expr5.getLanguage(6));
+        System.out.println("taal van (a|b)*:\n" + all.getLanguage(steps));
+        System.out.println("taal van (baa | bb)+:\n" + expr4.getLanguage(steps));
+        System.out.println("taal van (baa | bb)+ (a|b)*:\n" + expr5.getLanguage(steps));
+    }
+
+    public static void main(String[] args) {
+        TestRegExp test = new TestRegExp();
+        test.testLanguage();
     }
 }

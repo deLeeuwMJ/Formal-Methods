@@ -91,14 +91,14 @@ public class Automata<T extends Comparable>
     {
         boolean isDFA = true;
         
-        for (T from : states)
-        {
-            for (char symbol : symbols)
-            {
-                isDFA = isDFA && getToStates(from, symbol).size() == 1;
-            }
-        }
-        
+//        for (T from : states)
+//        {
+//            for (char symbol : symbols)
+//            {
+//                isDFA = isDFA && getToStates(from, symbol).size() == 1;
+//            }
+//        }
+//
         return isDFA;
     }    
    
