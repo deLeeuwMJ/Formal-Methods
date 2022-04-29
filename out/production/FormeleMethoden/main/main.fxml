@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+
+<AnchorPane fx:controller="main.MainController"
+            xmlns:fx="http://javafx.com/fxml" >
+    <children>
+        <TabPane>
+            <Tab fx:id="regExpTab" text="Reguliere Expressies" closable="false">
+
+            </Tab>
+            <Tab fx:id="ndfaTab" text="NDFA" closable="false">
+
+            </Tab>
+            <Tab fx:id="dfaTab" text="DFA" closable="false">
+
+            </Tab>
+        </TabPane>
+    </children>
+</AnchorPane>
