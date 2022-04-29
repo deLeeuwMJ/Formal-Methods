@@ -10,15 +10,23 @@ import main.operator.regex.RegExpOperatorType;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static main.RegExMain.formatAlphabet;
+import static main.RegExMain.isValid;
+
 public class RegExpTabController implements Initializable
 {
-    private final RegExpHandler regExpHandler = new RegExpHandler();
 
     @FXML
-    TextField inputText;
+    TextField alphabetText;
 
     @FXML
-    TextField matchText;
+    TextField startText;
+
+    @FXML
+    TextField patternText;
+
+    @FXML
+    TextField endText;
 
     @FXML
     TextArea outputText;
@@ -26,19 +34,21 @@ public class RegExpTabController implements Initializable
     @FXML
     Button runButton;
 
-    @FXML
-    EnumChoiceBox<RegExpOperatorType> operatorCb;
-
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        operatorCb.getSelectionModel().select(0);
+
     }
 
     @FXML
     private void onResultButton(ActionEvent event)
     {
-        RegExpOperatorType operator = RegExpOperatorType.valueOf(operatorCb.getValue().toString());
-        outputText.setText(regExpHandler.handle(operator, inputText.getText(), matchText.getText()).toString());
+        String alphabet = alphabetText.getText();
+        String start = startText.getText();
+        String pattern = patternText.getText();
+        String end = endText.getText();
+
+        if (!isValid(alphabet, start) || !isValid(alphabet, pattern) || !isValid(alphabet, end)) return;
+        outputText.setText("r = " + start + "(" + formatAlphabet(alphabet) + ")*" + pattern + "(" + formatAlphabet(alphabet) + ")*" + end);
     }
 }

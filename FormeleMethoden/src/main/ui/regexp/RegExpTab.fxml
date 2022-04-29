@@ -22,45 +22,52 @@
           GridPane.rowIndex="1"
           GridPane.columnSpan="2"/>
 
-    <Label text="Input:"
+    <Label text="Alphabet:"
            GridPane.columnIndex="1"
            GridPane.rowIndex="2"/>
 
-    <TextField fx:id="inputText"
-               text="pizza"
+    <TextField fx:id="alphabetText"
+               text="ab"
                GridPane.columnIndex="2"
                GridPane.rowIndex="2"/>
 
-    <Label text="Match:"
+    <Label text="Start:"
            GridPane.columnIndex="1"
            GridPane.rowIndex="3"/>
 
-    <TextField fx:id="matchText"
-               text="p"
+    <TextField fx:id="startText"
+               text="a"
                GridPane.columnIndex="2"
                GridPane.rowIndex="3"/>
 
-    <Label text="Operator:"
+    <Label text="Pattern:"
            GridPane.columnIndex="1"
            GridPane.rowIndex="4"/>
 
-    <EnumChoiceBox fx:id="operatorCb"
-                   enumType="main.operator.regex.RegExpOperatorType"
-                   prefHeight="21.0"
-                   prefWidth="105.0"
-                   GridPane.columnIndex="2"
-                   GridPane.rowIndex="4"
-                   GridPane.columnSpan="2"/>
+    <TextField fx:id="patternText"
+               text="bab"
+               GridPane.columnIndex="2"
+               GridPane.rowIndex="4"/>
+
+    <Label text="End:"
+           GridPane.columnIndex="1"
+           GridPane.rowIndex="5"/>
+
+    <TextField fx:id="endText"
+               text="a"
+               GridPane.columnIndex="2"
+               GridPane.rowIndex="5"/>
+
 
     <Label text="Output:"
            GridPane.columnIndex="1"
-           GridPane.rowIndex="5"/>
+           GridPane.rowIndex="6"/>
 
     <TextArea fx:id="outputText"
               id="output-text"
               editable="false"
               GridPane.columnIndex="2"
-              GridPane.rowIndex="5"
+              GridPane.rowIndex="6"
               GridPane.columnSpan="2"/>
 
     <Button fx:id="runButton"
