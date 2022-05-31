@@ -12,8 +12,8 @@ public class Main extends Application {
 
     private static final String APP_TITLE = "Formele methoden";
     private static final String CSS_PATH = "main/main.css";
-    private static final Integer APP_WIDTH = 516;
-    private static final Integer APP_HEIGHT = 387;
+    private static final Integer APP_WIDTH = 450;
+    private static final Integer APP_HEIGHT = 450;
 
     @Override
     public void start(Stage primaryStage) throws Exception{

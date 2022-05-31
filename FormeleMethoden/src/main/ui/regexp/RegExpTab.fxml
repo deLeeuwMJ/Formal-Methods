@@ -10,71 +10,111 @@
 <?import java.lang.String?>
 <?import main.common.views.EnumChoiceBox?>
 <GridPane
+        maxHeight="-Infinity"
+        maxWidth="-Infinity"
+        minHeight="-Infinity"
+        minWidth="-Infinity"
+        prefHeight="450.0"
+        prefWidth="450.0"
         fx:controller="main.ui.regexp.RegExpTabController"
         xmlns:fx="http://javafx.com/fxml"
-        hgap="15"
-        vgap="15"
         styleClass="root">
 
-    <Text id="header-text"
-          text="Vul hier de waarden in"
-          GridPane.columnIndex="1"
-          GridPane.rowIndex="1"
-          GridPane.columnSpan="2"/>
+    <columnConstraints>
+        <ColumnConstraints percentWidth="100"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="95"/>
+        <RowConstraints minHeight="10.0" prefHeight="106.0" vgrow="ALWAYS"/>
+    </rowConstraints>
 
-    <Label text="Alphabet:"
-           GridPane.columnIndex="1"
-           GridPane.rowIndex="2"/>
+    <ListView
+            GridPane.fillWidth="true">
 
-    <TextField fx:id="alphabetText"
-               text="ab"
-               GridPane.columnIndex="2"
-               GridPane.rowIndex="2"/>
+        <HBox spacing="10"
+              alignment="CENTER_LEFT">
 
-    <Label text="Start:"
-           GridPane.columnIndex="1"
-           GridPane.rowIndex="3"/>
+            <Label text="Alphabet:"/>
 
-    <TextField fx:id="startText"
-               text="a"
-               GridPane.columnIndex="2"
-               GridPane.rowIndex="3"/>
+            <VBox spacing="10"
+                  alignment="CENTER">
 
-    <Label text="Pattern:"
-           GridPane.columnIndex="1"
-           GridPane.rowIndex="4"/>
+                <TextField fx:id="alphabetText"
+                           text="ab"/>
+            </VBox>
+        </HBox>
 
-    <TextField fx:id="patternText"
-               text="bab"
-               GridPane.columnIndex="2"
-               GridPane.rowIndex="4"/>
+        <HBox spacing="10"
+              alignment="CENTER_LEFT">
 
-    <Label text="End:"
-           GridPane.columnIndex="1"
-           GridPane.rowIndex="5"/>
+            <Label text="Start:"/>
 
-    <TextField fx:id="endText"
-               text="a"
-               GridPane.columnIndex="2"
-               GridPane.rowIndex="5"/>
+            <VBox fx:id="addStartContainer"
+                  spacing="10"
+                  alignment="CENTER">
 
+                <TextField fx:id="startText"
+                           text="a"/>
+            </VBox>
 
-    <Label text="Output:"
-           GridPane.columnIndex="1"
-           GridPane.rowIndex="6"/>
+            <Button fx:id="addStartField"
+                    text="+"
+                    onAction="#addStartField"/>
+        </HBox>
 
-    <TextArea fx:id="outputText"
-              id="output-text"
-              editable="false"
-              GridPane.columnIndex="2"
-              GridPane.rowIndex="6"
-              GridPane.columnSpan="2"/>
+        <HBox spacing="10"
+              alignment="CENTER_LEFT">
 
-    <Button fx:id="runButton"
-            text="Uitvoeren"
-            onAction="#onResultButton"
-            GridPane.columnIndex="3"
-            GridPane.rowIndex="3"
-            GridPane.columnSpan="2"/>
+            <Label text="Pattern:"/>
 
+            <VBox fx:id="addPatternContainer"
+                  spacing="10"
+                  alignment="CENTER">
+
+                <TextField fx:id="patternText"
+                           text="bab"/>
+            </VBox>
+
+            <Button fx:id="addPatternField"
+                    text="+"
+                    onAction="#addPatternField"/>
+        </HBox>
+
+        <HBox spacing="10"
+              alignment="CENTER_LEFT">
+
+            <Label text="End:"/>
+
+            <VBox fx:id="addEndContainer"
+                  spacing="10"
+                  alignment="CENTER">
+
+                <TextField fx:id="endText"
+                           text="bab"/>
+            </VBox>
+
+            <Button fx:id="addEndField"
+                    text="+"
+                    onAction="#addEndField"/>
+        </HBox>
+
+        <VBox spacing="10"
+              alignment="CENTER_LEFT">
+
+            <Label text="Output:"/>
+
+            <TextArea fx:id="outputText"
+                      maxHeight="50"
+                      id="output-text"
+                      editable="false"/>
+        </VBox>
+
+        <HBox spacing="10"
+              alignment="CENTER">
+
+            <Button fx:id="runButton"
+                    text="Uitvoeren"
+                    onAction="#onResultButton"/>
+        </HBox>
+    </ListView>
 </GridPane>

@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,7 +36,7 @@ public class MainController implements Initializable {
             initializeTabContent(ndfaTab, NDFA_TAB_SRC);
             initializeTabContent(dfaTab, DFA_TAB_SRC);
         } catch (IOException e) {
-            System.out.println("Exption with message: " + e.getMessage());
+            System.out.println("Exception with message: " + e.getMessage());
         }
     }
 

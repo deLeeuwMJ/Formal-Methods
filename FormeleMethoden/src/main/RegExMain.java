@@ -6,7 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.List;
 
 public class RegExMain {
 
@@ -16,7 +18,9 @@ public class RegExMain {
         String pattern = "bab";
         String end = "a";
 
-        if (!isValid(alphabet, start) || !isValid(alphabet, pattern) || !isValid(alphabet, end)) return;
+        if (!isValid(alphabet, start)) return;
+
+//        if (!isValid(alphabet, start) || !isValid(alphabet, pattern) || !isValid(alphabet, end)) return;
 
         System.out.println("r = " + start + "(" + formatAlphabet(alphabet) + ")*" + pattern + "(" + formatAlphabet(alphabet) + ")*" + end);
     }
@@ -48,6 +52,22 @@ public class RegExMain {
                 System.out.println("Not in alphabet!");
                 return false;
             }
+        }
+
+        List<String> alphabetlist = new ArrayList<>();
+
+        for (char i : alphabet.toCharArray()) {
+            System.out.println("Before: " + alphabetlist);
+            if (alphabetlist.contains(Character.toString(i))) {
+                System.out.println("Char already in alphabet!");
+                return false;
+            }
+            else {
+                alphabetlist.add(String.valueOf(i));
+                System.out.println("After: " + alphabetlist);
+
+            }
+            System.out.println("------------------");
         }
 
         return true;
