@@ -23,8 +23,6 @@ public class RegExMain {
 
     //todo add row text for start pattern and end
 
-    //todo make userinput possible
-
     //todo split alphabet with '|'
     public static String formatAlphabet(String input) {
         StringBuilder formattedString = new StringBuilder();
