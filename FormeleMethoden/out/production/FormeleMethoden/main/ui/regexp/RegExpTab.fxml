@@ -10,7 +10,7 @@
 <?import java.lang.String?>
 <?import main.common.views.EnumChoiceBox?>
 <GridPane
-        fx:controller="main.ui.regexp.RegExpTabController"
+        fx:controller="main.regex.logic.RegExpTabController"
         xmlns:fx="http://javafx.com/fxml"
         hgap="15"
         vgap="15"
