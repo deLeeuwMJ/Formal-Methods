@@ -37,7 +37,7 @@
                   alignment="CENTER">
 
                 <TextField fx:id="alphabetText"
-                           text="ab"/>
+                           text="abc"/>
             </VBox>
         </HBox>
 
@@ -69,7 +69,7 @@
                   alignment="CENTER">
 
                 <TextField fx:id="patternText"
-                           text="bab"/>
+                           text="b"/>
             </VBox>
 
             <Button fx:id="addPatternField"
@@ -87,7 +87,7 @@
                   alignment="CENTER">
 
                 <TextField fx:id="endText"
-                           text="bab"/>
+                           text="c"/>
             </VBox>
 
             <Button fx:id="addEndField"
@@ -112,6 +112,20 @@
             <Button fx:id="runButton"
                     text="Uitvoeren"
                     onAction="#onResultButton"/>
+
+            <Button fx:id="genWords"
+                    text="Genereer"
+                    onAction="#onGenerateButton"/>
+
+            <HBox spacing="10"
+                  alignment="CENTER_LEFT">
+
+                <Label text="Extra stappen:"/>
+
+                <TextField fx:id="extraStepsText"
+                           text="0"
+                maxWidth="64"/>
+            </HBox>
         </HBox>
     </ListView>
 </GridPane>

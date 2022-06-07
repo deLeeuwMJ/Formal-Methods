@@ -49,10 +49,15 @@ public class RegExpTabController implements Initializable {
     @FXML
     VBox addEndContainer;
 
+    @FXML
+    TextField extraStepsText;
+
     private static final int MAX_FIELDS = 3;
     private List<TextField> startInputBoxes;
     private List<TextField> patternInputBoxes;
     private List<TextField> endInputBoxes;
+
+    private RegExpHelper regExpHelper = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -63,19 +68,30 @@ public class RegExpTabController implements Initializable {
 
     @FXML
     private void onResultButton(ActionEvent event) {
+        // Return false on error
+        if (!extractInputInformation()) {
+            displayError(ErrorType.INVALID_ALPHABET);
+            return;
+        }
+
+        displayOutput("r = " + regExpHelper.buildResult());
+    }
+
+    // Check if inputs are inside alphabet
+    private boolean extractInputInformation() {
+        List<String> alphabetList = extractIntoCharList(alphabetText.getText());
         List<String> startList = extractText(startInputBoxes);
         List<String> patternList = extractText(patternInputBoxes);
         List<String> endList = extractText(endInputBoxes);
 
-        if (startList.isEmpty() || patternList.isEmpty() || endList.isEmpty()) {
-            displayError(ErrorType.NOT_IN_ALPHABET);
-            return;
-        }
+        this.regExpHelper = new RegExpHelper(
+            alphabetList, startList, patternList, endList
+        );
 
-        String alphabet = alphabetText.getText();
-        displayOutput("r = " + formatOptions(startList) + "(" + formatAlphabet(alphabet) + ")*" + formatOptions(patternList) + "(" + formatAlphabet(alphabet) + ")*" + formatOptions(endList));
+        return !alphabetList.isEmpty() && !startList.isEmpty() && !patternList.isEmpty() && !endList.isEmpty();
     }
 
+    // Return empty list on non valid input string
     private List<String> extractText(List<TextField> items) {
         List<String> list = new ArrayList<>();
 
@@ -88,13 +104,36 @@ public class RegExpTabController implements Initializable {
         return list;
     }
 
+    @FXML
+    private void onGenerateButton(ActionEvent event) {
+        // Return false on error
+        if (!extractInputInformation()) {
+            displayError(ErrorType.INVALID_ALPHABET);
+            return;
+        } else if (!isValidNumberInput()) {
+            displayError(ErrorType.INVALID_NUMBER);
+            return;
+        }
+
+        displayOutput("Words " + regExpHelper.generateWords(Integer.parseInt(extraStepsText.getText())));
+    }
+
+    private boolean isValidNumberInput() {
+        try {
+            Integer.parseInt(extraStepsText.getText());
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+
     private void displayOutput(String message) {
         outputText.setStyle("-fx-text-fill: black");
         outputText.setText(message);
     }
 
     private enum ErrorType {
-        LIMIT_REACHED, NOT_IN_ALPHABET
+        LIMIT_REACHED, INVALID_ALPHABET, INVALID_NUMBER
     }
 
     private void displayError(ErrorType error) {
@@ -105,8 +144,11 @@ public class RegExpTabController implements Initializable {
             case LIMIT_REACHED:
                 errorMessage = "Het maximaal aantal velden van " + MAX_FIELDS + " is bereikt";
                 break;
-            case NOT_IN_ALPHABET:
-                errorMessage = "Het bevindt zich niet in het alfabet";
+            case INVALID_ALPHABET:
+                errorMessage = "Het bevindt zich niet in het alfabet of is dubbel";
+                break;
+            case INVALID_NUMBER:
+                errorMessage = "Er is geen geldig getal ingevoerd";
                 break;
             default:
                 errorMessage = "Er is een fout opgetreden";

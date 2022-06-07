@@ -1,7 +1,5 @@
 package main.regex;
 
-import main.regex.logic.RegExp;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +7,6 @@ public class RegExMain {
 
     public static void main(String[] args) {
         runBuilder();
-        runGenerator();
     }
 
     private static void runBuilder() {
@@ -22,44 +19,21 @@ public class RegExMain {
 
         if (!isValid(alphabet, start) || !isValid(alphabet, pattern) || !isValid(alphabet, end)) return;
 
-        System.out.println("r = " + start + "(" + formatAlphabet(alphabet) + ")*" + pattern + "(" + formatAlphabet(alphabet) + ")*" + end);
+        System.out.println("r = " + start + "(" + formatOutput(extractIntoCharList(alphabet)) + ")*" + pattern + "(" + formatOutput(extractIntoCharList(alphabet)) + ")*" + end);
     }
 
-    private static void runGenerator() {
-        System.out.println("[GENERATOR]----------------------------------------");
-        Integer steps = 5;
+    // Return empty list on double occurrence
+    public static List<String> extractIntoCharList(String text) {
+        List<String> list = new ArrayList<>();
 
-        RegExp expr1, expr2, expr3, expr4, expr5, a, b, all;
+        for (char c : text.toCharArray()){
+            list.add(String.valueOf(c));
+        }
 
-        a = new RegExp("a");
-        b = new RegExp("b");
-
-//        // expr1: "baa"
-//        expr1 = new RegExp("baa");
-//        // expr2: "bb"
-//        expr2 = new RegExp("bb");
-//        // expr3: "baa | baa"
-//        expr3 = expr1.or(expr2);
-
-        // all: "(a|b)*"
-        all = (a.or(b)).star();
-
-//        // expr4: "(baa | baa)+"
-//        expr4 = expr3.plus();
-//        // expr5: "(baa | baa)+ (a|b)*"
-//        expr5 = expr4.dot(all);
-
-
-//        System.out.println("taal van (baa):\n" + expr1.getLanguage(steps));
-//        System.out.println("taal van (bb):\n" + expr2.getLanguage(steps));
-//        System.out.println("taal van (baa | bb):\n" + expr3.getLanguage(steps));
-
-        System.out.println("taal van (a|b)*:\n" + all.getLanguage(steps));
-//        System.out.println("taal van (baa | bb)+:\n" + expr4.getLanguage(steps));
-//        System.out.println("taal van (baa | bb)+ (a|b)*:\n" + expr5.getLanguage(steps));
+        return list;
     }
 
-    public static String formatOptions(List<String> list) {
+    public static String formatOutput(List<String> list) {
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < list.size(); i++) {
@@ -71,21 +45,6 @@ public class RegExMain {
         }
 
         return builder.toString();
-    }
-
-    public static String formatAlphabet(String input) {
-        StringBuilder formattedString = new StringBuilder();
-        char[] chars = input.toCharArray();
-
-        for (int i = 0; i < chars.length; i++) {
-            if (chars.length - 1 == i) {
-                formattedString.append(chars[i]);
-            } else {
-                formattedString.append(chars[i]).append("|");
-            }
-        }
-
-        return formattedString.toString();
     }
 
     public static boolean isValid(String alphabet, String input) {
