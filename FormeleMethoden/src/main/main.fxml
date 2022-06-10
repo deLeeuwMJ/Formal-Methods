@@ -1,27 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.Tab?>
-
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
-<AnchorPane fx:controller="main.MainController"
-            xmlns:fx="http://javafx.com/fxml" >
-    <children>
-        <HBox>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<GridPane fx:controller="main.MainController"
+          xmlns:fx="http://javafx.com/fxml"
+          prefHeight="-Infinity"
+          prefWidth="-Infinity"
+          style="-fx-padding: 16 16 16 16; -fx-background-color: #F6F6F6;">
 
+    <VBox GridPane.rowIndex="0"
+          style="-fx-padding: 16 16 16 16;">
+
+        <Label text="Invoer"
+               style="-fx-padding: 0 0 16 0; -fx-font-weight: bold; -fx-wrap-text:true; -fx-font-size: 26;"/>
+
+        <HBox spacing="10"
+              alignment="CENTER_LEFT">
+
+            <Label text="Alphabet:"/>
+
+            <VBox spacing="10"
+                  alignment="CENTER">
+
+                <TextField fx:id="alphabetText"
+                           text="abc"/>
+            </VBox>
         </HBox>
+    </VBox>
 
-<!--        <TabPane>-->
-<!--            <Tab fx:id="regExpTab" text="Reguliere Expressies" closable="false">-->
+    <HBox spacing="10"
+          GridPane.rowIndex="1"
+          style="-fx-padding: 16 16 16 16;">
 
-<!--            </Tab>-->
-<!--            <Tab fx:id="ndfaTab" text="NDFA" closable="false">-->
+        <Button fx:id="runButton"
+                text="Uitvoeren"
+                onAction="#onResultButton"/>
 
-<!--            </Tab>-->
-<!--            <Tab fx:id="dfaTab" text="DFA" closable="false">-->
+        <Button fx:id="addRegex"
+                text="RegEx toevoegen"
+                onAction="#addRegex"/>
+    </HBox>
 
-<!--            </Tab>-->
-<!--        </TabPane>-->
-    </children>
-</AnchorPane>
+    <VBox GridPane.rowIndex="2"
+          style="-fx-padding: 16 16 16 16;">
+
+        <Label text="Log"
+               style="-fx-padding: 0 0 16 0; -fx-font-weight: bold; -fx-wrap-text:true; -fx-font-size: 26;"/>
+
+        <ListView fx:id="logList"/>
+    </VBox>
+
+    <columnConstraints>
+        <ColumnConstraints percentWidth="100"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="60" minHeight="10.0" prefHeight="106.0" vgrow="ALWAYS"/>
+        <RowConstraints percentHeight="10" minHeight="10.0" prefHeight="106.0" vgrow="ALWAYS"/>
+        <RowConstraints percentHeight="30" minHeight="10.0" prefHeight="106.0" vgrow="ALWAYS"/>
+    </rowConstraints>
+
+</GridPane>

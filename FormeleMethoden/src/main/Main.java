@@ -2,74 +2,89 @@ package main;
 
 import com.brunomnsilva.smartgraph.graph.Digraph;
 import com.brunomnsilva.smartgraph.graph.DigraphEdgeList;
-import com.brunomnsilva.smartgraph.graph.Graph;
-import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
 import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
-import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class Main extends Application {
 
     private static final String APP_TITLE = "Formele methoden";
     private static final String CSS_PATH = "main/main.css";
-    private static final Integer APP_WIDTH = 450;
-    private static final Integer APP_HEIGHT = 450;
+    private static final Integer APP_WIDTH = 1280;
+    private static final Integer APP_HEIGHT = 720;
 
-//    @Override
-//    public void start(Stage primaryStage) throws Exception {
-//        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main.fxml")));
-//        primaryStage.setTitle(APP_TITLE);
-//        Scene scene = new Scene(root, APP_WIDTH, APP_HEIGHT);
-//        scene.getStylesheets().add(CSS_PATH);
-//        primaryStage.setScene(scene);
-//        primaryStage.setResizable(false);
-//        primaryStage.show();
-//    }
+    public static SmartGraphPanel<String, String> graphView;
+    public static Digraph<String, String> graphList;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        Digraph<String, String> g = new DigraphEdgeList<>();
+    public void start(Stage primaryStage) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main.fxml")));
 
-        SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
-        SmartGraphPanel<String, String> graphView = new SmartGraphPanel<>(g, strategy);
-        Scene scene = new Scene(graphView, 1024, 768);
+        // Graph
+        graphList = new DigraphEdgeList<>();
+        graphView = new SmartGraphPanel<>(graphList, new SmartCircularSortedPlacementStrategy());
+
+        // Scene
+        GridPane mainPane = buildGridPane();
+        mainPane.add(graphView, 0, 0);
+        mainPane.add(root, 1, 0);
+
+        Scene scene = new Scene(mainPane, APP_WIDTH, APP_HEIGHT);
+        scene.getStylesheets().add(CSS_PATH);
 
         Stage stage = new Stage(StageStyle.DECORATED);
-        stage.setTitle("Visualization");
+        stage.setTitle(APP_TITLE);
         stage.setScene(scene);
         stage.show();
 
+        // Initialisations
+        initGraph();
+    }
+
+    private void initGraph() {
         graphView.init();
         graphView.setAutomaticLayout(true);
 
-        g.insertVertex("A");
-        g.insertVertex("B");
-        g.insertVertex("C");
-        g.insertVertex("D");
-        g.insertVertex("E");
-        g.insertVertex("F");
+        graphList.insertVertex("A");
+        graphList.insertVertex("B");
 
-        g.insertEdge("A", "B", "AB");
-        g.insertEdge("B", "A", "AB2");
-        g.insertEdge("A", "C", "AC");
-        g.insertEdge("A", "D", "AD");
-        g.insertEdge("B", "C", "BC");
-        g.insertEdge("C", "D", "CD");
-        g.insertEdge("B", "E", "BE");
-        g.insertEdge("F", "D", "DF");
-        g.insertEdge("F", "D", "DF2");
+        graphList.insertEdge("A", "B", "AB");
+        graphList.insertEdge("B", "A", "AB2");
 
-        //yep, its a loop!
-        g.insertEdge("A", "A", "Loop");
         graphView.update();
+    }
+
+    // Workaround since visualisation library doesn't support FXML
+    private GridPane buildGridPane() {
+        GridPane pane = new GridPane();
+
+        ColumnConstraints cc1 = new ColumnConstraints();
+        cc1.setHalignment(HPos.CENTER);
+        cc1.setPercentWidth(65);
+        pane.getColumnConstraints().add(cc1);
+
+        ColumnConstraints cc2 = new ColumnConstraints();
+        cc2.setHalignment(HPos.CENTER);
+        cc2.setPercentWidth(35);
+        pane.getColumnConstraints().add(cc2);
+
+        RowConstraints rc = new RowConstraints();
+        rc.setValignment(VPos.CENTER);
+        rc.setPercentHeight(100);
+        pane.getRowConstraints().add(rc);
+
+        return pane;
     }
 
     public static void main(String[] args) {
