@@ -4,19 +4,24 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 
+<?import javafx.scene.layout.HBox?>
 <AnchorPane fx:controller="main.MainController"
             xmlns:fx="http://javafx.com/fxml" >
     <children>
-        <TabPane>
-            <Tab fx:id="regExpTab" text="Reguliere Expressies" closable="false">
+        <HBox>
 
-            </Tab>
-            <Tab fx:id="ndfaTab" text="NDFA" closable="false">
+        </HBox>
 
-            </Tab>
-            <Tab fx:id="dfaTab" text="DFA" closable="false">
+<!--        <TabPane>-->
+<!--            <Tab fx:id="regExpTab" text="Reguliere Expressies" closable="false">-->
 
-            </Tab>
-        </TabPane>
+<!--            </Tab>-->
+<!--            <Tab fx:id="ndfaTab" text="NDFA" closable="false">-->
+
+<!--            </Tab>-->
+<!--            <Tab fx:id="dfaTab" text="DFA" closable="false">-->
+
+<!--            </Tab>-->
+<!--        </TabPane>-->
     </children>
 </AnchorPane>

@@ -52,6 +52,7 @@ public class RegExpHelper {
 
         wordList.addAll(generateSameKind(list));
         wordList.addAll(generateDifferentKind(list));
+        wordList.add("");
         Collections.sort(wordList);
 
         return wordList;
@@ -60,20 +61,12 @@ public class RegExpHelper {
     public List<String> generateDifferentKind(List<String> list) {
         String[] ml = list.toArray(new String[0]);
 
-        // Traverse all possible lengths
         for (int z = 0; z < MAX_STEPS - 1; z++) {
-
-            // Stores all combinations
-            // of length z
             Vector<String> tmp = new Vector<String>();
 
-            // Traverse the array
             for (int i = 0; i < list.size(); i++) {
                 for (int k = 0; k < ml.length; k++) {
                     if (list.get(i) != ml[k]) {
-
-                        // Generate all
-                        // combinations of length z
                         tmp.add(ml[k] + list.get(i));
                     }
                 }
