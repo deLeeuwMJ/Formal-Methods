@@ -1,6 +1,4 @@
-package main.example.regex;
-
-import main.model.Operator;
+package main.model;
 
 import java.util.*;
 

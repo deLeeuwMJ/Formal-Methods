@@ -10,7 +10,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import main.example.regex.RegExp;
+import main.model.RegExp;
 import main.model.EnumChoiceBox;
 import main.model.LogErrorType;
 import main.model.Operator;
