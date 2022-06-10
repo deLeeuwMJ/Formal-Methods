@@ -34,6 +34,7 @@ public class Main extends Application {
         // Graph
         graphList = new DigraphEdgeList<>();
         graphView = new SmartGraphPanel<>(graphList, new SmartCircularSortedPlacementStrategy());
+        graphView.setAutomaticLayout(true);
 
         // Scene
         GridPane mainPane = buildGridPane();
@@ -48,21 +49,8 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
 
-        // Initialisations
-        initGraph();
-    }
-
-    private void initGraph() {
+        // Needs to be after show()
         graphView.init();
-        graphView.setAutomaticLayout(true);
-
-        graphList.insertVertex("A");
-        graphList.insertVertex("B");
-
-        graphList.insertEdge("A", "B", "AB");
-        graphList.insertEdge("B", "A", "AB2");
-
-        graphView.update();
     }
 
     // Workaround since visualisation library doesn't support FXML
