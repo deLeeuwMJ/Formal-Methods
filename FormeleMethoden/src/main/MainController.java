@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 import main.model.*;
 
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -51,7 +52,7 @@ public class MainController implements Initializable {
             public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
 
                 if (regexMode.getSelectedToggle() != null) {
-                    switch (RegexMode.valueOf(regexMode.getSelectedToggle().getUserData().toString())){
+                    switch (getRegexMode()) {
                         case INPUT:
                             operatorChoiceBox.setVisible(false);
                             addRegex.setVisible(false);
@@ -65,6 +66,10 @@ public class MainController implements Initializable {
                 }
             }
         });
+    }
+
+    private RegexMode getRegexMode() {
+        return RegexMode.valueOf(regexMode.getSelectedToggle().getUserData().toString());
     }
 
     public void onExampleButton(ActionEvent actionEvent) {
@@ -92,7 +97,12 @@ public class MainController implements Initializable {
     }
 
     public void onResultButton(ActionEvent actionEvent) {
-        displayError(LogErrorType.NO_FUNCTIONALITY);
+        if (getRegexMode() == RegexMode.BUILDER) {
+            displayError(LogErrorType.NO_FUNCTIONALITY);
+            return;
+        }
+
+        displayOutput("Parsen van Regex...");
     }
 
     public void addRegex(ActionEvent actionEvent) {
@@ -161,6 +171,7 @@ public class MainController implements Initializable {
         logList.getItems().clear();
         regexField.clear();
         clearGraphList();
+        displayOutput("Resetting...");
     }
 
     private void clearGraphList() {
@@ -204,6 +215,8 @@ public class MainController implements Initializable {
     }
 
     private void logInfo(Text text, Color color) {
+        LocalDateTime now = LocalDateTime.now();
+        text.setText("[" + now.getHour() + ":" + now.getMinute() + "] " + text.getText());
         text.setFill(color);
         logList.getItems().add(0, text);
     }
