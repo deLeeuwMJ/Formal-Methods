@@ -11,13 +11,14 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import main.example.dfa.Automata;
+import main.example.dfa.TestAutomata;
+import main.example.dfa.Transition;
 import main.model.*;
 
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static main.Main.graphList;
 import static main.Main.graphView;
@@ -32,15 +33,20 @@ public class MainController implements Initializable {
     public RadioButton inputMode;
     public Button addRegex;
 
+    // Regex
     private List<Vertex<String>> bufferVertexList;
     private List<Edge<String, String>> bufferEdgeList;
     private String regexString;
     private RegExp lastRegex;
 
+    // Automata
+    private SortedSet<Character> terminalList;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         bufferVertexList = new ArrayList<>();
         bufferEdgeList = new ArrayList<>();
+        terminalList = new TreeSet<>();
         lastRegex = new RegExp();
         regexString = "";
 
@@ -83,17 +89,27 @@ public class MainController implements Initializable {
 
         clearGraphList();
 
-        bufferVertexList.add(graphList.insertVertex("A"));
-        bufferVertexList.add(graphList.insertVertex("B"));
+        bufferVertexList.add(graphList.insertVertex("q0"));
+        bufferVertexList.add(graphList.insertVertex("q1"));
 
-        bufferEdgeList.add(graphList.insertEdge("A", "B", "a"));
-        bufferEdgeList.add(graphList.insertEdge("A", "A", " a"));
-        bufferEdgeList.add(graphList.insertEdge("B", "B", "b"));
-        bufferEdgeList.add(graphList.insertEdge("B", "A", " b"));
+        bufferEdgeList.add(graphList.insertEdge("q0", "q1", "a"));
+        bufferEdgeList.add(graphList.insertEdge("q0", "q0", " a"));
+        bufferEdgeList.add(graphList.insertEdge("q1", "q1", "b"));
+        bufferEdgeList.add(graphList.insertEdge("q1", "q0", " b"));
 
         graphView.update();
 
         displayOutput("Taal: " + all.getLanguage(3).toString());
+    }
+
+    private void addTerminals(String characters) {
+        char[] splitString = characters.toCharArray();
+
+        for (char c : splitString) {
+            if (!terminalList.contains(c)) {
+                terminalList.add(c);
+            }
+        }
     }
 
     public void onResultButton(ActionEvent actionEvent) {
@@ -102,7 +118,102 @@ public class MainController implements Initializable {
             return;
         }
 
-        displayOutput("Parsen van Regex...");
+        // todo validate input
+        String input = regexField.getText();
+
+        // Defining values for automata ab+
+        addTerminals("ab");
+
+        Character[] alphabet = terminalList.toArray(new Character[0]);
+        Automata<String> m = new Automata<String>(alphabet);
+
+        // Transitions
+        m.addTransition(new Transition<String>("q0", 'a', "q1"));
+        m.addTransition(new Transition<String>("q1", 'b', "q0"));
+
+        // Loops
+        m.addTransition(new Transition<String>("q0", 'a'));
+        m.addTransition(new Transition<String>("q1", 'b'));
+
+        m.defineAsStartState("q0");
+        m.defineAsFinalState("q1");
+
+        List<Transition> transitionsResult = m.getTransitions();
+
+        drawGraph(transitionsResult);
+
+        // Log output
+        displayOutput("Terminals: " + m.getAlphabet().toString());
+        Collections.reverse(transitionsResult); // Reverse to correctly output
+        for (Transition t : transitionsResult) displayOutput("Transition: " + t.toString());
+    }
+
+    private void drawGraph(List<Transition> transitionsResult) {
+        clearGraphList();
+
+        // Draw nodes
+        for (Transition t : transitionsResult) {
+            String state = t.getFromState().toString();
+
+            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
+                bufferVertexList.add(graphList.insertVertex(state));
+            }
+        }
+
+        for (Vertex<String> v : bufferVertexList) System.out.println("Node: " + v.element());
+
+        // Draw edges
+        for (Transition t : transitionsResult) {
+            if (bufferEdgeList.isEmpty() || !doesEdgeExist(t)) {
+                bufferEdgeList.add(graphList.insertEdge(
+                        t.getFromState().toString(),
+                        t.getToState().toString(),
+                        getSymbol(t.getSymbol())
+                ));
+            }
+        }
+
+        graphView.update();
+    }
+
+    private boolean doesVertexExist(String state) {
+        for (Vertex<String> v : bufferVertexList) {
+            if (v.element().equals(state)) return true;
+        }
+        return false;
+    }
+
+    private boolean doesEdgeExist(Transition state) {
+        for (Edge<String, String> e : bufferEdgeList) {
+            String beginState = e.vertices()[0].element();
+            String endState = e.vertices()[1].element();
+
+            if (beginState.equals(state.getFromState().toString()) && endState.equals(state.getToState().toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String getSymbol(char symbol) {
+        String label = String.valueOf(symbol);
+
+        do {
+            label+= " ";
+        } while (doesLabelAlreadyExist(label));
+
+        return label;
+    }
+
+    private boolean doesLabelAlreadyExist(String label) {
+        for (Edge<String, String> e : bufferEdgeList) {
+            String l = e.element();
+
+            if (l.equals(label)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addRegex(ActionEvent actionEvent) {
@@ -122,6 +233,7 @@ public class MainController implements Initializable {
         }
 
         RegExp newRegex = new RegExp(terminals);
+        addTerminals(terminals);
         switch (operator) {
             case PLUS:  // expr: baa+"
                 if (!validatePrevRegex()) break;
@@ -166,6 +278,7 @@ public class MainController implements Initializable {
     }
 
     private void resetData() {
+        terminalList.clear();
         regexString = "";
         lastRegex = new RegExp();
         logList.getItems().clear();

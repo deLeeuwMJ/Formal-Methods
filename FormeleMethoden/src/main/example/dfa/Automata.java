@@ -3,9 +3,9 @@ package main.example.dfa;
 /**
  * The class Automata represents both DFA and NDFA: some NDFA's are also DFA
  * Using the method isDFA we can check this
- * 
+ *
  * We use '$' to denote the empty symbol epsilon
- * 
+ *
  * @author Paul de Mast
  * @version 1.0
 
@@ -28,9 +28,9 @@ public class Automata<T extends Comparable>
     {
            this(new TreeSet<Character>());
     }
-    
+
     public Automata(Character [] s)
-    {   
+    {
         this(new TreeSet<Character>(Arrays.asList(s)) );
     }
 
@@ -42,56 +42,61 @@ public class Automata<T extends Comparable>
         finalStates = new TreeSet<T>();
         this.setAlphabet(symbols);
     }
-    
+
     public void setAlphabet(Character [] s)
     {
         this.setAlphabet(new TreeSet<Character>(Arrays.asList(s)));
     }
-    
+
     public void setAlphabet(SortedSet<Character> symbols)
     {
        this.symbols = symbols;
     }
-    
+
     public SortedSet<Character> getAlphabet()
     {
        return symbols;
     }
-    
+
     public void addTransition(Transition<T> t)
     {
         transitions.add(t);
         states.add(t.getFromState());
-        states.add(t.getToState());        
+        states.add(t.getToState());
     }
-    
+
     public void defineAsStartState(T t)
     {
         // if already in states no problem because a Set will remove duplicates.
         states.add(t);
-        startStates.add(t);        
+        startStates.add(t);
     }
 
     public void defineAsFinalState(T t)
     {
         // if already in states no problem because a Set will remove duplicates.
         states.add(t);
-        finalStates.add(t);        
+        finalStates.add(t);
     }
 
     public void printTransitions()
     {
-
         for (Transition<T> t : transitions)
         {
             System.out.println (t);
         }
     }
-    
+
+    public List<Transition> getTransitions(){
+        List<Transition> list = new ArrayList<>();
+        list.addAll(transitions);
+        return list;
+    }
+
     public boolean isDFA()
     {
         boolean isDFA = true;
-        
+
         for (T from : states)
         {
             for (char symbol : symbols)
@@ -99,7 +104,7 @@ public class Automata<T extends Comparable>
                 isDFA = isDFA && getToStates(from, symbol).size() == 1;
             }
         }
-        
+
         return isDFA;
     }
 
