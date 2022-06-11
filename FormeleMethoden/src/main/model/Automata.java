@@ -1,4 +1,4 @@
-package main.example.dfa;
+package main.model;
 
 /**
  * The class Automata represents both DFA and NDFA: some NDFA's are also DFA
@@ -111,5 +111,4 @@ public class Automata<T extends Comparable>
     private Collection<Object> getToStates(T from, char symbol) {
         return null;
     }
-
 }

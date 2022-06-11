@@ -1,4 +1,4 @@
-package main.example.dfa;
+package main.model;
 
 /**
  * The class Automata represents both DFA and NDFA: some NDFA's are also DFA

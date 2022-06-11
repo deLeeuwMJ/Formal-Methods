@@ -1,5 +1,0 @@
-package main.model;
-
-public enum LogErrorType {
-    NO_FUNCTIONALITY, NO_OPERATOR_SELECTED, INVALID_OPERATOR_ACTION, EMPTY_FIELD
-}

@@ -1,4 +1,4 @@
-package main.model;
+package main.ui;
 
 import javafx.beans.NamedArg;
 import javafx.scene.control.ChoiceBox;
