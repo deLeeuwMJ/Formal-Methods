@@ -2,18 +2,16 @@ package main;
 
 import com.brunomnsilva.smartgraph.graph.Edge;
 import com.brunomnsilva.smartgraph.graph.Vertex;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import main.model.RegExp;
-import main.model.EnumChoiceBox;
-import main.model.LogErrorType;
-import main.model.Operator;
+import main.model.*;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,16 +23,18 @@ import static main.Main.graphView;
 
 public class MainController implements Initializable {
 
+    @FXML
+    public ListView<Node> logList;
+    public TextField regexField;
+    public EnumChoiceBox<Operator> operatorChoiceBox;
+    public ToggleGroup regexMode;
+    public RadioButton inputMode;
+    public Button addRegex;
+
     private List<Vertex<String>> bufferVertexList;
     private List<Edge<String, String>> bufferEdgeList;
     private String regexString;
     private RegExp lastRegex;
-    private int regexBuildIterationCount;
-
-    @FXML
-    public ListView<Node> logList;
-    public TextField regexField;
-    public EnumChoiceBox<Operator> operatorCheckbox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -42,7 +42,29 @@ public class MainController implements Initializable {
         bufferEdgeList = new ArrayList<>();
         lastRegex = new RegExp();
         regexString = "";
-        regexBuildIterationCount = 0;
+
+        initListeners();
+    }
+
+    private void initListeners() {
+        regexMode.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+
+                if (regexMode.getSelectedToggle() != null) {
+                    switch (RegexMode.valueOf(regexMode.getSelectedToggle().getUserData().toString())){
+                        case INPUT:
+                            operatorChoiceBox.setVisible(false);
+                            addRegex.setVisible(false);
+                            break;
+                        case BUILDER:
+                            operatorChoiceBox.setVisible(true);
+                            addRegex.setVisible(true);
+                            break;
+                    }
+                    resetData();
+                }
+            }
+        });
     }
 
     public void onExampleButton(ActionEvent actionEvent) {
@@ -76,7 +98,7 @@ public class MainController implements Initializable {
     public void addRegex(ActionEvent actionEvent) {
         Operator operator;
         try {
-            operator = Operator.valueOf(operatorCheckbox.getValue().toString());
+            operator = Operator.valueOf(operatorChoiceBox.getValue().toString());
         } catch (NullPointerException e) {
             displayError(LogErrorType.NO_OPERATOR_SELECTED);
             return;
@@ -84,7 +106,7 @@ public class MainController implements Initializable {
 
         String terminals = regexField.getText();
 
-        if (terminals.isEmpty() && operator != Operator.PLUS && operator != Operator.STAR) {
+        if (terminals.isEmpty() && operator != Operator.PLUS && operator != Operator.STAR && operator != Operator.ONE) {
             displayError(LogErrorType.EMPTY_FIELD);
             return;
         }
@@ -114,12 +136,12 @@ public class MainController implements Initializable {
             case ONE:   // expr: "baa"
                 lastRegex = newRegex;
                 regexString = terminals;
-                regexBuildIterationCount = 0;
                 break;
         }
 
         displayOutput("Taal: " + lastRegex.getLanguage(5).toString());
         displayOutput("Regex: " + regexString);
+        regexField.clear();
     }
 
     private boolean validatePrevRegex() {
@@ -133,8 +155,7 @@ public class MainController implements Initializable {
         resetData();
     }
 
-    private void resetData(){
-        regexBuildIterationCount = 0;
+    private void resetData() {
         regexString = "";
         lastRegex = new RegExp();
         logList.getItems().clear();
@@ -186,6 +207,4 @@ public class MainController implements Initializable {
         text.setFill(color);
         logList.getItems().add(0, text);
     }
-
-
 }

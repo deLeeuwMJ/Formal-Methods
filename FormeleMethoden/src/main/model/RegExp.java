@@ -88,7 +88,6 @@ public class RegExp
         SortedSet<String> languageLeft, languageRight;
         
         if (maxSteps < 1) return emptyLanguage;
-        
         switch (this.operator) {
             case ONE:
                  {languageResult.add(terminals);}
@@ -130,8 +129,7 @@ public class RegExp
             default:
                 System.out.println ("getLanguage is nog niet gedefinieerd voor de operator: " + this.operator);
                 break;
-        }        
-                
+        }
             
         return languageResult;
     }  

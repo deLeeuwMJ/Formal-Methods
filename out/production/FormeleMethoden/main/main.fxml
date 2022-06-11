@@ -11,6 +11,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import main.model.EnumChoiceBox?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <GridPane fx:controller="main.MainController"
           xmlns:fx="http://javafx.com/fxml"
           prefHeight="-Infinity"
@@ -20,8 +22,21 @@
     <VBox GridPane.rowIndex="0"
           style="-fx-padding: 16 16 16 16;">
 
+        <fx:define>
+            <ToggleGroup fx:id="regexMode" />
+        </fx:define>
+
         <Label text="Input"
                style="-fx-padding: 0 0 16 0; -fx-font-weight: bold; -fx-wrap-text:true; -fx-font-size: 26;"/>
+
+        <HBox spacing="10"
+              alignment="CENTER_LEFT"
+              style="-fx-padding: 0 0 16 0;">
+
+            <Label text="Mode:"/>
+            <RadioButton fx:id="inputMode" text="Input" userData="INPUT" toggleGroup="$regexMode" selected="true"/>
+            <RadioButton fx:id="builderMode" text="Builder" userData="BUILDER" toggleGroup="$regexMode"/>
+        </HBox>
 
         <HBox spacing="10"
               alignment="CENTER_LEFT"
@@ -36,8 +51,9 @@
                            text=""/>
             </VBox>
 
-            <EnumChoiceBox fx:id="operatorCheckbox"
+            <EnumChoiceBox fx:id="operatorChoiceBox"
                            enumType="main.model.Operator"
+                           visible="false"
                            prefHeight="21.0"
                            maxWidth="92.0"/>
         </HBox>
@@ -51,10 +67,6 @@
                 text="Run"
                 onAction="#onResultButton"/>
 
-        <Button fx:id="addRegex"
-                text="Add"
-                onAction="#addRegex"/>
-
         <Button fx:id="resetRegex"
                 text="Reset"
                 onAction="#resetRegex"/>
@@ -62,6 +74,11 @@
         <Button fx:id="runExample"
                 text="Example"
                 onAction="#onExampleButton"/>
+
+        <Button fx:id="addRegex"
+                visible="false"
+                text="Add"
+                onAction="#addRegex"/>
 
     </HBox>
 
@@ -78,9 +95,9 @@
         <ColumnConstraints percentWidth="100"/>
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints percentHeight="60" minHeight="10.0" prefHeight="106.0" vgrow="ALWAYS"/>
+        <RowConstraints percentHeight="20" minHeight="10.0" prefHeight="106.0" vgrow="ALWAYS"/>
         <RowConstraints percentHeight="10" minHeight="10.0" prefHeight="106.0" vgrow="ALWAYS"/>
-        <RowConstraints percentHeight="30" minHeight="10.0" prefHeight="106.0" vgrow="ALWAYS"/>
+        <RowConstraints percentHeight="70" minHeight="10.0" prefHeight="106.0" vgrow="ALWAYS"/>
     </rowConstraints>
 
 </GridPane>
