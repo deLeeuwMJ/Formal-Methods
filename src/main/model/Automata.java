@@ -79,6 +79,14 @@ public class Automata<T extends Comparable>
         finalStates.add(t);
     }
 
+    public SortedSet<T> getStartStates() {
+        return startStates;
+    }
+
+    public SortedSet<T> getFinalStates() {
+        return finalStates;
+    }
+
     public void printTransitions()
     {
         for (Transition<T> t : transitions)

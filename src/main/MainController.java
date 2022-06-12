@@ -82,7 +82,7 @@ public class MainController implements Initializable {
         diagramVisualiser.addEdge("q1", "q0", " b");
         diagramVisualiser.build();
 
-        loggerBox.displayOutput("Taal: " + all.getLanguage(3).toString());
+        loggerBox.displayOutput("Taal: " + all.getLanguage(5).toString());
     }
 
     public void onResultButton(ActionEvent actionEvent) {
@@ -90,6 +90,8 @@ public class MainController implements Initializable {
             loggerBox.displayError(LoggerBox.LogErrorType.NO_FUNCTIONALITY);
             return;
         }
+
+        resetData();
 
         /* Automata for ab+ */
         automataBuilder.addTerminals("ab");

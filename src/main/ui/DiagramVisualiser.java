@@ -8,6 +8,7 @@ import main.model.VertexType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 
 import static main.Main.graphList;
 import static main.Main.graphView;
@@ -27,31 +28,40 @@ public class DiagramVisualiser {
     }
 
     public void draw(Automata automaton) {
-        List<Transition> transitionsResult = automaton.getTransitions();
-
         reset();
 
-        // Draw nodes
-        for (Transition t : transitionsResult) {
+        /* Start */
+        for (String state : new ArrayList<String> (automaton.getStartStates())) {
+            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
+                addVertex(state, VertexType.START);
+            }
+        }
+        /* Final */
+        for (String state : new ArrayList<String> (automaton.getFinalStates())) {
+            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
+                addVertex(state, VertexType.FINAL);
+            }
+        }
+
+        /* Others */
+        for (Transition t : (List<Transition>) automaton.getTransitions()) {
             String state = t.getFromState().toString();
 
             if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-                bufferVertexList.add(graphList.insertVertex(state));
+                addVertex(state, VertexType.NORMAL);
             }
-        }
 
-        // Draw edges
-        for (Transition t : transitionsResult) {
+            // Draw edges
             if (bufferEdgeList.isEmpty() || !doesEdgeExist(t)) {
-                bufferEdgeList.add(graphList.insertEdge(
+                addEdge(
                         t.getFromState().toString(),
                         t.getToState().toString(),
                         getSymbol(t.getSymbol())
-                ));
+                );
             }
         }
 
-        graphView.update();
+        build();
     }
 
     private boolean doesVertexExist(String state) {
@@ -141,7 +151,7 @@ public class DiagramVisualiser {
         try {
             if (startVertex != null) setStartStyle(startVertex);
             for (Vertex<String> v : finalVertexList) setFinalStyle(v);
-        } catch (Exception e){
+        } catch (Exception e) {
             // Do nothing
         }
     }
