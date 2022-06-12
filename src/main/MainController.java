@@ -73,9 +73,9 @@ public class MainController implements Initializable {
         RegExp b = new RegExp("b");
         RegExp all = a.dot(b).plus();
 
-        diagramVisualiser.clear();
-        diagramVisualiser.addVertex("q0");
-        diagramVisualiser.addVertex("q1");
+        diagramVisualiser.reset();
+        diagramVisualiser.addVertex("q0", VertexType.START);
+        diagramVisualiser.addVertex("q1", VertexType.FINAL);
         diagramVisualiser.addEdge("q0", "q1", "a");
         diagramVisualiser.addEdge("q0", "q0", " a");
         diagramVisualiser.addEdge("q1", "q1", "b");
@@ -144,7 +144,7 @@ public class MainController implements Initializable {
         automataBuilder.reset();
         regexBuilder.reset();
         loggerBox.reset();
-        diagramVisualiser.clear();
+        diagramVisualiser.reset();
 
         regexField.clear();
     }

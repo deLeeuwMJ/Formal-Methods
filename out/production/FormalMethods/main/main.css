@@ -1,7 +1,7 @@
 .root {
     -fx-font-size: 14px;
     -fx-font-family: arial;
-    -fx-background-color: #ffffff;
+    -fx-background-color: #edf6fd;
 }
 
 .tab {
@@ -26,7 +26,6 @@
 
 .button {
     -fx-padding: 8 15 15 15;
-    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 1 0;
     -fx-background-radius: 8;
     -fx-font-weight: bold;
     -fx-font-size: 1.1em;

@@ -17,7 +17,7 @@
           xmlns:fx="http://javafx.com/fxml"
           prefHeight="-Infinity"
           prefWidth="-Infinity"
-          style="-fx-padding: 16 16 16 16; -fx-background-color: #F6F6F6;">
+          style="-fx-padding: 16 16 16 16;">
 
     <GridPane GridPane.rowIndex="0"
               style="-fx-padding: 16 16 16 16;">

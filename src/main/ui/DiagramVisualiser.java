@@ -4,6 +4,7 @@ import com.brunomnsilva.smartgraph.graph.Edge;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 import main.model.Automata;
 import main.model.Transition;
+import main.model.VertexType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +15,21 @@ import static main.Main.graphView;
 public class DiagramVisualiser {
 
     private final List<Vertex<String>> bufferVertexList;
+    private final List<Vertex<String>> finalVertexList;
+    private Vertex<String> startVertex;
+
     private final List<Edge<String, String>> bufferEdgeList;
 
     public DiagramVisualiser() {
         bufferVertexList = new ArrayList<>();
+        finalVertexList = new ArrayList<>();
         bufferEdgeList = new ArrayList<>();
     }
 
     public void draw(Automata automaton) {
         List<Transition> transitionsResult = automaton.getTransitions();
 
-        clear();
+        reset();
 
         // Draw nodes
         for (Transition t : transitionsResult) {
@@ -89,7 +94,7 @@ public class DiagramVisualiser {
         return false;
     }
 
-    public void clear() {
+    public void reset() {
         if (!graphList.vertices().isEmpty()) {
             // Needs to be in this order to prevent errors
             for (Edge<String, String> e : bufferEdgeList) graphList.removeEdge(e);
@@ -100,10 +105,27 @@ public class DiagramVisualiser {
 
             build();
         }
+
+        if (startVertex != null) startVertex = null;
+        if (!finalVertexList.isEmpty()) finalVertexList.clear();
     }
 
-    public void addVertex(String label) {
-        bufferVertexList.add(graphList.insertVertex(label));
+    public void addVertex(String label, VertexType type) {
+        Vertex<String> v = graphList.insertVertex(label);
+
+        switch (type) {
+            case START:
+                startVertex = v;
+                break;
+            case FINAL:
+                finalVertexList.add(v);
+                break;
+            case NORMAL:
+            default:
+                // do nothing
+        }
+
+        bufferVertexList.add(v);
     }
 
     public void addEdge(String from, String to, String label) {
@@ -111,6 +133,24 @@ public class DiagramVisualiser {
     }
 
     public void build() {
-        graphView.update();
+        graphView.updateAndWait();
+        updateStyling();
+    }
+
+    public void updateStyling() {
+        try {
+            if (startVertex != null) setStartStyle(startVertex);
+            for (Vertex<String> v : finalVertexList) setFinalStyle(v);
+        } catch (Exception e){
+            // Do nothing
+        }
+    }
+
+    public void setStartStyle(Vertex<String> v) {
+        graphView.getStylableVertex(v).setStyle("-fx-fill: white; -fx-stroke: black;");
+    }
+
+    public void setFinalStyle(Vertex<String> v) {
+        graphView.getStylableVertex(v).setStyle("-fx-fill: #ddf0d1; -fx-stroke: #8dcd65;");
     }
 }
