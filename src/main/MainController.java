@@ -143,8 +143,9 @@ public class MainController implements Initializable {
     private void resetData() {
         automataBuilder.reset();
         regexBuilder.reset();
-        regexField.clear();
         loggerBox.reset();
         diagramVisualiser.clear();
+
+        regexField.clear();
     }
 }
