@@ -147,7 +147,7 @@ public class DiagramVisualiser {
         updateStyling();
     }
 
-    public void updateStyling() {
+    private void updateStyling() {
         try {
             if (startVertex != null) setStartStyle(startVertex);
             for (Vertex<String> v : finalVertexList) setFinalStyle(v);
@@ -156,11 +156,11 @@ public class DiagramVisualiser {
         }
     }
 
-    public void setStartStyle(Vertex<String> v) {
+    private void setStartStyle(Vertex<String> v) {
         graphView.getStylableVertex(v).setStyle("-fx-fill: white; -fx-stroke: black;");
     }
 
-    public void setFinalStyle(Vertex<String> v) {
+    private void setFinalStyle(Vertex<String> v) {
         graphView.getStylableVertex(v).setStyle("-fx-fill: #ddf0d1; -fx-stroke: #8dcd65;");
     }
 }

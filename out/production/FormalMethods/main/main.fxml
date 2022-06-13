@@ -57,7 +57,7 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <TextField fx:id="regexField"/>
+            <TextField fx:id="regexField" text="(ab)*"/>
 
             <EnumChoiceBox fx:id="operatorChoiceBox"
                            enumType="main.model.Operator"

@@ -5,6 +5,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import main.logic.AutomataBuilder;
+import main.model.RegExp;
 import main.model.Transition;
 
 import java.time.LocalDateTime;
@@ -53,10 +54,17 @@ public class LoggerBox {
         logInfo(new Text(errorMessage), Color.RED);
     }
 
+    public void displayLanguage(RegExp regExp) {
+        displayOutput(regExp.getLanguage(5).toString());
+    }
+
+    public void displayTransitions(List<Transition> result){
+        Collections.reverse(result); // Reverse to correctly output transitions
+        for (Transition t : result) displayOutput("S > " + t.toString());
+    }
+
     public void displayAutomata(AutomataBuilder builder){
-        List<Transition> transitionsResult = builder.get().getTransitions();
-        Collections.reverse(transitionsResult); // Reverse to correctly output transitions
-        for (Transition t : transitionsResult) displayOutput("S > " + t.toString());
+        displayTransitions(builder.get().getTransitions());
         displayOutput(builder.getMachine());
     }
 

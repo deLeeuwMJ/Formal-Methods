@@ -13,7 +13,7 @@ package main.model;
 public class Transition<T extends Comparable> implements Comparable<Transition<T>>
 {
 
-    public static final char EPSILON = '$';
+    public static final char EPSILON = 'ε';
     
     private T fromState;
     private char symbol;
@@ -22,16 +22,15 @@ public class Transition<T extends Comparable> implements Comparable<Transition<T
    // this constructor can be used to define loops:
     public Transition(T fromOrTo, char s)
     {
-        this (fromOrTo, s, fromOrTo);
+        this (fromOrTo, fromOrTo, s);
     }
 
     public Transition(T from, T to)
     {
-        this(from, EPSILON, to);
+        this(from, to, EPSILON);
     }
 
-
-    public Transition(T from, char s, T to)
+    public Transition(T from, T to, char s)
     {
         this.fromState = from;
         this.symbol = s;

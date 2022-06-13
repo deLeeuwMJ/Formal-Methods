@@ -71,7 +71,7 @@ public class AutomataBuilder {
     }
 
     public void addTransition(String from, char label, String to) {
-        automata.addTransition(new Transition<String>(from, label, to));
+        automata.addTransition(new Transition<String>(from, to, label));
     }
 
     public void addSelfTransition(String node, char label) {

@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import main.logic.AutomataBuilder;
 import main.logic.RegexBuilder;
+import main.logic.ThompsonHandler;
 import main.model.*;
 import main.ui.DiagramVisualiser;
 import main.ui.EnumChoiceBox;
@@ -30,6 +31,7 @@ public class MainController implements Initializable {
 
     // Helper classes
     private DiagramVisualiser diagramVisualiser;
+    private ThompsonHandler thompsonHandler;
     private AutomataBuilder automataBuilder;
     private RegexBuilder regexBuilder;
     private LoggerBox loggerBox;
@@ -37,6 +39,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         diagramVisualiser = new DiagramVisualiser();
+        thompsonHandler = new ThompsonHandler();
         automataBuilder = new AutomataBuilder();
         loggerBox = new LoggerBox(logList);
         regexBuilder = new RegexBuilder();
@@ -52,10 +55,12 @@ public class MainController implements Initializable {
                         case INPUT:
                             operatorChoiceBox.setVisible(false);
                             addRegex.setVisible(false);
+                            regexField.setText("ab+");
                             break;
                         case BUILDER:
                             operatorChoiceBox.setVisible(true);
                             addRegex.setVisible(true);
+                            regexField.clear();
                             break;
                     }
                     resetData();
@@ -64,36 +69,14 @@ public class MainController implements Initializable {
         });
     }
 
+    /* ab+ */
     public void onExampleButton(ActionEvent actionEvent) {
         resetData();
 
-        loggerBox.displayOutput("RegEx: ab+");
-
         RegExp a = new RegExp("a");
         RegExp b = new RegExp("b");
-        RegExp all = a.dot(b).plus();
+        RegExp exp = a.dot(b).plus();
 
-        diagramVisualiser.reset();
-        diagramVisualiser.addVertex("q0", VertexType.START);
-        diagramVisualiser.addVertex("q1", VertexType.FINAL);
-        diagramVisualiser.addEdge("q0", "q1", "a");
-        diagramVisualiser.addEdge("q0", "q0", " a");
-        diagramVisualiser.addEdge("q1", "q1", "b");
-        diagramVisualiser.addEdge("q1", "q0", " b");
-        diagramVisualiser.build();
-
-        loggerBox.displayOutput("Taal: " + all.getLanguage(5).toString());
-    }
-
-    public void onResultButton(ActionEvent actionEvent) {
-        if (getRegexMode() == RegexMode.BUILDER) {
-            loggerBox.displayError(LoggerBox.LogErrorType.NO_FUNCTIONALITY);
-            return;
-        }
-
-        resetData();
-
-        /* Automata for ab+ */
         automataBuilder.addTerminals("ab");
         if (automataBuilder.init() == ExecutionResult.FAILED) {
             loggerBox.displayError(LoggerBox.LogErrorType.NO_TERMINALS_GIVEN);
@@ -109,6 +92,19 @@ public class MainController implements Initializable {
 
         diagramVisualiser.draw(automataBuilder.get());
         loggerBox.displayAutomata(automataBuilder);
+        loggerBox.displayLanguage(exp);
+    }
+
+    public void onResultButton(ActionEvent actionEvent) {
+        resetData();
+
+        if (getRegexMode() == RegexMode.BUILDER) {
+            loggerBox.displayError(LoggerBox.LogErrorType.NO_FUNCTIONALITY);
+            return;
+        }
+
+        NFA result = thompsonHandler.process(regexField.getText());
+        loggerBox.displayTransitions(result.transitions);
     }
 
     public void resetRegex(ActionEvent actionEvent) {
@@ -147,7 +143,5 @@ public class MainController implements Initializable {
         regexBuilder.reset();
         loggerBox.reset();
         diagramVisualiser.reset();
-
-        regexField.clear();
     }
 }
