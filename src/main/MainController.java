@@ -83,8 +83,8 @@ public class MainController implements Initializable {
             return;
         }
 
-        automataBuilder.addTransition("q0", 'a', "q1");
-        automataBuilder.addTransition("q1", 'b', "q0");
+        automataBuilder.addTransition("q0", "q1", 'a');
+        automataBuilder.addTransition("q1", "q0", 'b');
         automataBuilder.addSelfTransition("q0", 'a');
         automataBuilder.addSelfTransition("q1", 'b');
         automataBuilder.defineStart("q0");
@@ -104,7 +104,9 @@ public class MainController implements Initializable {
         }
 
         NFA result = thompsonHandler.process(regexField.getText());
-        loggerBox.displayTransitions(result.transitions);
+        automataBuilder.convert(result);
+        diagramVisualiser.draw(automataBuilder.get());
+        loggerBox.displayAutomata(automataBuilder);
     }
 
     public void resetRegex(ActionEvent actionEvent) {

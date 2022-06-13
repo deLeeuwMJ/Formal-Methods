@@ -50,8 +50,10 @@ public class DiagramVisualiser {
             if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
                 addVertex(state, VertexType.NORMAL);
             }
+        }
 
-            // Draw edges
+        /* Edges */
+        for (Transition t : (List<Transition>) automaton.getTransitions()) {
             if (bufferEdgeList.isEmpty() || !doesEdgeExist(t)) {
                 addEdge(
                         t.getFromState().toString(),

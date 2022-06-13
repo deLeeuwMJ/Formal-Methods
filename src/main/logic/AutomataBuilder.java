@@ -2,6 +2,7 @@ package main.logic;
 
 import main.model.Automata;
 import main.model.ExecutionResult;
+import main.model.NFA;
 import main.model.Transition;
 
 import java.util.*;
@@ -70,7 +71,7 @@ public class AutomataBuilder {
         automata = new Automata<>();
     }
 
-    public void addTransition(String from, char label, String to) {
+    public void addTransition(String from, String to, char label) {
         automata.addTransition(new Transition<String>(from, to, label));
     }
 
@@ -90,5 +91,26 @@ public class AutomataBuilder {
 
     public Automata<String> get() {
         return automata;
+    }
+
+    public void convert(NFA result) {
+        StringBuilder terminalBuilder = new StringBuilder();
+
+        // Create fitting string for function
+        for (Transition t : result.transitions){
+            terminalBuilder.append(t.getSymbol());
+        }
+        addTerminals(terminalBuilder.toString());
+
+        init();
+
+        // Create fitting string for function
+        for (Transition t : result.transitions){
+            addTransition(t.getFromState().toString(), t.getToState().toString(), t.getSymbol());
+        }
+
+        defineStart("0");
+        defineFinal(String.valueOf(result.final_state));
+
     }
 }
