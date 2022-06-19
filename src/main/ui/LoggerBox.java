@@ -21,7 +21,7 @@ public class LoggerBox {
     }
 
     public enum LogErrorType {
-        NO_FUNCTIONALITY, NO_OPERATOR_SELECTED, INVALID_OPERATOR_ACTION, EMPTY_FIELD, NO_TERMINALS_GIVEN
+        NO_FUNCTIONALITY, NO_OPERATOR_SELECTED, INVALID_OPERATOR_ACTION, EMPTY_FIELD, NO_TERMINALS_GIVEN, LENGTH_CANT_BE_SMALLER_THAN_TERMINAL_SIZE, INVALID_REGEX;
     }
 
     public void displayOutput(String message) {
@@ -44,8 +44,11 @@ public class LoggerBox {
             case INVALID_OPERATOR_ACTION:
                 errorMessage = "Met de huidge regex is deze actie niet mogelijk";
                 break;
-            case NO_TERMINALS_GIVEN:
-                errorMessage = "Er zijn nog geen terminals opgegeven";
+            case LENGTH_CANT_BE_SMALLER_THAN_TERMINAL_SIZE:
+                errorMessage = "De lengte moet groter of gelijk zijn aan terminals";
+                break;
+            case INVALID_REGEX:
+                errorMessage = "Er is een incorrecte regex opgegeven";
                 break;
             default:
                 errorMessage = "Er is een fout opgetreden";
@@ -54,8 +57,12 @@ public class LoggerBox {
         logInfo(new Text(errorMessage), Color.RED);
     }
 
-    public void displayLanguage(RegExp regExp) {
-        displayOutput(regExp.getLanguage(5).toString());
+    public void displayOperations(List<String> regexOperations) {
+        displayOutput("Operations: " + regexOperations);
+    }
+
+    public void displayLanguage(RegExp regExp, int steps) {
+        displayOutput(regExp.getLanguage(steps).toString());
     }
 
     public void displayTransitions(List<Transition> result){
@@ -63,9 +70,8 @@ public class LoggerBox {
         for (Transition t : result) displayOutput("S > " + t.toString());
     }
 
-    public void displayAutomata(AutomataBuilder builder){
-        displayTransitions(builder.get().getTransitions());
-        displayOutput(builder.getMachine());
+    public void displayAutomata(String machine){
+        displayOutput(machine);
     }
 
     private void logInfo(Text text, Color color) {

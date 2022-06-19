@@ -1,49 +1,17 @@
 package main.logic;
 
-import main.model.Automata;
-import main.model.ExecutionResult;
-import main.model.NFA;
-import main.model.Transition;
+import main.model.*;
 
 import java.util.*;
 
 public class AutomataBuilder {
 
-    private final SortedSet<Character> terminalList;
     private Automata<String> automata;
     private final List<String> nodeFinals;
     private String nodeStart;
 
     public AutomataBuilder() {
-        terminalList = new TreeSet<>();
         nodeFinals = new ArrayList<>();
-    }
-
-    public ExecutionResult init() {
-        if (getAlphabet().length != 0) {
-            automata = new Automata<String>(getAlphabet());
-            return ExecutionResult.PASSED;
-        } else return ExecutionResult.FAILED;
-    }
-
-    public void addTerminals(String characters) {
-        char[] splitString = characters.toCharArray();
-
-        for (char c : splitString) {
-            if (!terminalList.contains(c)) {
-                terminalList.add(c);
-            }
-        }
-    }
-
-    private Character[] getAlphabet() {
-        return terminalList.toArray(new Character[0]);
-    }
-
-    public String getMachine() {
-        String alphabet = Arrays.toString(getAlphabet());
-
-        return "M = ({" + formatArrayString(getNodes().toString()) + "}, {" + formatArrayString(alphabet) + "}, S, " + nodeStart + ", {" + formatArrayString(nodeFinals.toString()) + "})";
     }
 
     private List<String> getNodes() {
@@ -64,13 +32,6 @@ public class AutomataBuilder {
         return s.substring(1, s.length() - 1);
     }
 
-    public void reset() {
-        terminalList.clear();
-        nodeFinals.clear();
-        nodeStart = "";
-        automata = new Automata<>();
-    }
-
     public void addTransition(String from, String to, char label) {
         automata.addTransition(new Transition<String>(from, to, label));
     }
@@ -89,28 +50,48 @@ public class AutomataBuilder {
         nodeFinals.add(node);
     }
 
-    public Automata<String> get() {
+    public void convert(NFA result) {
+//        StringBuilder terminalBuilder = new StringBuilder();
+//
+//        // Create fitting string for function
+//        for (Transition t : result.transitions){
+//            terminalBuilder.append(t.getSymbol());
+//        }
+//        addTerminals(terminalBuilder.toString());
+//
+//        init();
+//
+//        // Create fitting string for function
+//        for (Transition t : result.transitions){
+//            addTransition(t.getFromState().toString(), t.getToState().toString(), t.getSymbol());
+//        }
+//
+//        defineStart("0");
+//        defineFinal(String.valueOf(result.final_state));
+
+    }
+
+    public Automata<String> build(List<String> regexOperations, List<String> terminals) {
+        automata = new Automata<String>();
+        nodeFinals.clear();
+        nodeStart = "";
+
+        List<String> sigmaList = Arrays.asList("a","b");
+        List<String> states = Arrays.asList("A", "B");
+
+        // Q * SIGMA
+        addTransition("A", "B", 'a');
+        addSelfTransition("A", 'b');
+        addSelfTransition("B", 'a');
+        addSelfTransition("B", 'b');
+
+        defineStart("A");
+        defineFinal("B");
+
         return automata;
     }
 
-    public void convert(NFA result) {
-        StringBuilder terminalBuilder = new StringBuilder();
-
-        // Create fitting string for function
-        for (Transition t : result.transitions){
-            terminalBuilder.append(t.getSymbol());
-        }
-        addTerminals(terminalBuilder.toString());
-
-        init();
-
-        // Create fitting string for function
-        for (Transition t : result.transitions){
-            addTransition(t.getFromState().toString(), t.getToState().toString(), t.getSymbol());
-        }
-
-        defineStart("0");
-        defineFinal(String.valueOf(result.final_state));
-
+    public String getMachine() {
+        return "M = ({" + formatArrayString(getNodes().toString()) + "}, {" + formatArrayString("ab") + "}, " + nodeStart + ", {" + formatArrayString(nodeFinals.toString()) + "}, P)";
     }
 }
