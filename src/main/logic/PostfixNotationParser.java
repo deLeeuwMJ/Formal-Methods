@@ -11,61 +11,59 @@ import static main.logic.InputValidator.isOperator;
 
 public class PostfixNotationParser {
 
-    public Stack<String> parse (RegexOperationSequence operations) {
+    private int getPrecedence(String c) {
+        if (isOperator(c)) {
+            switch (getOperator(c)) {
+                case OR:
+                    return 1;
+                case DOT:
+                    return 2;
+                case STAR:
+                case PLUS:
+                    return 3;
+            }
+        }
+        return -1;
+    }
+
+    public Stack<String> parse(RegexOperationSequence operations) {
         List<String> sequence = operations.getSequence();
 
         Stack<String> outputQueue = new Stack<>();
-        Stack<Operator> operatorQueue = new Stack<>();
+        Stack<String> operatorQueue = new Stack<>();
 
         /*
         Using Shunt-Yard Algorithm to get rid of the parenthesis and convert into postfix
-        Algorithm created based on visual example found at
-        https://blog.cernera.me/converting-regular-expressions-to-postfix-notation-with-the-shunting-yard-algorithm/
         Postfix explanation: https://runestone.academy/ns/books/published/pythonds/BasicDS/InfixPrefixandPostfixExpressions.html
         */
         for (int i = 0; i < sequence.size(); i++) {
             String val = operations.getSequence().get(i);
 
-            if (isOperator(val)) {
-                Operator currentOperator = getOperator(val);
-
-                if (currentOperator == Operator.RIGHT_PARENT) {
-                    // pop everything in operator queue till left parenthesis
-                    boolean leftParentFound = false;
-
-                    do {
-                        Operator currOperatorInStack = operatorQueue.pop();
-
-                        if (currOperatorInStack == Operator.LEFT_PARENT) {
-                            leftParentFound = true;
-                        } else {
-                            outputQueue.push(currOperatorInStack.name());
-                        }
-
-                    } while (!leftParentFound);
-                } else if (currentOperator == Operator.SEPARATOR && !operatorQueue.isEmpty()) {
-                    boolean prevSeparatorFound = false;
-
-                    do {
-                        Operator currOperatorInStack = operatorQueue.pop();
-
-                        outputQueue.push(currOperatorInStack.name());
-                        if (currOperatorInStack == Operator.SEPARATOR) {
-                            prevSeparatorFound = true;
-                            operatorQueue.push(currentOperator);
-                        }
-
-                    } while (!prevSeparatorFound);
-                } else {
-                    operatorQueue.push(currentOperator);
+            // Check if its an operator;
+            if (getPrecedence(val) > 0) {
+                while (!operatorQueue.isEmpty() && getPrecedence(operatorQueue.peek()) >= getPrecedence(val)) {
+                    outputQueue.push(operatorQueue.pop());
                 }
+                operatorQueue.push(val);
+            } else if (val.equals(")")) {
+                String x = operatorQueue.pop();
+                while (!x.equals("(")) {
+                    outputQueue.push(x);
+                    x = operatorQueue.pop();
+                }
+            } else if (val.equals("(")) {
+                operatorQueue.push(val);
             } else {
+                //character is neither operator nor (
                 outputQueue.push(val);
             }
         }
 
-        // Remove last operator from operator stack which should be separator
-        outputQueue.push(operatorQueue.pop().name());
+        if (!operatorQueue.isEmpty()) {
+            for (int i = 0; i <= operatorQueue.size(); i++) {
+                outputQueue.push(operatorQueue.pop());
+            }
+        }
 
         return outputQueue;
     }

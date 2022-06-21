@@ -12,6 +12,7 @@ import main.model.Transition;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.Stack;
 
 public class LoggerBox {
@@ -68,8 +69,8 @@ public class LoggerBox {
         displayOutput("Postfix: " + postfixResult);
     }
 
-    public void displayLanguage(RegExp regExp, int steps) {
-        displayOutput(regExp.getLanguage(steps).toString());
+    public void displayLanguage(SortedSet<String> set) {
+        displayOutput("Languange: " + set);
     }
 
     public void displayTransitions(List<Transition> result){

@@ -37,7 +37,7 @@ public class RegExParser {
                     if (parenthesisCounter % 2 == 0){ // always need to be even parenthesis count
                         return new RegexOperationSequence();
                     } else parenthesisCounter--;
-                    concatStack.push(Operator.RIGHT_PARENT.name());
+                    concatStack.push(String.valueOf(c));
                 } else if (c == '*') {
                     concatStack.push(Operator.STAR.name());
                     isAbleToConcat = false;
@@ -48,7 +48,7 @@ public class RegExParser {
                     concatStack.push(Operator.SEPARATOR.name());
                     isAbleToConcat = false;
                 } else if (c == '(') {
-                    concatStack.push(Operator.LEFT_PARENT.name());
+                    concatStack.push(String.valueOf(c));
                     parenthesisCounter++;
                 } else if (c == '|') {
                     concatStack.push(Operator.OR.name());

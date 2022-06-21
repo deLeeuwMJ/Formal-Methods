@@ -1,7 +1,5 @@
 package main;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,7 +8,6 @@ import javafx.scene.control.*;
 import main.logic.*;
 import main.model.*;
 import main.ui.DiagramVisualiser;
-import main.ui.EnumChoiceBox;
 import main.ui.LoggerBox;
 
 import java.net.URL;
@@ -27,7 +24,7 @@ public class MainController implements Initializable {
     // Helper classes
     private DiagramVisualiser diagramVisualiser;
     private AutomataBuilder automataBuilder;
-    private RegexBuilder regexBuilder;
+    private NfaBuilder regexBuilder;
     private LoggerBox loggerBox;
 
     @Override
@@ -35,7 +32,7 @@ public class MainController implements Initializable {
         diagramVisualiser = new DiagramVisualiser();
         automataBuilder = new AutomataBuilder();
         loggerBox = new LoggerBox(logList);
-        regexBuilder = new RegexBuilder();
+        regexBuilder = new NfaBuilder();
     }
 
     public void onExampleButton(ActionEvent actionEvent) {
@@ -86,16 +83,16 @@ public class MainController implements Initializable {
             return;
         } else loggerBox.displayOperations(operationSequence);
 
-        // Parse into postfix notation to remove parenthesis
+        // Parse into postfix notation
         PostfixNotationParser postfixParser = new PostfixNotationParser();
         Stack<String> postfixResult = postfixParser.parse(operationSequence);
         loggerBox.displayPostfixNotation(postfixResult);
 
-        // Build regex code based on postfix operation result stack
-        State startState = regexBuilder.build(postfixResult);
-        boolean result = NfaSimulator.simulateNFA(startState, inputField.getText());
+        // Generate words based on postfix
+        WordGenerator wordGenerator = new WordGenerator();
+        SortedSet<String> words = wordGenerator.generate(postfixResult, 5);
+        loggerBox.displayLanguage(words);
 
-        System.out.println(result);
 //        System.out.println(result.getLanguage(5));
 //        int stringLength = Integer.parseInt(lengthField.getText());
 //        if (regexBuilder.getTerminals().size() >= stringLength) {

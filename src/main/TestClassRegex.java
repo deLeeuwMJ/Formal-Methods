@@ -2,10 +2,12 @@ package main;
 
 import main.logic.PostfixNotationParser;
 import main.logic.RegExParser;
+import main.logic.WordGenerator;
 import main.model.RegExp;
 import main.model.RegexOperationSequence;
-import main.ui.LoggerBox;
 
+import java.util.List;
+import java.util.SortedSet;
 import java.util.Stack;
 
 public class TestClassRegex {
@@ -15,7 +17,7 @@ public class TestClassRegex {
     }
 
     private static void postFixParser() {
-        RegexOperationSequence operationSequence = new RegExParser().parse("a+b*c");
+        RegexOperationSequence operationSequence = new RegExParser().parse("(aa|b)+");
         if (operationSequence.failed()) {
             return;
         } else System.out.println(operationSequence.getSequence());
@@ -24,31 +26,10 @@ public class TestClassRegex {
         PostfixNotationParser postfixParser = new PostfixNotationParser();
         Stack<String> postfixResult = postfixParser.parse(operationSequence);
         System.out.println(postfixResult);
-    }
 
-    public static void orTest(){
-        // a | e
-        RegExp a = new RegExp("a");
-        RegExp e = new RegExp("e");
-        RegExp exp = a.or(e);
-
-        System.out.println(exp.getLanguage(3));
-
-        RegExp plusOperation = exp.plus();
-
-        System.out.println(plusOperation.getLanguage(3));
-    }
-
-    public static void dotTest(){
-        // ae
-        RegExp a = new RegExp("a");
-        RegExp e = new RegExp("e");
-        RegExp exp = a.dot(e);
-
-        System.out.println(exp.getLanguage(3));
-
-        RegExp plusOperation = exp.plus();
-
-        System.out.println(plusOperation.getLanguage(3));
+        // Generate words with postfix
+        WordGenerator wordGenerator = new WordGenerator();
+        SortedSet<String> words = wordGenerator.generate(postfixResult, 5);
+        System.out.println(words);
     }
 }

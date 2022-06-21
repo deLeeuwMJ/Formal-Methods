@@ -8,7 +8,7 @@ import static main.logic.InputValidator.isAlphabet;
 import static main.logic.InputValidator.isRegexOperator;
 
 
-public class RegexBuilder {
+public class NfaBuilder {
 
     public State build(Stack<String> postfixStack) {
         OwnStack<Fragment> fragmentStack = new OwnStack <Fragment> ();
