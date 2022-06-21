@@ -9,10 +9,8 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.ColumnConstraints?>
-<?import main.ui.EnumChoiceBox?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.control.TextArea?>
 <GridPane fx:controller="main.MainController"
           xmlns:fx="http://javafx.com/fxml"
           prefHeight="-Infinity"
@@ -23,7 +21,6 @@
               style="-fx-padding: 16 16 16 16;">
 
         <fx:define>
-            <ToggleGroup fx:id="regexMode"/>
             <ToggleGroup fx:id="automataType"/>
             <ToggleGroup fx:id="languageMode"/>
         </fx:define>
@@ -33,7 +30,8 @@
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0; -fx-font-weight: bold; -fx-wrap-text:true; -fx-font-size: 26;"/>
 
-        <Label text="Mode:"
+
+        <Label text="Automata:"
                GridPane.rowIndex="1"
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
@@ -44,11 +42,12 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <RadioButton fx:id="inputMode" text="Input" userData="INPUT" toggleGroup="$regexMode" selected="true"/>
-            <RadioButton fx:id="builderMode" text="Builder" userData="BUILDER" toggleGroup="$regexMode"/>
+            <RadioButton text="Deterministic" userData="DFA" toggleGroup="$automataType"
+                         selected="true"/>
+            <RadioButton text="Nondeterministic" userData="NFA" toggleGroup="$automataType"/>
         </HBox>
 
-        <Label text="Automata:"
+        <Label text="Language:"
                GridPane.rowIndex="2"
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
@@ -59,12 +58,12 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <RadioButton fx:id="dfaType" text="Deterministic" userData="DFA" toggleGroup="$automataType"
-                         selected="true"/>
-            <RadioButton fx:id="nfaType" text="Nondeterministic" userData="NFA" toggleGroup="$automataType"/>
+            <RadioButton text="Start" userData="START" toggleGroup="$languageMode" selected="true"/>
+            <RadioButton text="Contains" userData="CONTAINS" toggleGroup="$languageMode"/>
+            <RadioButton text="Ends" userData="ENDS" toggleGroup="$languageMode"/>
         </HBox>
 
-        <Label text="Language:"
+        <Label text="RegEx:"
                GridPane.rowIndex="3"
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
@@ -75,15 +74,15 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <RadioButton fx:id="startMode" text="Start" userData="START" toggleGroup="$languageMode" selected="true"/>
-            <RadioButton fx:id="containsMode" text="Contains" userData="CONTAINS" toggleGroup="$languageMode"/>
-            <RadioButton fx:id="endMode" text="Ends" userData="ENDS" toggleGroup="$languageMode"/>
+            <TextField fx:id="regexField"/>
+            <TextField fx:id="lengthField" maxWidth="64"/>
         </HBox>
 
-        <Label text="RegEx:"
+        <Label text="String:"
                GridPane.rowIndex="4"
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
+
 
         <HBox spacing="10"
               GridPane.rowIndex="4"
@@ -91,29 +90,8 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <TextField fx:id="regexField" text="a(a|b)*"/>
-            <TextField fx:id="lengthField" text="2" maxWidth="64"/>
-        </HBox>
+            <TextField fx:id="inputField"/>
 
-        <Label text="String:"
-               GridPane.rowIndex="5"
-               GridPane.columnIndex="0"
-               style="-fx-padding: 0 0 16 0;"/>
-
-
-        <HBox spacing="10"
-              GridPane.rowIndex="5"
-              GridPane.columnIndex="1"
-              alignment="CENTER_LEFT"
-              style="-fx-padding: 0 0 16 0;">
-
-            <TextField fx:id="inputField" text="10"/>
-
-            <EnumChoiceBox fx:id="operatorChoiceBox"
-                           enumType="main.model.Operator"
-                           visible="false"
-                           prefHeight="21.0"
-                           maxWidth="92.0"/>
         </HBox>
 
         <columnConstraints>
@@ -129,20 +107,15 @@
 
         <Button fx:id="runButton"
                 text="Run"
-                onAction="#onResultButton"/>
+                onAction="#onRunButton"/>
 
-        <Button fx:id="resetRegex"
-                text="Reset"
-                onAction="#resetRegex"/>
-
-        <Button fx:id="runExample"
-                text="Example"
+        <Button fx:id="setExample"
+                text="Load Example"
                 onAction="#onExampleButton"/>
 
-        <Button fx:id="addRegex"
-                visible="false"
-                text="Add"
-                onAction="#addRegex"/>
+        <Button fx:id="resetButton"
+                text="Reset"
+                onAction="#onResetButton"/>
 
     </HBox>
 

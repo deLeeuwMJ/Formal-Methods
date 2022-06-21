@@ -1,19 +1,20 @@
 package main.logic;
 
-import main.model.NFA;
-import main.model.Transition;
+import main.model.Operator;
+import main.model.RegexOperationSequence;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Stack;
+
+import static main.logic.InputValidator.isAlphabet;
+import static main.logic.InputValidator.validRegEx;
 
 public class RegExParser {
 
     // Empty list means not valid regex
-    public List<String> parse(String regex) {
+    public RegexOperationSequence parse(String regex) {
         if (!validRegEx(regex)) {
             System.out.println("Invalid Regular Expression Input.");
-            return Collections.emptyList();
+            return new RegexOperationSequence();
         }
 
         char c;
@@ -24,9 +25,9 @@ public class RegExParser {
         for (int i = 0; i < regex.length(); i++) {
             c = regex.charAt(i);
 
-            if (alphabet(c)) {
+            if (isAlphabet(c)) {
                 if (isAbleToConcat) { // concat this w/ previous
-                    concatStack.push("DOT"); // 'DOT' represent concat
+                    concatStack.push(Operator.DOT.name());
                 } else isAbleToConcat = true;
 
                 concatStack.push(String.valueOf(c));
@@ -34,48 +35,28 @@ public class RegExParser {
                 if (c == ')') {
                     isAbleToConcat = false;
                     if (parenthesisCounter % 2 == 0){ // always need to be even parenthesis count
-                        return Collections.emptyList();
+                        return new RegexOperationSequence();
                     } else parenthesisCounter--;
-                    concatStack.push("RIGHT_PARENT");
+                    concatStack.push(Operator.RIGHT_PARENT.name());
                 } else if (c == '*') {
-                    concatStack.push("STAR");
-                    isAbleToConcat = true;
+                    concatStack.push(Operator.STAR.name());
+                    isAbleToConcat = false;
                 } else if (c == '+') {
-                    concatStack.push("PLUS");
-                    isAbleToConcat = true;
+                    concatStack.push(Operator.PLUS.name());
+                    isAbleToConcat = false;
+                } else if (c == '#'){
+                    concatStack.push(Operator.SEPARATOR.name());
+                    isAbleToConcat = false;
                 } else if (c == '(') {
-                    concatStack.push("LEFT_PARENT");
+                    concatStack.push(Operator.LEFT_PARENT.name());
                     parenthesisCounter++;
                 } else if (c == '|') {
-                    concatStack.push("OR");
+                    concatStack.push(Operator.OR.name());
                     isAbleToConcat = false;
                 }
             }
         }
 
-        return concatStack;
+        return new RegexOperationSequence(concatStack, regex);
     }
-
-    private boolean validRegEx(String regex) {
-        if (regex.isEmpty())
-            return false;
-        for (char c : regex.toCharArray())
-            if (!validRegExChar(c))
-                return false;
-        return true;
-    }
-
-    private boolean validRegExChar(char c) {
-        return alphabet(c) || regexOperator(c);
-    }
-
-    // Check if character is inside alphabet with ASCII table
-    private boolean alphabet(char c) {
-        return c >= 97 && c <= 122 || c == Transition.EPSILON;
-    }
-
-    private boolean regexOperator(char c) {
-        return c == '(' || c == ')' || c == '*' || c == '|' || c == '+';
-    }
-
 }

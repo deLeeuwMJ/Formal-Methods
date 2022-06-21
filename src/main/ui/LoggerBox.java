@@ -6,11 +6,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import main.logic.AutomataBuilder;
 import main.model.RegExp;
+import main.model.RegexOperationSequence;
 import main.model.Transition;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 public class LoggerBox {
 
@@ -21,7 +23,7 @@ public class LoggerBox {
     }
 
     public enum LogErrorType {
-        NO_FUNCTIONALITY, NO_OPERATOR_SELECTED, INVALID_OPERATOR_ACTION, EMPTY_FIELD, NO_TERMINALS_GIVEN, LENGTH_CANT_BE_SMALLER_THAN_TERMINAL_SIZE, INVALID_REGEX;
+        NO_FUNCTIONALITY, NO_OPERATOR_SELECTED, INVALID_OPERATOR_ACTION, EMPTY_FIELD, LENGTH_CANT_BE_SMALLER_THAN_TERMINAL_SIZE, INVALID_REGEX;
     }
 
     public void displayOutput(String message) {
@@ -57,8 +59,13 @@ public class LoggerBox {
         logInfo(new Text(errorMessage), Color.RED);
     }
 
-    public void displayOperations(List<String> regexOperations) {
-        displayOutput("Operations: " + regexOperations);
+    public void displayOperations(RegexOperationSequence regexOperations) {
+        displayOutput("Given expression: " + regexOperations.getRegexString());
+        displayOutput("Operations: " + regexOperations.getSequence().toString());
+    }
+
+    public void displayPostfixNotation(Stack<String> postfixResult) {
+        displayOutput("Postfix: " + postfixResult);
     }
 
     public void displayLanguage(RegExp regExp, int steps) {

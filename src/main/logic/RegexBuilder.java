@@ -1,101 +1,67 @@
 package main.logic;
 
-import main.model.Operator;
-import main.model.RegExp;
+import main.model.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
+
+import static main.logic.InputValidator.isAlphabet;
+import static main.logic.InputValidator.isRegexOperator;
+
 
 public class RegexBuilder {
 
-    private final List<String> terminalBuffer;
-    private String regexString;
-    private RegExp lastRegex;
+    public State build(Stack<String> postfixStack) {
+        OwnStack<Fragment> fragmentStack = new OwnStack <Fragment> ();
+        Fragment completeNfa = new Fragment();
+        State matchstate = new State();
 
-    public RegexBuilder() {
-        terminalBuffer = new ArrayList<>();
-    }
+        for (int i = 0; i < postfixStack.size(); i++) {
+            String val = postfixStack.get(i);
 
-    // todo fix concat issue
-    public RegExp build(List<String> operations) {
-        boolean parentFlag = false;
-        Operator lastOperator = null;
-
-        terminalBuffer.clear();
-        String concatBuffer = "";
-        regexString = "";
-
-        lastRegex = new RegExp();
-
-        for (int i = 0; i < operations.size(); i++) {
-            String indexValue = operations.get(i);
-
-            boolean isOperator = false;
-            Operator tempOperator = null;
-
-            try {
-                tempOperator = Operator.valueOf(indexValue);
-                isOperator = true;
-            } catch (IllegalArgumentException e) {
-                // Do nothing
+            if(isAlphabet(val.charAt(0))){
+                State literalState = new State(val.charAt(0));
+                fragmentStack.push(new Fragment(literalState, literalState));
             }
-
-            if (isOperator) {
-                switch (tempOperator) {  // Operators that don't require next value
-                    case LEFT_PARENT:
-                        parentFlag = true;
-                        break;
-                    case RIGHT_PARENT:
-                        parentFlag = false;
-                        break;
-                    case PLUS:  // Eg baa+"
-                        lastRegex = lastRegex.plus();
-                        regexString = "(" + regexString + ")+";
-                        break;
-                    case STAR:  // Eg "(a|b)*"
-                        lastRegex = lastRegex.star();
-                        regexString = "(" + regexString + ")*";
-                        break;
-                }
-                lastOperator = tempOperator;
-            } else { // Is terminal
-                if (lastOperator != null) {
-                    switch (lastOperator) { // Operators that do require next value
-                        case OR:    // Eg "baa | bb"
-                            lastRegex = lastRegex.or(new RegExp(indexValue));
-                            regexString = regexString + "|" + indexValue;
-                            break;
-                        case DOT:   // Eg "b.a"
-                            lastRegex = lastRegex.dot(new RegExp(indexValue));
-                            regexString = regexString + indexValue;
-                            break;
-                    }
-                }
-
-                if ((i + 1) < operations.size()) {
-                    if (Operator.valueOf(operations.get(i + 1)) != Operator.DOT) { // proceed if it isn't a concat operation
-                        String concatString = concatBuffer + indexValue;
-                        terminalBuffer.add(concatString);
-                        concatBuffer = "";
-                    } else {
-                        if (regexString.length() == 0) {
-                            lastRegex = new RegExp(indexValue);
-                            regexString += indexValue; // Needed to fix issue with first char on new Regex
-                        }
-                        concatBuffer += indexValue;
-                    }
-                }
+            else if (Operator.valueOf(val) == Operator.DOT){
+                Fragment previous2 = fragmentStack.pop();
+                Fragment previous1 = fragmentStack.pop();
+                patchFragmentToAState(previous1, previous2.getStart());
+                fragmentStack.push(new Fragment(previous1.getStart(), previous2.getOutArrows() ) );
+            }
+            else if (Operator.valueOf(val) == Operator.OR){
+                Fragment previous2 = fragmentStack.pop();
+                Fragment previous1 = fragmentStack.pop();
+                State newState = new State(previous1.getStart(), previous2.getStart());
+                fragmentStack.push(new Fragment(newState, appendOutArrows(previous1.getOutArrows(), previous2.getOutArrows())));
+            }
+            else if (Operator.valueOf(val) == Operator.STAR){
+                Fragment previous = fragmentStack.pop();
+                State newState = new State(previous.getStart(), null);
+                patchFragmentToAState(previous, newState);
+                fragmentStack.push(new Fragment(newState, newState));
             }
         }
-
-        return lastRegex;
+        completeNfa = fragmentStack.pop();
+        patchFragmentToAState(completeNfa, matchstate);
+        return completeNfa.getStart();
     }
 
-    public String getString() {
-        return regexString;
+    private OwnArrayList<State> appendOutArrows(OwnArrayList<State> a, OwnArrayList<State> b){
+        OwnArrayList <State> appended = new OwnArrayList<State>();
+        for (int i = 0; i < a.size(); i++){
+            appended.add(a.get(i));
+        }
+        for (int i = 0; i < b.size(); i++){
+            appended.add(b.get(i));
+        }
+        return appended;
+    }
+    private void patchFragmentToAState(Fragment a, State s){
+        OwnArrayList<State> toBePatched = a.getOutArrows();
+        for (int i = 0; i < toBePatched.size(); i++){
+            State openarrows = toBePatched.get(i);
+            openarrows.patch(s);
+        }
     }
 
-    public List<String> getTerminals() {
-        return terminalBuffer;
-    }
 }

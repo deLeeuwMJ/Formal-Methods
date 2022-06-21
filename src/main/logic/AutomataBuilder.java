@@ -50,27 +50,6 @@ public class AutomataBuilder {
         nodeFinals.add(node);
     }
 
-    public void convert(NFA result) {
-//        StringBuilder terminalBuilder = new StringBuilder();
-//
-//        // Create fitting string for function
-//        for (Transition t : result.transitions){
-//            terminalBuilder.append(t.getSymbol());
-//        }
-//        addTerminals(terminalBuilder.toString());
-//
-//        init();
-//
-//        // Create fitting string for function
-//        for (Transition t : result.transitions){
-//            addTransition(t.getFromState().toString(), t.getToState().toString(), t.getSymbol());
-//        }
-//
-//        defineStart("0");
-//        defineFinal(String.valueOf(result.final_state));
-
-    }
-
     public Automata<String> build(List<String> regexOperations, List<String> terminals) {
         automata = new Automata<String>();
         nodeFinals.clear();
