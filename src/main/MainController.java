@@ -23,16 +23,12 @@ public class MainController implements Initializable {
 
     // Helper classes
     private DiagramVisualiser diagramVisualiser;
-    private AutomataBuilder automataBuilder;
-    private NfaBuilder regexBuilder;
     private LoggerBox loggerBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         diagramVisualiser = new DiagramVisualiser();
-        automataBuilder = new AutomataBuilder();
         loggerBox = new LoggerBox(logList);
-        regexBuilder = new NfaBuilder();
     }
 
     public void onExampleButton(ActionEvent actionEvent) {

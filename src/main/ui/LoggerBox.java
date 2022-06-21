@@ -4,8 +4,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import main.logic.AutomataBuilder;
-import main.model.RegExp;
 import main.model.RegexOperationSequence;
 import main.model.Transition;
 

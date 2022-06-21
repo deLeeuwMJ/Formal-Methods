@@ -1,23 +1,18 @@
 package main;
 
-import main.logic.PostfixNotationParser;
-import main.logic.RegExParser;
-import main.logic.WordGenerator;
-import main.model.RegExp;
-import main.model.RegexOperationSequence;
+import main.logic.*;
+import main.model.*;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.Stack;
 
 public class TestClassRegex {
 
     public static void main(String[] args){
-        postFixParser();
-    }
-
-    private static void postFixParser() {
-        RegexOperationSequence operationSequence = new RegExParser().parse("(aa|b)+");
+        RegexOperationSequence operationSequence = new RegExParser().parse("(aa|b)*");
+//        RegexOperationSequence operationSequence = new RegExParser().parse("(cb|a)+");
         if (operationSequence.failed()) {
             return;
         } else System.out.println(operationSequence.getSequence());
@@ -31,5 +26,21 @@ public class TestClassRegex {
         WordGenerator wordGenerator = new WordGenerator();
         SortedSet<String> words = wordGenerator.generate(postfixResult, 5);
         System.out.println(words);
+        System.out.println(wordGenerator.getTerminals());
+
+        // Build expression tree based on postfix
+        ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();
+        Node root = treeBuilder.construct(postfixResult);
+        treeBuilder.print(ExpressionTreeConstructor.PrintOrder.INORDER,root);
+
+        // Build automata
+//        AutomataBuilder automataBuilder = new AutomataBuilder();
+//        Automata resultFA = automataBuilder.build(AutomataType.DFA, root, wordGenerator.getTerminals());
+//        System.out.println(resultFA.getTransitions());
+
+        // Simulate automata
+        AutomataSimulator automataSimulator = new AutomataSimulator();
+        boolean matches = automataSimulator.simulate(AutomataType.DFA, LanguageMode.ENDS, new ArrayList<>(words), "ca");
+        System.out.println("\r\nIs valid: " + matches);
     }
 }

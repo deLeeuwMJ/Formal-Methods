@@ -14,7 +14,6 @@ public class RegExp
     // De mogelijke operatoren voor een reguliere expressie (+, *, |, .) 
     // Daarnaast ook een operator definitie voor 1 keer repeteren (default)
 
-    
     RegExp left;
     RegExp right;
 
