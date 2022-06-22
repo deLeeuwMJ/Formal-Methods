@@ -40,12 +40,12 @@ public class MainController implements Initializable {
         AutomataType type = AutomataType.valueOf(automataType.getSelectedToggle().getUserData().toString());
         switch (type) {
             case DFA:
-                regexExample = "a#(a+b)*#b";
+                regexExample = "a(a+b)*b";
                 stringExample = "abb";
                 break;
             case NFA:
-                regexExample = "a+";
-                stringExample = "aarde";
+                regexExample = "ab";
+                stringExample = "ab";
                 break;
         }
 
@@ -79,32 +79,37 @@ public class MainController implements Initializable {
             return;
         } else loggerBox.displayOperations(operationSequence);
 
-        // Parse into postfix notation
+        // Parse into postfix notation to remove parenthesis
         PostfixNotationParser postfixParser = new PostfixNotationParser();
         Stack<String> postfixResult = postfixParser.parse(operationSequence);
         loggerBox.displayPostfixNotation(postfixResult);
 
-        // Generate words based on postfix
+        // Generate words with postfix
         WordGenerator wordGenerator = new WordGenerator();
-        SortedSet<String> words = wordGenerator.generate(postfixResult, 5);
+        SortedSet<String> words = wordGenerator.generate(postfixResult, Integer.parseInt(lengthField.getText()));
         loggerBox.displayLanguage(words);
 
-//        System.out.println(result.getLanguage(5));
-//        int stringLength = Integer.parseInt(lengthField.getText());
-//        if (regexBuilder.getTerminals().size() >= stringLength) {
-//            loggerBox.displayError(LoggerBox.LogErrorType.LENGTH_CANT_BE_SMALLER_THAN_TERMINAL_SIZE);
-//            return;
-//        } else loggerBox.displayLanguage(result, stringLength);
+        // Build expression tree based on postfix
+        ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();
+        main.model.Node root = treeBuilder.construct(postfixResult);
+        treeBuilder.print(ExpressionTreeConstructor.PrintOrder.INORDER,root);
 
-        // Convert into FSM based on operations stack and terminals
-//        Automata<String> automata = automataBuilder.build(regexOperations, regexBuilder.getTerminals());
-//        diagramVisualiser.draw(automata);
-//        loggerBox.displayAutomata(automataBuilder.getMachine());
+        // Build automata
+        AutomataBuilder automataBuilder = new AutomataBuilder();
+        Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, wordGenerator.getTerminals());
+        loggerBox.displayTransitions(resultFA.getTransitions());
+
+        // Draw FSM
+        diagramVisualiser.draw(resultFA);
     }
 
     private void resetData() {
         loggerBox.reset();
         diagramVisualiser.reset();
+    }
+
+    private AutomataType getAutomataType() {
+        return AutomataType.valueOf(automataType.getSelectedToggle().getUserData().toString());
     }
 
     private LanguageMode getLanguageMode() {

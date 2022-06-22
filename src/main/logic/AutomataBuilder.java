@@ -1,16 +1,16 @@
 package main.logic;
 
-import main.model.Automata;
-import main.model.AutomataType;
-import main.model.Node;
-import main.model.Transition;
+import main.model.*;
 
 import java.util.List;
 import java.util.Stack;
 
+import static main.logic.InputValidator.getOperator;
+import static main.logic.InputValidator.isOperator;
+
 public class AutomataBuilder {
 
-    public Automata build(AutomataType type, Stack<String> root, List<String> terminals) {
+    public Automata build(AutomataType type, Stack<String> postfixStack, List<String> terminals) {
         Character[] alphabet = {'a', 'b'};
         Automata<String> m = new Automata<String>(alphabet);
 
@@ -38,22 +38,40 @@ public class AutomataBuilder {
             m.defineAsFinalState("q2");
             m.defineAsFinalState("q3");
         } else if (type == AutomataType.NFA) {
-            m.addTransition( new Transition<String> ("A", "C", 'a') );
-            m.addTransition( new Transition<String> ("A", "B", 'b') );
-            m.addTransition( new Transition<String> ("A", "C", 'b') );
+            int nodeIndex = 1; // indicates start
 
-            m.addTransition( new Transition<String> ("B", "C", 'b') );
-            m.addTransition( new Transition<String> ("B", "C"));
+//            for (int i = 0; i < postfixStack.size(); i++) {
+//                String val = postfixStack.get(i);
+//
+//                if (isOperator(val)) { // Is it an operator
+//                    switch (getOperator(val)) {
+//                        case DOT:
+//                        case OR:
+//                        case PLUS:
+//                        case STAR:
+//                    }
+//                } else { // its a terminal
+//                    m.addTransition(new Transition<String>(String.valueOf(nodeIndex - 1), String.valueOf(nodeIndex), val.charAt(0)));
+//                }
+//                nodeIndex++;
+//            }
 
-            m.addTransition( new Transition<String> ("C", "D", 'a') );
-            m.addTransition( new Transition<String> ("C", "E", 'a') );
-            m.addTransition( new Transition<String> ("C", "D", 'b') );
+            m.addTransition(new Transition<String>("A", "C", 'a'));
+            m.addTransition(new Transition<String>("A", "B", 'b'));
+            m.addTransition(new Transition<String>("A", "C", 'b'));
 
-            m.addTransition( new Transition<String> ("D", "B", 'a') );
-            m.addTransition( new Transition<String> ("D", "C", 'a') );
+            m.addTransition(new Transition<String>("B", "C", 'b'));
+            m.addTransition(new Transition<String>("B", "C"));
 
-            m.addTransition( new Transition<String> ("E", "a") );
-            m.addTransition( new Transition<String> ("E", "D") );
+            m.addTransition(new Transition<String>("C", "D", 'a'));
+            m.addTransition(new Transition<String>("C", "E", 'a'));
+            m.addTransition(new Transition<String>("C", "D", 'b'));
+
+            m.addTransition(new Transition<String>("D", "B", 'a'));
+            m.addTransition(new Transition<String>("D", "C", 'a'));
+
+            m.addTransition(new Transition<String>("E", "A"));
+            m.addTransition(new Transition<String>("E", "D"));
 
             // only on start state in a dfa:
             m.defineAsStartState("A");

@@ -36,8 +36,8 @@ public class WordGeneratorTest {
         RegexOperationSequence sequence = regExParser.parse("(a|b)*");
         Stack<String> result = postfixParser.parse(sequence);
 
-        SortedSet<String> words = wordGenerator.generate(result, 3);
+        SortedSet<String> words = wordGenerator.generate(result, 4);
 
-        assertEquals("[, a, b, aa, ab, ba, bb, aaa, aab, aba, abb, baa, bab, bba, bbb]", words.toString());
+        assertEquals("[, a, b, aa, ab, ba, bb, aaa, aab, aba, abb, baa, bab, bba, bbb, aaaa, aaab, aaba, aabb, abaa, abab, abba, abbb, baaa, baab, baba, babb, bbaa, bbab, bbba, bbbb]", words.toString());
     }
 }

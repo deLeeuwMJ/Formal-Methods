@@ -11,8 +11,8 @@ import java.util.Stack;
 public class TestClassRegex {
 
     public static void main(String[] args){
-        RegexOperationSequence operationSequence = new RegExParser().parse("(aa|b)*");
-//        RegexOperationSequence operationSequence = new RegExParser().parse("(cb|a)+");
+//        RegexOperationSequence operationSequence = new RegExParser().parse("(a|b)*");
+        RegexOperationSequence operationSequence = new RegExParser().parse("ab");
         if (operationSequence.failed()) {
             return;
         } else System.out.println(operationSequence.getSequence());
@@ -37,9 +37,6 @@ public class TestClassRegex {
         AutomataBuilder automataBuilder = new AutomataBuilder();
         Automata resultFA = automataBuilder.build(AutomataType.NFA, postfixResult, wordGenerator.getTerminals());
         System.out.println(resultFA.getTransitions());
-
-        // Draw automata
-        // Todo
 
         // Simulate automata
         AutomataSimulator automataSimulator = new AutomataSimulator();

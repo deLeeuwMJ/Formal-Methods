@@ -30,38 +30,38 @@ public class DiagramVisualiser {
     public void draw(Automata automaton) {
         reset();
 
-//        /* Start */
-//        for (String state : new ArrayList<String> (automaton.getStartStates())) {
-//            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-//                addVertex(state, VertexType.START);
-//            }
-//        }
-//        /* Final */
-//        for (String state : new ArrayList<String> (automaton.getFinalStates())) {
-//            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-//                addVertex(state, VertexType.FINAL);
-//            }
-//        }
-//
-//        /* Others */
-//        for (Transition t : (List<Transition>) automaton.getTransitions()) {
-//            String state = t.getFromState().toString();
-//
-//            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-//                addVertex(state, VertexType.NORMAL);
-//            }
-//        }
-//
-//        /* Edges */
-//        for (Transition t : (List<Transition>) automaton.getTransitions()) {
-//            if (bufferEdgeList.isEmpty() || !doesEdgeExist(t)) {
-//                addEdge(
-//                        t.getFromState().toString(),
-//                        t.getToState().toString(),
-//                        getSymbol(t.getSymbol())
-//                );
-//            }
-//        }
+        /* Start */
+        for (String state : new ArrayList<String> (automaton.getStartStates())) {
+            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
+                addVertex(state, VertexType.START);
+            }
+        }
+        /* Final */
+        for (String state : new ArrayList<String> (automaton.getFinalStates())) {
+            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
+                addVertex(state, VertexType.FINAL);
+            }
+        }
+
+        /* Others */
+        for (Transition t : (List<Transition>) automaton.getTransitions()) {
+            String state = t.getFromState().toString();
+
+            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
+                addVertex(state, VertexType.NORMAL);
+            }
+        }
+
+        /* Edges */
+        for (Transition t : (List<Transition>) automaton.getTransitions()) {
+            if (bufferEdgeList.isEmpty() || !doesEdgeExist(t)) {
+                addEdge(
+                        t.getFromState().toString(),
+                        t.getToState().toString(),
+                        getSymbol(t.getSymbol())
+                );
+            }
+        }
 
         build();
     }

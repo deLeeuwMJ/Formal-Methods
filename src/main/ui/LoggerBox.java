@@ -68,7 +68,7 @@ public class LoggerBox {
     }
 
     public void displayLanguage(SortedSet<String> set) {
-        displayOutput("Languange: " + set);
+        displayOutput("Language: " + set);
     }
 
     public void displayTransitions(List<Transition> result){
