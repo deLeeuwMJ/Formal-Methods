@@ -34,13 +34,16 @@ public class TestClassRegex {
         treeBuilder.print(ExpressionTreeConstructor.PrintOrder.INORDER,root);
 
         // Build automata
-//        AutomataBuilder automataBuilder = new AutomataBuilder();
-//        Automata resultFA = automataBuilder.build(AutomataType.DFA, root, wordGenerator.getTerminals());
-//        System.out.println(resultFA.getTransitions());
+        AutomataBuilder automataBuilder = new AutomataBuilder();
+        Automata resultFA = automataBuilder.build(AutomataType.NFA, postfixResult, wordGenerator.getTerminals());
+        System.out.println(resultFA.getTransitions());
+
+        // Draw automata
+        // Todo
 
         // Simulate automata
         AutomataSimulator automataSimulator = new AutomataSimulator();
-        boolean matches = automataSimulator.simulate(AutomataType.DFA, LanguageMode.ENDS, new ArrayList<>(words), "ca");
+        boolean matches = automataSimulator.simulate(AutomataType.NFA, LanguageMode.ENDS, new ArrayList<>(words), "ca");
         System.out.println("\r\nIs valid: " + matches);
     }
 }

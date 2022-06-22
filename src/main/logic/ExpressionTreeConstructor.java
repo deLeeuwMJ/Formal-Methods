@@ -49,6 +49,7 @@ public class ExpressionTreeConstructor {
                 postOrder(root);
                 break;
         }
+        System.out.println("\n");
     }
 
     // Print the postfix expression for an expression tree

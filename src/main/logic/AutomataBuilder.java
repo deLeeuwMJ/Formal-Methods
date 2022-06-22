@@ -6,41 +6,38 @@ import main.model.Node;
 import main.model.Transition;
 
 import java.util.List;
+import java.util.Stack;
 
 public class AutomataBuilder {
 
-    public Automata build(AutomataType type, Node root, List<String> terminals) {
+    public Automata build(AutomataType type, Stack<String> root, List<String> terminals) {
         Character[] alphabet = {'a', 'b'};
         Automata<String> m = new Automata<String>(alphabet);
 
         if (type == AutomataType.DFA) {
-            int nodeCounter = 0;
+            m.addTransition(new Transition<String>("q0", "q1", 'a'));
+            m.addTransition(new Transition<String>("q0", "q4", 'b'));
 
-            createTransition(m, root, nodeCounter);
+            m.addTransition(new Transition<String>("q1", "q4", 'a'));
+            m.addTransition(new Transition<String>("q1", "q2", 'b'));
 
-//            m.addTransition(new Transition<String>("q0", "q1", 'a'));
-//            m.addTransition(new Transition<String>("q0", "q4", 'b'));
-//
-//            m.addTransition(new Transition<String>("q1", "q4", 'a'));
-//            m.addTransition(new Transition<String>("q1", "q2", 'b'));
-//
-//            m.addTransition(new Transition<String>("q2", "q3", 'a'));
-//            m.addTransition(new Transition<String>("q2", "q4", 'b'));
-//
-//            m.addTransition(new Transition<String>("q3", "q1", 'a'));
-//            m.addTransition(new Transition<String>("q3", "q2", 'b'));
-//
-//            // the error state, loops for a and b:
-//            m.addTransition(new Transition<String>("q4", 'a'));
-//            m.addTransition(new Transition<String>("q4", 'b'));
-//
-//            // only on start state in a dfa:
-//            m.defineAsStartState("q0");
-//
-//            // two final states:
-//            m.defineAsFinalState("q2");
-//            m.defineAsFinalState("q3");
-        } else {
+            m.addTransition(new Transition<String>("q2", "q3", 'a'));
+            m.addTransition(new Transition<String>("q2", "q4", 'b'));
+
+            m.addTransition(new Transition<String>("q3", "q1", 'a'));
+            m.addTransition(new Transition<String>("q3", "q2", 'b'));
+
+            // the error state, loops for a and b:
+            m.addTransition(new Transition<String>("q4", 'a'));
+            m.addTransition(new Transition<String>("q4", 'b'));
+
+            // only on start state in a dfa:
+            m.defineAsStartState("q0");
+
+            // two final states:
+            m.defineAsFinalState("q2");
+            m.defineAsFinalState("q3");
+        } else if (type == AutomataType.NFA) {
             m.addTransition( new Transition<String> ("A", "C", 'a') );
             m.addTransition( new Transition<String> ("A", "B", 'b') );
             m.addTransition( new Transition<String> ("A", "C", 'b') );
@@ -66,20 +63,5 @@ public class AutomataBuilder {
             m.defineAsFinalState("E");
         }
         return m;
-    }
-
-    private void createTransition(Automata<String> m, Node root, int nodeCounter) {
-        if (root == null) return;
-        nodeCounter++;
-
-        String valueLeft = root.left.value != null ? "E" : root.left.value;
-        String valueRight = root.right.value != null ? "E" : root.right.value;
-
-        m.addTransition(new Transition<String>(valueLeft, valueRight, root.value.charAt(0)));
-
-        createTransition(m, root.left, nodeCounter);
-        System.out.print(root.value);
-        createTransition(m, root.right, nodeCounter);
-
     }
 }
