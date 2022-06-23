@@ -11,8 +11,8 @@ import java.util.Stack;
 public class TestClassRegex {
 
     public static void main(String[] args){
-//        RegexOperationSequence operationSequence = new RegExParser().parse("(a|b)*");
-        RegexOperationSequence operationSequence = new RegExParser().parse("ab");
+        RegexOperationSequence operationSequence = new RegExParser().parse("(a|b)*");
+//        RegexOperationSequence operationSequence = new RegExParser().parse("ab");
         if (operationSequence.failed()) {
             return;
         } else System.out.println(operationSequence.getSequence());
@@ -36,11 +36,11 @@ public class TestClassRegex {
         // Build automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
         Automata resultFA = automataBuilder.build(AutomataType.NFA, postfixResult, wordGenerator.getTerminals());
-        System.out.println(resultFA.getTransitions());
+//        System.out.println(resultFA.getTransitions());
 
         // Simulate automata
-        AutomataSimulator automataSimulator = new AutomataSimulator();
-        boolean matches = automataSimulator.simulate(AutomataType.NFA, LanguageMode.ENDS, new ArrayList<>(words), "ca");
-        System.out.println("\r\nIs valid: " + matches);
+//        AutomataSimulator automataSimulator = new AutomataSimulator();
+//        boolean matches = automataSimulator.simulate(AutomataType.NFA, LanguageMode.ENDS, new ArrayList<>(words), "ca");
+//        System.out.println("\r\nIs valid: " + matches);
     }
 }
