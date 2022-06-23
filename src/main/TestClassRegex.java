@@ -9,7 +9,7 @@ import java.util.Stack;
 public class TestClassRegex {
 
     public static void main(String[] args){
-        RegexOperationSequence operationSequence = new RegExParser().parse("(a|b)*");
+        RegexOperationSequence operationSequence = new RegExParser().parse("(a|bc)*");
         if (operationSequence.failed()) {
             return;
         } else System.out.println(operationSequence.getSequence());
@@ -21,8 +21,8 @@ public class TestClassRegex {
 
         // Generate words with postfix
         WordGenerator wordGenerator = new WordGenerator();
-//        SortedSet<String> words = wordGenerator.generate(postfixResult, 5);
-//        System.out.println(words);
+        SortedSet<String> words = wordGenerator.generate(postfixResult, 5);
+        System.out.println(words);
 
         // Build expression tree based on postfix
         ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();
@@ -33,6 +33,10 @@ public class TestClassRegex {
         // Build automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
         Automata resultFA = automataBuilder.build(AutomataType.NFA, postfixResult, wordGenerator.getSymbols());
+
+        // Convert NFA to DFA
+        NFAtoDFAConverter nfaConverter = new NFAtoDFAConverter();
+        nfaConverter.convert(resultFA);
 
         // Simulate automata
 //        AutomataSimulator automataSimulator = new AutomataSimulator();
