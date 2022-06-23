@@ -71,13 +71,17 @@ public class LoggerBox {
         displayOutput("Language: " + set);
     }
 
-    public void displayTransitions(List<Transition> result){
-        Collections.reverse(result); // Reverse to correctly output transitions
-        for (Transition t : result) displayOutput("S > " + t.toString());
+    public void displayExpressionTree(String result){
+        displayOutput("Tree: " + result);
     }
 
-    public void displayAutomata(String machine){
-        displayOutput(machine);
+    public void displayTransitions(List<Transition> result){
+        Collections.reverse(result); // Reverse to correctly output transitions
+        for (Transition t : result) displayOutput("Trans: " + t.toString());
+    }
+
+    public void displayMachine(String machine) {
+        displayOutput("Machine: " + machine);
     }
 
     private void logInfo(Text text, Color color) {

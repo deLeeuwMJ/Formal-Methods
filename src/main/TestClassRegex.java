@@ -3,15 +3,12 @@ package main;
 import main.logic.*;
 import main.model.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.Stack;
 
 public class TestClassRegex {
 
     public static void main(String[] args){
-//        RegexOperationSequence operationSequence = new RegExParser().parse("(a|b)+");
         RegexOperationSequence operationSequence = new RegExParser().parse("(a|b)*");
         if (operationSequence.failed()) {
             return;
@@ -26,16 +23,16 @@ public class TestClassRegex {
         WordGenerator wordGenerator = new WordGenerator();
         SortedSet<String> words = wordGenerator.generate(postfixResult, 5);
         System.out.println(words);
-        System.out.println(wordGenerator.getTerminals());
 
         // Build expression tree based on postfix
         ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();
         Node root = treeBuilder.construct(postfixResult);
-        treeBuilder.print(ExpressionTreeConstructor.PrintOrder.INORDER,root);
+        String result = treeBuilder.constructString(ExpressionTreeConstructor.PrintOrder.INORDER,root);
+        System.out.println(result);
 
         // Build automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
-        Automata resultFA = automataBuilder.build(AutomataType.NFA, postfixResult, wordGenerator.getTerminals());
+        Automata resultFA = automataBuilder.build(AutomataType.NFA, postfixResult, wordGenerator.getSymbols());
 
         // Simulate automata
 //        AutomataSimulator automataSimulator = new AutomataSimulator();

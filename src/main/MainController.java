@@ -44,8 +44,8 @@ public class MainController implements Initializable {
                 stringExample = "abb";
                 break;
             case NFA:
-                regexExample = "ab";
-                stringExample = "ab";
+                regexExample = "(a|b)*";
+                stringExample = "a";
                 break;
         }
 
@@ -85,22 +85,24 @@ public class MainController implements Initializable {
         loggerBox.displayPostfixNotation(postfixResult);
 
         // Generate words with postfix
-        WordGenerator wordGenerator = new WordGenerator();
-        SortedSet<String> words = wordGenerator.generate(postfixResult, Integer.parseInt(lengthField.getText()));
-        loggerBox.displayLanguage(words);
+//        WordGenerator wordGenerator = new WordGenerator();
+//        SortedSet<String> words = wordGenerator.generate(postfixResult, Integer.parseInt(lengthField.getText()));
+//        loggerBox.displayLanguage(words);
 
         // Build expression tree based on postfix
         ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();
         main.model.Node root = treeBuilder.construct(postfixResult);
-        treeBuilder.print(ExpressionTreeConstructor.PrintOrder.INORDER,root);
+        String result = treeBuilder.constructString(ExpressionTreeConstructor.PrintOrder.INORDER,root);
+        loggerBox.displayExpressionTree(result);
 
         // Build automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
-        Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, wordGenerator.getTerminals());
-//        loggerBox.displayTransitions(resultFA.getTransitions());
+        Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, null);
+        loggerBox.displayTransitions(resultFA.getTransitions());
+        loggerBox.displayMachine(resultFA.getMachine());
 
         // Draw FSM
-//        diagramVisualiser.draw(resultFA);
+        diagramVisualiser.draw(resultFA);
     }
 
     private void resetData() {

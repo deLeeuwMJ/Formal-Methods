@@ -11,16 +11,16 @@ import static main.logic.InputValidator.*;
 
 public class WordGenerator {
 
-    private List<String> terminals;
+    private List<String> symbols;
 
     public WordGenerator() {
-        this.terminals = new ArrayList<>();
+        this.symbols = new ArrayList<>();
     }
 
     public SortedSet<String> generate(Stack<String> postFixStack, int length) {
         RegExp finalExpression = new RegExp();
         Stack<RegExp> regexQueue = new Stack<>();
-        terminals.clear();
+        symbols.clear();
 
         for (int i = 0; i < postFixStack.size(); i++) {
             String val = postFixStack.get(i);
@@ -51,8 +51,8 @@ public class WordGenerator {
                         break;
 
                 }
-            } else { // its a terminal
-                addTerminal(val);
+            } else { // its a symbol
+                addSymbol(val);
                 regexQueue.push(new RegExp(val));
             }
         }
@@ -60,13 +60,13 @@ public class WordGenerator {
         return finalExpression.getLanguage(length);
     }
 
-    private void addTerminal(String val) {
-        if (!terminals.contains(val)){
-            terminals.add(val);
+    private void addSymbol(String val) {
+        if (!symbols.contains(val)){
+            symbols.add(val);
         }
     }
 
-    public List<String> getTerminals() {
-        return terminals;
+    public List<String> getSymbols() {
+        return symbols;
     }
 }

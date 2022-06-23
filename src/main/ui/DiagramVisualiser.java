@@ -3,87 +3,99 @@ package main.ui;
 import com.brunomnsilva.smartgraph.graph.Edge;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 import main.model.Automata;
+import main.model.Transition;
 import main.model.VertexType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import static main.Main.graphList;
 import static main.Main.graphView;
 
 public class DiagramVisualiser {
 
-    private final List<Vertex<String>> bufferVertexList;
-    private final List<Vertex<String>> finalVertexList;
     private Vertex<String> startVertex;
-
-    private final List<Edge<String, String>> bufferEdgeList;
+    private final List<Vertex<String>> finalVertices;
+    private final List<Vertex<String>> vertices;
+    private final List<Edge<String, String>> edges;
 
     public DiagramVisualiser() {
-        bufferVertexList = new ArrayList<>();
-        finalVertexList = new ArrayList<>();
-        bufferEdgeList = new ArrayList<>();
+        finalVertices = new ArrayList<>();
+        vertices = new ArrayList<>();
+        edges = new ArrayList<>();
     }
 
     public void draw(Automata automaton) {
         reset();
 
-//        /* Start */
-//        for (String state : new ArrayList<String> (automaton.getStartStates())) {
-//            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-//                addVertex(state, VertexType.START);
-//            }
-//        }
-//        /* Final */
-//        for (String state : new ArrayList<String> (automaton.getFinalStates())) {
-//            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-//                addVertex(state, VertexType.FINAL);
-//            }
-//        }
-//
-//        /* Others */
-//        for (Transition t : (List<Transition>) automaton.getTransitions()) {
-//            String state = t.getFromState().toString();
-//
-//            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-//                addVertex(state, VertexType.NORMAL);
-//            }
-//        }
-//
-//        /* Edges */
-//        for (Transition t : (List<Transition>) automaton.getTransitions()) {
-//            if (bufferEdgeList.isEmpty() || !doesEdgeExist(t)) {
-//                addEdge(
-//                        t.getFromState().toString(),
-//                        t.getToState().toString(),
-//                        getSymbol(t.getSymbol())
-//                );
-//            }
-//        }
+        // Start state
+        addVertex(String.valueOf(automaton.getStartState()), VertexType.START);
 
+        // final state
+        addVertex(String.valueOf(automaton.getFinalState()), VertexType.FINAL);
+
+        for (Transition t : automaton.getTransitions()) {
+
+            // Add vertices if it doesn't exist
+            addVertex(String.valueOf(t.from), VertexType.NORMAL);
+            addVertex(String.valueOf(t.to), VertexType.NORMAL);
+
+            // Add edge between vertices
+            addEdge(
+                    String.valueOf(t.from),
+                    String.valueOf(t.to),
+                    formatSymbol(t.symbol)
+            );
+        }
         build();
     }
 
-    private boolean doesVertexExist(String state) {
-        for (Vertex<String> v : bufferVertexList) {
-            if (v.element().equals(state)) return true;
+    public void addVertex(String label, VertexType type) {
+        if (doesVertexExist(label)) return;
+
+        Vertex<String> v = graphList.insertVertex(label);
+
+        switch (type) {
+            case START:
+                startVertex = v;
+                break;
+            case FINAL:
+                finalVertices.add(v);
+                break;
+            default:
+                // do nothing
+        }
+
+        vertices.add(v);
+    }
+
+    private boolean doesVertexExist(String label) {
+        for (Vertex<String> v : vertices) {
+            if (v.element().equals(label)) return true;
         }
         return false;
     }
 
-//    private boolean doesEdgeExist(Transition state) {
-//        for (Edge<String, String> e : bufferEdgeList) {
-//            String beginState = e.vertices()[0].element();
-//            String endState = e.vertices()[1].element();
-//
-//            if (beginState.equals(state.getFromState().toString()) && endState.equals(state.getToState().toString())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+    public void addEdge(String from, String to, String label) {
+        if (!doesEdgeExist(from, to)) {
+            edges.add(graphList.insertEdge(from, to, label));
+        }
+    }
 
-    private String getSymbol(char symbol) {
+    private boolean doesEdgeExist(String from, String to) {
+        for (Edge<String, String> e : edges) {
+            String beginState = e.vertices()[0].element();
+            String endState = e.vertices()[1].element();
+
+            if (beginState.equals(from) && endState.equals(to)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String formatSymbol(String symbol) {
         String label = String.valueOf(symbol);
 
         do {
@@ -94,7 +106,7 @@ public class DiagramVisualiser {
     }
 
     private boolean doesLabelAlreadyExist(String label) {
-        for (Edge<String, String> e : bufferEdgeList) {
+        for (Edge<String, String> e : edges) {
             String l = e.element();
 
             if (l.equals(label)) {
@@ -107,39 +119,17 @@ public class DiagramVisualiser {
     public void reset() {
         if (!graphList.vertices().isEmpty()) {
             // Needs to be in this order to prevent errors
-            for (Edge<String, String> e : bufferEdgeList) graphList.removeEdge(e);
-            for (Vertex<String> v : bufferVertexList) graphList.removeVertex(v);
+            for (Edge<String, String> e : edges) graphList.removeEdge(e);
+            for (Vertex<String> v : vertices) graphList.removeVertex(v);
 
-            bufferEdgeList.clear();
-            bufferVertexList.clear();
+            edges.clear();
+            vertices.clear();
 
             build();
         }
 
         if (startVertex != null) startVertex = null;
-        if (!finalVertexList.isEmpty()) finalVertexList.clear();
-    }
-
-    public void addVertex(String label, VertexType type) {
-        Vertex<String> v = graphList.insertVertex(label);
-
-        switch (type) {
-            case START:
-                startVertex = v;
-                break;
-            case FINAL:
-                finalVertexList.add(v);
-                break;
-            case NORMAL:
-            default:
-                // do nothing
-        }
-
-        bufferVertexList.add(v);
-    }
-
-    public void addEdge(String from, String to, String label) {
-        bufferEdgeList.add(graphList.insertEdge(from, to, label));
+        if (!finalVertices.isEmpty()) finalVertices.clear();
     }
 
     public void build() {
@@ -150,7 +140,7 @@ public class DiagramVisualiser {
     private void updateStyling() {
         try {
             if (startVertex != null) setStartStyle(startVertex);
-            for (Vertex<String> v : finalVertexList) setFinalStyle(v);
+            for (Vertex<String> v : finalVertices) setFinalStyle(v);
         } catch (Exception e) {
             // Do nothing
         }

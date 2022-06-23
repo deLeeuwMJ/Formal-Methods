@@ -9,4 +9,9 @@ public class Transition {
         this.to = v2;
         this.symbol = sym;
     }
+
+    @Override
+    public String toString() {
+        return "(" + from + ", " + symbol + ", " + to + ")";
+    }
 }

@@ -9,6 +9,8 @@ import static main.logic.InputValidator.isOperator;
 
 public class ExpressionTreeConstructor {
 
+    private StringBuilder expressionBuilder;
+
     public Node construct(Stack<String> postFixStack) {
         // Empty stack to store tree pointers
         Stack<Node> nodeStack = new Stack<>();
@@ -39,8 +41,9 @@ public class ExpressionTreeConstructor {
         INORDER, POSTORDER
     }
 
-    public void print(PrintOrder order, Node root){
-        System.out.println("---" + order.name() + "---");
+    public String constructString(PrintOrder order, Node root){
+        expressionBuilder = new StringBuilder(order.name() + " > ");
+
         switch (order){
             case INORDER:
                 inOrder(root);
@@ -49,7 +52,8 @@ public class ExpressionTreeConstructor {
                 postOrder(root);
                 break;
         }
-        System.out.println("\n");
+
+        return expressionBuilder.toString();
     }
 
     // Print the postfix expression for an expression tree
@@ -58,7 +62,7 @@ public class ExpressionTreeConstructor {
 
         postOrder(root.left);
         postOrder(root.right);
-        System.out.print(root.value);
+        expressionBuilder.append(root.value);
     }
 
     // Print the infix expression for an expression tree
@@ -66,15 +70,15 @@ public class ExpressionTreeConstructor {
         if (root == null) return;
 
         if (isOperator(root.value)) {
-            System.out.print("(");
+            expressionBuilder.append("(");
         }
 
         inOrder(root.left);
-        System.out.print(root.value);
+        expressionBuilder.append(root.value);
         inOrder(root.right);
 
         if (isOperator(root.value)) {
-            System.out.print(")");
+            expressionBuilder.append(")");
         }
     }
 }

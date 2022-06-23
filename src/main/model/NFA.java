@@ -5,11 +5,6 @@ import java.util.List;
 
 public class NFA extends Automata {
 
-    public List<String> symbols;
-    public ArrayList<Integer> states;
-    public ArrayList<Transition> transitions;
-
-    public int start_state = 0;
     public int final_state;
 
     public NFA() {
@@ -35,29 +30,6 @@ public class NFA extends Automata {
         this.final_state = 1;
         this.transitions.add(new Transition(
                 0, 1, c));
-    }
-
-    public void setStateSize(int size) {
-        for (int i = 0; i < size; i++)
-            this.states.add(i);
-    }
-
-    public void setSymbols(List<String> symbols) {
-        this.symbols = symbols;
-    }
-
-    public void printTransitions() {
-        for (Transition t : transitions) {
-            System.out.println("(" + t.from + ", " + t.symbol + ", " + t.to + ")");
-        }
-    }
-
-    public void printSymbols() {
-        System.out.println(symbols);
-    }
-
-    public int getFinalState() {
-        return transitions.size();
     }
 }
 
