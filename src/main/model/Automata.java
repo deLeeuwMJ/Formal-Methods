@@ -55,7 +55,7 @@ public abstract class Automata {
                 result.append(items.get(i));
             }
         }
-        
+
         result.append("}");
 
         return result.toString();
