@@ -3,10 +3,11 @@ package main;
 import main.logic.*;
 import main.model.*;
 
+import java.util.ArrayList;
 import java.util.SortedSet;
 import java.util.Stack;
 
-public class TestClassRegex {
+public class DebugClass {
 
     public static void main(String[] args){
         RegexOperationSequence operationSequence = new RegExParser().parse("(a|bc)*");
@@ -39,8 +40,8 @@ public class TestClassRegex {
         nfaConverter.convert(resultFA);
 
         // Simulate automata
-//        AutomataSimulator automataSimulator = new AutomataSimulator();
-//        boolean matches = automataSimulator.simulate(AutomataType.NFA, LanguageMode.ENDS, new ArrayList<>(words), "ca");
-//        System.out.println("\r\nIs valid: " + matches);
+        AutomataSimulator automataSimulator = new AutomataSimulator();
+        boolean matches = automataSimulator.simulate(LanguageMode.START, words, "aabc");
+        System.out.println("Is valid: " + matches);
     }
 }
