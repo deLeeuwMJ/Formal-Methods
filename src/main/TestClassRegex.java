@@ -21,8 +21,8 @@ public class TestClassRegex {
 
         // Generate words with postfix
         WordGenerator wordGenerator = new WordGenerator();
-        SortedSet<String> words = wordGenerator.generate(postfixResult, 5);
-        System.out.println(words);
+//        SortedSet<String> words = wordGenerator.generate(postfixResult, 5);
+//        System.out.println(words);
 
         // Build expression tree based on postfix
         ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();

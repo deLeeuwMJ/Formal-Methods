@@ -43,7 +43,7 @@ public abstract class Automata {
     }
 
     public String getMachine() {
-        return "(" + formatList(getStates()) + ", " + formatList(getSymbols()) + ", Trans, " + getStartState() + ", {" + getFinalState() + "})";
+        return "(" + formatList(getStates()) + ", " + formatList(getSymbols()) + ", " + getStartState() + ", {" + getFinalState() + "})";
     }
 
     private <T> String formatList(List<T> items) {

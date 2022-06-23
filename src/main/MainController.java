@@ -85,7 +85,7 @@ public class MainController implements Initializable {
         loggerBox.displayPostfixNotation(postfixResult);
 
         // Generate words with postfix
-//        WordGenerator wordGenerator = new WordGenerator();
+        WordGenerator wordGenerator = new WordGenerator();
 //        SortedSet<String> words = wordGenerator.generate(postfixResult, Integer.parseInt(lengthField.getText()));
 //        loggerBox.displayLanguage(words);
 
@@ -97,7 +97,7 @@ public class MainController implements Initializable {
 
         // Build automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
-        Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, null);
+        Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, wordGenerator.getSymbols());
         loggerBox.displayTransitions(resultFA.getTransitions());
         loggerBox.displayMachine(resultFA.getMachine());
 
