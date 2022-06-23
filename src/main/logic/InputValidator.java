@@ -1,11 +1,10 @@
 package main.logic;
 
 import main.model.Operator;
-import main.model.Transition;
 
 public class InputValidator {
 
-    private static final char REGEX_SEPARATOR_SYMBOL = '#';
+    public static final String EPSILON_SYMBOL = "ε";
 
     public static boolean validRegEx(String regex) {
         if (regex.isEmpty())
@@ -22,11 +21,11 @@ public class InputValidator {
 
     // Check if character is inside alphabet with ASCII table
     public static boolean isAlphabet(char c) {
-        return c >= 97 && c <= 122 || c == Transition.EPSILON;
+        return c >= 97 && c <= 122 || c == EPSILON_SYMBOL.charAt(0);
     }
 
     public static boolean isRegexOperator(char c) {
-        return c == '(' || c == ')' || c == '*' || c == '|' || c == '+' || c == REGEX_SEPARATOR_SYMBOL;
+        return c == '(' || c == ')' || c == '*' || c == '|' || c == '+';
     }
 
     public static boolean isOperator(String indexValue) {

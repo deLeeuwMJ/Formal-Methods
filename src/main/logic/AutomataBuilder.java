@@ -2,81 +2,38 @@ package main.logic;
 
 import main.model.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
-import static main.logic.InputValidator.getOperator;
-import static main.logic.InputValidator.isOperator;
+import static main.logic.InputValidator.*;
 
 public class AutomataBuilder {
 
-    public class State {
-        String label;
-        State edge1;
-        State edge2;
-
-        public State() {
-            this.label = "E";
-            this.edge1 = null;
-            this.edge2 = null;
-        }
-
-        public State(String label) {
-            this.label = label;
-            this.edge1 = null;
-            this.edge2 = null;
-        }
-
-        public State(String label, State edge1, State edge2) {
-            this.label = label;
-            this.edge1 = edge1;
-            this.edge2 = edge2;
-        }
-    }
-
-    public class NFA {
-        State initial;
-        State accept;
-
-        public NFA() {
-            this.initial = null;
-            this.accept = null;
-        }
-
-        public NFA(State initial, State accept) {
-            this.initial = initial;
-            this.accept = accept;
-        }
-    }
-
     public Automata build(AutomataType type, Stack<String> postfixStack, List<String> terminals) {
-        Character[] alphabet = {'a', 'b'};
-        Automata<String> m = new Automata<String>(alphabet);
+        Automata resultFA = null;
 
         if (type == AutomataType.DFA) {
-            m.addTransition(new Transition<String>("q0", "q1", 'a'));
-            m.addTransition(new Transition<String>("q0", "q4", 'b'));
-
-            m.addTransition(new Transition<String>("q1", "q4", 'a'));
-            m.addTransition(new Transition<String>("q1", "q2", 'b'));
-
-            m.addTransition(new Transition<String>("q2", "q3", 'a'));
-            m.addTransition(new Transition<String>("q2", "q4", 'b'));
-
-            m.addTransition(new Transition<String>("q3", "q1", 'a'));
-            m.addTransition(new Transition<String>("q3", "q2", 'b'));
-
-            // the error state, loops for a and b:
-            m.addTransition(new Transition<String>("q4", 'a'));
-            m.addTransition(new Transition<String>("q4", 'b'));
-
-            // only on start state in a dfa:
-            m.defineAsStartState("q0");
-
-            // two final states:
-            m.defineAsFinalState("q2");
-            m.defineAsFinalState("q3");
+//            m.addTransition(new Transition<String>("q0", "q1", 'a'));
+//            m.addTransition(new Transition<String>("q0", "q4", 'b'));
+//
+//            m.addTransition(new Transition<String>("q1", "q4", 'a'));
+//            m.addTransition(new Transition<String>("q1", "q2", 'b'));
+//
+//            m.addTransition(new Transition<String>("q2", "q3", 'a'));
+//            m.addTransition(new Transition<String>("q2", "q4", 'b'));
+//
+//            m.addTransition(new Transition<String>("q3", "q1", 'a'));
+//            m.addTransition(new Transition<String>("q3", "q2", 'b'));
+//
+//            // the error state, loops for a and b:
+//            m.addTransition(new Transition<String>("q4", 'a'));
+//            m.addTransition(new Transition<String>("q4", 'b'));
+//
+//            // only on start state in a dfa:
+//            m.defineAsStartState("q0");
+//
+//            // two final states:
+//            m.defineAsFinalState("q2");
+//            m.defineAsFinalState("q3");
         } else if (type == AutomataType.NFA) {
             Stack<NFA> nfaStack = new Stack<>();
 
@@ -84,106 +41,143 @@ public class AutomataBuilder {
                 String val = postfixStack.get(i);
 
                 if (isOperator(val)) { // Is it an operator
-                    NFA nfa1, nfa2, newNFA;
-                    State accept = new State();
-                    State initial = new State();
+                    NFA nfa1, nfa2;
 
                     switch (getOperator(val)) {
                         case DOT:
                             nfa2 = nfaStack.pop();
                             nfa1 = nfaStack.pop();
 
-                            nfa1.accept.edge1 = nfa2.initial;
-
-                            newNFA = new NFA(initial, accept);
-                            nfaStack.push(newNFA);
+                            nfaStack.push(concat(nfa1, nfa2));
                             break;
                         case OR:
                             nfa2 = nfaStack.pop();
                             nfa1 = nfaStack.pop();
 
-                            initial.edge1 = nfa1.initial;
-                            initial.edge2 = nfa2.initial;
-
-                            nfa1.accept.edge1 = accept;
-                            nfa2.accept.edge1 = accept;
-
-                            newNFA = new NFA(initial, accept);
-                            nfaStack.push(newNFA);
+                            nfaStack.push(union(nfa1, nfa2));
                             break;
                         case PLUS:
                             nfa1 = nfaStack.pop();
 
-                            initial.edge1 = nfa1.initial;
-
-                            nfa1.accept.edge1 = nfa1.initial;
-                            nfa1.accept.edge2 = accept;
-
-                            newNFA = new NFA(initial, accept);
-                            nfaStack.push(newNFA);
+                            nfaStack.push(more(nfa1));
                             break;
                         case STAR:
                             nfa1 = nfaStack.pop();
 
-                            initial.edge1 = nfa1.initial;
-                            initial.edge2 = accept;
-
-                            nfa1.accept.edge1 = nfa1.initial;
-                            nfa1.accept.edge2 = accept;
-
-                            newNFA = new NFA(initial, accept);
-                            nfaStack.push(newNFA);
+                            nfaStack.push(kleene(nfa1));
                             break;
                     }
                 } else { // its a terminal
-                    State accept = new State();
-                    State initial = new State();
-
-                    initial.label = val;
-                    initial.edge1 = accept;
-
-                    nfaStack.push(new NFA(initial, accept));
+                    nfaStack.push(new NFA(val));
                 }
             }
+
+            // There should be one NFA left in stack
             NFA root = nfaStack.pop();
+            root.setSymbols(terminals);
+            root.printTransitions();
 
-            List<State> current = new ArrayList<>();
-            List<State> next = new ArrayList<>();
-            
-            current.addAll(follows(root.initial));
-            String input = "ab";
-
-            System.out.println(current);
-
-            for (char s : input.toCharArray()){
-                for (State c : current){
-                    if (c.label.equals(String.valueOf(s))){
-                        next.addAll(follows(c.edge1));
-                    }
-                }
-                current = next;
-                next = new ArrayList<>();
-            }
-
-            System.out.println("Match: " + current.contains(root.accept));
+            resultFA = root;
         }
-        return m;
+        return resultFA;
     }
 
-    private List<State> follows(State state) {
-        List<State> states = new ArrayList<>();
-        states.add(state);
+    private NFA concat(NFA n, NFA m) {
+        m.states.remove(0); // delete m's initial state
 
-        if (state.label == null){
-            if (state.edge1 != null){
-                states.addAll(follows(state.edge1));
-            }
-
-            if (state.edge2 != null){
-                states.addAll(follows(state.edge2));
-            }
+        // copy NFA m's transitions to n, and handles connecting n & m
+        for (Transition t : m.transitions) {
+            n.transitions.add(new Transition(t.from + n.states.size() - 1,
+                    t.to + n.states.size() - 1, t.symbol));
         }
 
-        return states;
+        // take m and combine to n after erasing initial m state
+        for (Integer s : m.states) {
+            n.states.add(s + n.states.size() + 1);
+        }
+
+        n.final_state = n.states.size() + m.states.size() - 2;
+        return n;
     }
+
+    private NFA union(NFA n, NFA m) {
+        NFA result = new NFA(n.states.size() + m.states.size() + 2);
+
+        // the branching of q0 to beginning of n
+        result.transitions.add(new Transition(0, 1, EPSILON_SYMBOL));
+
+        // copy existing transitions of n
+        for (Transition t : n.transitions) {
+            result.transitions.add(new Transition(t.from + 1,
+                    t.to + 1, t.symbol));
+        }
+
+        // transition from last n to final state
+        result.transitions.add(new Transition(n.states.size(),
+                n.states.size() + m.states.size() + 1, EPSILON_SYMBOL));
+
+        // the branching of q0 to beginning of m
+        result.transitions.add(new Transition(0, n.states.size() + 1, EPSILON_SYMBOL));
+
+        // copy existing transitions of m
+        for (Transition t : m.transitions) {
+            result.transitions.add(new Transition(t.from + n.states.size()
+                    + 1, t.to + n.states.size() + 1, t.symbol));
+        }
+
+        // transition from last m to final state
+        result.transitions.add(new Transition(m.states.size() + n.states.size(),
+                n.states.size() + m.states.size() + 1, EPSILON_SYMBOL));
+
+        // 2 new states and shifted m to avoid repetition of last n & 1st m
+        result.final_state = n.states.size() + m.states.size() + 1;
+
+        return result;
+    }
+
+    private NFA kleene(NFA n) {
+        NFA result = new NFA(n.states.size() + 2);
+        result.transitions.add(new Transition(0, 1, EPSILON_SYMBOL)); // new trans for q0
+
+        // copy existing transitions
+        for (Transition t : n.transitions) {
+            result.transitions.add(new Transition(t.from + 1,
+                    t.to + 1, t.symbol));
+        }
+
+        // add empty transition from final n state to new final state.
+        result.transitions.add(new Transition(n.states.size(),
+                n.states.size() + 1, EPSILON_SYMBOL));
+
+        // Loop back from last state of n to initial state of n.
+        result.transitions.add(new Transition(n.states.size(), 1, EPSILON_SYMBOL));
+
+        // Add empty transition from new initial state to new final state.
+        result.transitions.add(new Transition(0, n.states.size() + 1, EPSILON_SYMBOL));
+
+        result.final_state = n.states.size() + 1;
+        return result;
+    }
+
+    private NFA more(NFA n) {
+        NFA result = new NFA(n.states.size() + 2);
+        result.transitions.add(new Transition(0, 1, EPSILON_SYMBOL)); // new trans for q0
+
+        // copy existing transitions
+        for (Transition t : n.transitions) {
+            result.transitions.add(new Transition(t.from + 1,
+                    t.to + 1, t.symbol));
+        }
+
+        // add empty transition from final n state to new final state.
+        result.transitions.add(new Transition(n.states.size(),
+                n.states.size() + 1, EPSILON_SYMBOL));
+
+        // Loop back from last state of n to initial state of n.
+        result.transitions.add(new Transition(n.states.size(), 1, EPSILON_SYMBOL));
+
+        result.final_state = n.states.size() + 1;
+        return result;
+    }
+
 }

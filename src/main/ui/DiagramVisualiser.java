@@ -3,12 +3,10 @@ package main.ui;
 import com.brunomnsilva.smartgraph.graph.Edge;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 import main.model.Automata;
-import main.model.Transition;
 import main.model.VertexType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedSet;
 
 import static main.Main.graphList;
 import static main.Main.graphView;
@@ -30,38 +28,38 @@ public class DiagramVisualiser {
     public void draw(Automata automaton) {
         reset();
 
-        /* Start */
-        for (String state : new ArrayList<String> (automaton.getStartStates())) {
-            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-                addVertex(state, VertexType.START);
-            }
-        }
-        /* Final */
-        for (String state : new ArrayList<String> (automaton.getFinalStates())) {
-            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-                addVertex(state, VertexType.FINAL);
-            }
-        }
-
-        /* Others */
-        for (Transition t : (List<Transition>) automaton.getTransitions()) {
-            String state = t.getFromState().toString();
-
-            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
-                addVertex(state, VertexType.NORMAL);
-            }
-        }
-
-        /* Edges */
-        for (Transition t : (List<Transition>) automaton.getTransitions()) {
-            if (bufferEdgeList.isEmpty() || !doesEdgeExist(t)) {
-                addEdge(
-                        t.getFromState().toString(),
-                        t.getToState().toString(),
-                        getSymbol(t.getSymbol())
-                );
-            }
-        }
+//        /* Start */
+//        for (String state : new ArrayList<String> (automaton.getStartStates())) {
+//            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
+//                addVertex(state, VertexType.START);
+//            }
+//        }
+//        /* Final */
+//        for (String state : new ArrayList<String> (automaton.getFinalStates())) {
+//            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
+//                addVertex(state, VertexType.FINAL);
+//            }
+//        }
+//
+//        /* Others */
+//        for (Transition t : (List<Transition>) automaton.getTransitions()) {
+//            String state = t.getFromState().toString();
+//
+//            if (bufferVertexList.isEmpty() || !doesVertexExist(state)) {
+//                addVertex(state, VertexType.NORMAL);
+//            }
+//        }
+//
+//        /* Edges */
+//        for (Transition t : (List<Transition>) automaton.getTransitions()) {
+//            if (bufferEdgeList.isEmpty() || !doesEdgeExist(t)) {
+//                addEdge(
+//                        t.getFromState().toString(),
+//                        t.getToState().toString(),
+//                        getSymbol(t.getSymbol())
+//                );
+//            }
+//        }
 
         build();
     }
@@ -73,17 +71,17 @@ public class DiagramVisualiser {
         return false;
     }
 
-    private boolean doesEdgeExist(Transition state) {
-        for (Edge<String, String> e : bufferEdgeList) {
-            String beginState = e.vertices()[0].element();
-            String endState = e.vertices()[1].element();
-
-            if (beginState.equals(state.getFromState().toString()) && endState.equals(state.getToState().toString())) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean doesEdgeExist(Transition state) {
+//        for (Edge<String, String> e : bufferEdgeList) {
+//            String beginState = e.vertices()[0].element();
+//            String endState = e.vertices()[1].element();
+//
+//            if (beginState.equals(state.getFromState().toString()) && endState.equals(state.getToState().toString())) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     private String getSymbol(char symbol) {
         String label = String.valueOf(symbol);

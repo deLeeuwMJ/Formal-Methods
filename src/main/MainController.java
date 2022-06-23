@@ -97,10 +97,10 @@ public class MainController implements Initializable {
         // Build automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
         Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, wordGenerator.getTerminals());
-        loggerBox.displayTransitions(resultFA.getTransitions());
+//        loggerBox.displayTransitions(resultFA.getTransitions());
 
         // Draw FSM
-        diagramVisualiser.draw(resultFA);
+//        diagramVisualiser.draw(resultFA);
     }
 
     private void resetData() {
