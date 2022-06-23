@@ -40,7 +40,7 @@ public class MainController implements Initializable {
         AutomataType type = AutomataType.valueOf(automataType.getSelectedToggle().getUserData().toString());
         switch (type) {
             case DFA:
-                regexExample = "a(a+b)*b";
+                regexExample = "a(a|b)+";
                 stringExample = "abb";
                 break;
             case NFA:
@@ -98,11 +98,17 @@ public class MainController implements Initializable {
         // Build automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
         Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, wordGenerator.getSymbols());
-        loggerBox.displayTransitions(resultFA.getTransitions());
-        loggerBox.displayMachine(resultFA.getMachine());
+        if (resultFA != null) {
+            loggerBox.displayTransitions(resultFA.getTransitions());
+            loggerBox.displayMachine(resultFA.getMachine());
 
-        // Draw FSM
-        diagramVisualiser.draw(resultFA);
+            // Draw FSM
+            diagramVisualiser.draw(resultFA);
+
+            // Convert NFA to DFA
+            NFAtoDFAConverter nfaConverter = new NFAtoDFAConverter();
+            nfaConverter.convert(resultFA);
+        }
 
         // Simulate automata
         AutomataSimulator automataSimulator = new AutomataSimulator();

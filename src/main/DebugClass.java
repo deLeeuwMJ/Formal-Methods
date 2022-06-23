@@ -10,7 +10,7 @@ import java.util.Stack;
 public class DebugClass {
 
     public static void main(String[] args){
-        RegexOperationSequence operationSequence = new RegExParser().parse("(a|bc)*");
+        RegexOperationSequence operationSequence = new RegExParser().parse("(a|b)*");
         if (operationSequence.failed()) {
             return;
         } else System.out.println(operationSequence.getSequence());
