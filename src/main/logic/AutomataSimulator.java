@@ -8,6 +8,14 @@ public class AutomataSimulator {
 
     public boolean simulate(LanguageMode mode, SortedSet<String> validWords, String input) {
         for (String word : validWords) {
+
+            // To deal with regex that uses STAR
+            if (word.isEmpty()) {
+                if (input.isEmpty()){
+                    return true;
+                } else continue;
+            }
+
             switch (mode) {
                 case START:
                     if (input.startsWith(word, 0)) return true;

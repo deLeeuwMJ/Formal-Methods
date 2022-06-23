@@ -84,6 +84,10 @@ public class LoggerBox {
         displayOutput("Machine: " + machine);
     }
 
+    public void displayMatch(boolean matches) {
+        displayOutput("Is valid: " + matches);
+    }
+
     private void logInfo(Text text, Color color) {
         LocalDateTime now = LocalDateTime.now();
         text.setText("[" + now.getHour() + ":" + now.getMinute() + "] " + text.getText());

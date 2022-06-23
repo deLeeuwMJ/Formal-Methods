@@ -86,8 +86,8 @@ public class MainController implements Initializable {
 
         // Generate words with postfix
         WordGenerator wordGenerator = new WordGenerator();
-//        SortedSet<String> words = wordGenerator.generate(postfixResult, Integer.parseInt(lengthField.getText()));
-//        loggerBox.displayLanguage(words);
+        SortedSet<String> words = wordGenerator.generate(postfixResult, Integer.parseInt(lengthField.getText()));
+        loggerBox.displayLanguage(words);
 
         // Build expression tree based on postfix
         ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();
@@ -103,6 +103,11 @@ public class MainController implements Initializable {
 
         // Draw FSM
         diagramVisualiser.draw(resultFA);
+
+        // Simulate automata
+        AutomataSimulator automataSimulator = new AutomataSimulator();
+        boolean matches = automataSimulator.simulate(getLanguageMode(), words, inputField.getText());
+        loggerBox.displayMatch(matches);
     }
 
     private void resetData() {
