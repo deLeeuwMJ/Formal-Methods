@@ -4,7 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import main.model.RegexOperationSequence;
+import main.model.ParsedRegex;
 import main.model.Transition;
 
 import java.time.LocalDateTime;
@@ -58,7 +58,7 @@ public class LoggerBox {
         logInfo(new Text(errorMessage), Color.RED);
     }
 
-    public void displayOperations(RegexOperationSequence regexOperations) {
+    public void displayOperations(ParsedRegex regexOperations) {
         displayOutput("Given expression: " + regexOperations.getRegexString());
         displayOutput("Operations: " + regexOperations.getSequence().toString());
     }
@@ -67,8 +67,9 @@ public class LoggerBox {
         displayOutput("Postfix: " + postfixResult);
     }
 
-    public void displayLanguage(SortedSet<String> set) {
-        displayOutput("Language: " + set);
+    public void displayLanguage(SortedSet<String> set, boolean isValid) {
+        displayOutput( (isValid ? "Valid"  : "Invalid") + " language: " + set);
+
     }
 
     public void displayExpressionTree(String result){

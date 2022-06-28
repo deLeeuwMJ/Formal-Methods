@@ -70,50 +70,52 @@ public class MainController implements Initializable {
     }
 
     public void onRunButton(ActionEvent actionEvent) {
-        resetData();
-
-        // Parse string into regex operations stack
-        RegexOperationSequence operationSequence = new RegExParser().parse(regexField.getText());
-        if (operationSequence.failed()) {
-            loggerBox.displayError(LoggerBox.LogErrorType.INVALID_REGEX);
-            return;
-        } else loggerBox.displayOperations(operationSequence);
-
-        // Parse into postfix notation to remove parenthesis
-        PostfixNotationParser postfixParser = new PostfixNotationParser();
-        Stack<String> postfixResult = postfixParser.parse(operationSequence);
-        loggerBox.displayPostfixNotation(postfixResult);
-
-        // Generate words with postfix
-        WordGenerator wordGenerator = new WordGenerator();
-        SortedSet<String> words = wordGenerator.generate(postfixResult, Integer.parseInt(lengthField.getText()));
-        loggerBox.displayLanguage(words);
-
-        // Build expression tree based on postfix
-        ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();
-        main.model.Node root = treeBuilder.construct(postfixResult);
-        String result = treeBuilder.constructString(ExpressionTreeConstructor.PrintOrder.INORDER,root);
-        loggerBox.displayExpressionTree(result);
-
-        // Build automata
-        AutomataBuilder automataBuilder = new AutomataBuilder();
-        Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, wordGenerator.getSymbols());
-        if (resultFA != null) {
-            loggerBox.displayTransitions(resultFA.getTransitions());
-            loggerBox.displayMachine(resultFA.getMachine());
-
-            // Draw FSM
-            diagramVisualiser.draw(resultFA);
-
-            // Convert NFA to DFA
-            NFAtoDFAConverter nfaConverter = new NFAtoDFAConverter();
-            nfaConverter.convert(resultFA);
-        }
-
-        // Simulate automata
-        AutomataSimulator automataSimulator = new AutomataSimulator();
-        boolean matches = automataSimulator.simulate(getLanguageMode(), words, inputField.getText());
-        loggerBox.displayMatch(matches);
+//        resetData();
+//
+//        // Parse string into regex operations stack
+//        RegexOperationSequence operationSequence = new RegExParser().parse(regexField.getText());
+//        if (operationSequence.failed()) {
+//            loggerBox.displayError(LoggerBox.LogErrorType.INVALID_REGEX);
+//            return;
+//        } else loggerBox.displayOperations(operationSequence);
+//
+//        // Parse into postfix notation to remove parenthesis
+//        PostfixNotationParser postfixParser = new PostfixNotationParser();
+//        Stack<String> postfixResult = postfixParser.parse(operationSequence);
+//        loggerBox.displayPostfixNotation(postfixResult);
+//
+//        // Generate (in)valid words with postfix
+//        WordGenerator wordGenerator = new WordGenerator();
+//        SortedSet<String> validWords = wordGenerator.generateValidWords(postfixResult, Integer.parseInt(lengthField.getText()));
+//        SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, Integer.parseInt(lengthField.getText()));
+//        loggerBox.displayLanguage(validWords, true);
+//        loggerBox.displayLanguage(invalidWords, false);
+//
+//        // Build expression tree based on postfix
+//        ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();
+//        main.model.Node root = treeBuilder.construct(postfixResult);
+//        String result = treeBuilder.constructString(ExpressionTreeConstructor.PrintOrder.INORDER,root);
+//        loggerBox.displayExpressionTree(result);
+//
+//        // Build automata
+//        AutomataBuilder automataBuilder = new AutomataBuilder();
+//        Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, wordGenerator.getSymbols());
+//        if (resultFA != null) {
+//            loggerBox.displayTransitions(resultFA.getTransitions());
+//            loggerBox.displayMachine(resultFA.getMachine());
+//
+//            // Draw FSM
+//            diagramVisualiser.draw(resultFA);
+//
+//            // Convert NFA to DFA
+//            NFAtoDFAConverter nfaConverter = new NFAtoDFAConverter();
+//            nfaConverter.convert(resultFA);
+//        }
+//
+//        // Simulate automata
+//        AutomataSimulator automataSimulator = new AutomataSimulator();
+//        boolean matches = automataSimulator.simulate(getLanguageMode(), validWords, inputField.getText());
+//        loggerBox.displayMatch(matches);
     }
 
     private void resetData() {

@@ -1,43 +1,36 @@
 package main.logic;
 
-import main.model.Operator;
-import main.model.RegexOperationSequence;
+import main.model.ParsedRegex;
 
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
-import static main.logic.InputValidator.getOperator;
-import static main.logic.InputValidator.isOperator;
+import static main.logic.InputValidator.*;
 
 public class PostfixNotationParser {
 
-    private int getPrecedence(String c) {
-        if (isOperator(c)) {
-            switch (getOperator(c)) {
-                case OR:
-                    return 1;
-                case DOT:
-                    return 2;
-                case STAR:
-                case PLUS:
-                    return 3;
-            }
+    private int getPrecedence(char c) {
+        switch (c) {
+            case OR_OPERATOR_SYMBOL:
+                return 1;
+            case DOT_OPERATOR_SYMBOL:
+                return 2;
+            case STAR_OPERATOR_SYMBOL:
+            case PLUS_OPERATOR_SYMBOL:
+                return 3;
         }
         return -1;
     }
 
-    public Stack<String> parse(RegexOperationSequence operations) {
-        List<String> sequence = operations.getSequence();
-
-        Stack<String> outputQueue = new Stack<>();
-        Stack<String> operatorQueue = new Stack<>();
+    public Stack<Character> parse(ParsedRegex parsedRegex) {
+        Stack<Character> outputQueue = new Stack<>();
+        Stack<Character> operatorQueue = new Stack<>();
 
         /*
         Using Shunt-Yard Algorithm to get rid of the parenthesis and convert into postfix
         Postfix explanation: https://runestone.academy/ns/books/published/pythonds/BasicDS/InfixPrefixandPostfixExpressions.html
         */
-        for (int i = 0; i < sequence.size(); i++) {
-            String val = operations.getSequence().get(i);
+        for (int i = 0; i < parsedRegex.getSequence().size(); i++) {
+            char val = parsedRegex.getSequence().get(i);
 
             // Check if its an operator;
             if (getPrecedence(val) > 0) {
@@ -45,16 +38,15 @@ public class PostfixNotationParser {
                     outputQueue.push(operatorQueue.pop());
                 }
                 operatorQueue.push(val);
-            } else if (val.equals(")")) {
-                String x = operatorQueue.pop();
-                while (!x.equals("(")) {
+            } else if (val == ')') {
+                char x = operatorQueue.pop();
+                while (x != '(') {
                     outputQueue.push(x);
                     x = operatorQueue.pop();
                 }
-            } else if (val.equals("(")) {
+            } else if (val == '(') {
                 operatorQueue.push(val);
             } else {
-                //character is neither operator nor (
                 outputQueue.push(val);
             }
         }

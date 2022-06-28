@@ -35,48 +35,48 @@ public class AutomataBuilder {
 //            m.defineAsFinalState("q2");
 //            m.defineAsFinalState("q3");
         } else if (type == AutomataType.NFA) {
-            Stack<NFA> nfaStack = new Stack<>();
-
-            for (int i = 0; i < postfixStack.size(); i++) {
-                String val = postfixStack.get(i);
-
-                if (isOperator(val)) { // Is it an operator
-                    NFA nfa1, nfa2;
-
-                    switch (getOperator(val)) {
-                        case DOT:
-                            nfa2 = nfaStack.pop();
-                            nfa1 = nfaStack.pop();
-
-                            nfaStack.push(concat(nfa1, nfa2));
-                            break;
-                        case OR:
-                            nfa2 = nfaStack.pop();
-                            nfa1 = nfaStack.pop();
-
-                            nfaStack.push(union(nfa1, nfa2));
-                            break;
-                        case PLUS:
-                            nfa1 = nfaStack.pop();
-
-                            nfaStack.push(more(nfa1));
-                            break;
-                        case STAR:
-                            nfa1 = nfaStack.pop();
-
-                            nfaStack.push(kleene(nfa1));
-                            break;
-                    }
-                } else { // its a symbol
-                    nfaStack.push(new NFA(val));
-                }
-            }
-
-            // There should be one NFA left in stack
-            NFA root = nfaStack.pop();
-            root.setSymbols(symbols);
-
-            resultFA = root;
+//            Stack<NFA> nfaStack = new Stack<>();
+//
+//            for (int i = 0; i < postfixStack.size(); i++) {
+//                String val = postfixStack.get(i);
+//
+//                if (isOperator(val)) { // Is it an operator
+//                    NFA nfa1, nfa2;
+//
+//                    switch (getOperator(val)) {
+//                        case DOT:
+//                            nfa2 = nfaStack.pop();
+//                            nfa1 = nfaStack.pop();
+//
+//                            nfaStack.push(concat(nfa1, nfa2));
+//                            break;
+//                        case OR:
+//                            nfa2 = nfaStack.pop();
+//                            nfa1 = nfaStack.pop();
+//
+//                            nfaStack.push(union(nfa1, nfa2));
+//                            break;
+//                        case PLUS:
+//                            nfa1 = nfaStack.pop();
+//
+//                            nfaStack.push(more(nfa1));
+//                            break;
+//                        case STAR:
+//                            nfa1 = nfaStack.pop();
+//
+//                            nfaStack.push(kleene(nfa1));
+//                            break;
+//                    }
+//                } else { // its a symbol
+//                    nfaStack.push(new NFA(val));
+//                }
+//            }
+//
+//            // There should be one NFA left in stack
+//            NFA root = nfaStack.pop();
+//            root.setSymbols(symbols);
+//
+//            resultFA = root;
         }
         return resultFA;
     }
@@ -107,7 +107,7 @@ public class AutomataBuilder {
 
         // the branching of q0 to beginning of n
         result.getTransitions()
-                .add(new Transition(0, 1, EPSILON_SYMBOL));
+                .add(new Transition(0, 1, String.valueOf(EPSILON_SYMBOL)));
 
         // copy existing getTransitions()
         // of n
@@ -121,11 +121,11 @@ public class AutomataBuilder {
         // transition from last n to final state
         result.getTransitions()
                 .add(new Transition(n.getStates().size(),
-                n.getStates().size() + m.getStates().size() + 1, EPSILON_SYMBOL));
+                n.getStates().size() + m.getStates().size() + 1, String.valueOf(EPSILON_SYMBOL)));
 
         // the branching of q0 to beginning of m
         result.getTransitions()
-                .add(new Transition(0, n.getStates().size() + 1, EPSILON_SYMBOL));
+                .add(new Transition(0, n.getStates().size() + 1, String.valueOf(EPSILON_SYMBOL)));
 
         // copy existing getTransitions()
         // of m
@@ -139,7 +139,7 @@ public class AutomataBuilder {
         // transition from last m to final state
         result.getTransitions()
                 .add(new Transition(m.getStates().size() + n.getStates().size(),
-                n.getStates().size() + m.getStates().size() + 1, EPSILON_SYMBOL));
+                n.getStates().size() + m.getStates().size() + 1, String.valueOf(EPSILON_SYMBOL)));
 
         // 2 new getStates() and shifted m to avoid repetition of last n & 1st m
         result.final_state = n.getStates().size() + m.getStates().size() + 1;
@@ -150,7 +150,7 @@ public class AutomataBuilder {
     private NFA kleene(NFA n) {
         NFA result = new NFA(n.getStates().size() + 2);
         result.getTransitions()
-                .add(new Transition(0, 1, EPSILON_SYMBOL)); // new trans for q0
+                .add(new Transition(0, 1, String.valueOf(EPSILON_SYMBOL))); // new trans for q0
 
         // copy existing getTransitions()
 
@@ -164,15 +164,15 @@ public class AutomataBuilder {
         // add empty transition from final n state to new final state.
         result.getTransitions()
                 .add(new Transition(n.getStates().size(),
-                n.getStates().size() + 1, EPSILON_SYMBOL));
+                n.getStates().size() + 1, String.valueOf(EPSILON_SYMBOL)));
 
         // Loop back from last state of n to initial state of n.
         result.getTransitions()
-                .add(new Transition(n.getStates().size(), 1, EPSILON_SYMBOL));
+                .add(new Transition(n.getStates().size(), 1, String.valueOf(EPSILON_SYMBOL)));
 
         // Add empty transition from new initial state to new final state.
         result.getTransitions()
-                .add(new Transition(0, n.getStates().size() + 1, EPSILON_SYMBOL));
+                .add(new Transition(0, n.getStates().size() + 1, String.valueOf(EPSILON_SYMBOL)));
 
         result.final_state = n.getStates().size() + 1;
         return result;
@@ -181,7 +181,7 @@ public class AutomataBuilder {
     private NFA more(NFA n) {
         NFA result = new NFA(n.getStates().size() + 2);
         result.getTransitions()
-                .add(new Transition(0, 1, EPSILON_SYMBOL)); // new trans for q0
+                .add(new Transition(0, 1, String.valueOf(EPSILON_SYMBOL))); // new trans for q0
 
         // copy existing getTransitions()
 
@@ -195,11 +195,11 @@ public class AutomataBuilder {
         // add empty transition from final n state to new final state.
         result.getTransitions()
                 .add(new Transition(n.getStates().size(),
-                n.getStates().size() + 1, EPSILON_SYMBOL));
+                n.getStates().size() + 1, String.valueOf(EPSILON_SYMBOL)));
 
         // Loop back from last state of n to initial state of n.
         result.getTransitions()
-                .add(new Transition(n.getStates().size(), 1, EPSILON_SYMBOL));
+                .add(new Transition(n.getStates().size(), 1, String.valueOf(EPSILON_SYMBOL)));
 
         result.final_state = n.getStates().size() + 1;
         return result;

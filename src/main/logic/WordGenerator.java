@@ -2,16 +2,13 @@ package main.logic;
 
 import main.model.RegExp;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.Stack;
+import java.util.*;
 
 import static main.logic.InputValidator.*;
 
 public class WordGenerator {
 
-    private List<String> symbols;
+    private final List<Character> symbols;
 
     public WordGenerator() {
         this.symbols = new ArrayList<>();
@@ -33,30 +30,30 @@ public class WordGenerator {
         regStar = reg1.star
     */
 
-    public SortedSet<String> generate(Stack<String> postFixStack, int length) {
+    public SortedSet<String> generateValidWords(Stack<Character> postFixStack, int length) {
         Stack<RegExp> regexQueue = new Stack<>();
         symbols.clear();
 
-        for (String val : postFixStack) {
-            if (isOperator(val)) { // Is it an operator
-                switch (getOperator(val)) {
-                    case DOT:
+        for (char c : postFixStack) {
+            if (isRegexOperator(c)) { // Is it an operator
+                switch (c) {
+                    case DOT_OPERATOR_SYMBOL:
                         RegExp tempDotRegex1 = regexQueue.pop();
                         RegExp tempDotRegex2 = regexQueue.pop();
 
                         regexQueue.push(tempDotRegex2.dot(tempDotRegex1));
                         break;
-                    case OR:
+                    case OR_OPERATOR_SYMBOL:
                         RegExp tempOrRegex1 = regexQueue.pop();
                         RegExp tempOrRegex2 = regexQueue.pop();
 
                         regexQueue.push(tempOrRegex2.or(tempOrRegex1));
                         break;
-                    case PLUS:
+                    case PLUS_OPERATOR_SYMBOL:
                         RegExp tempPlusRegex = regexQueue.pop();
                         regexQueue.push(tempPlusRegex.plus());
                         break;
-                    case STAR:
+                    case STAR_OPERATOR_SYMBOL:
                         RegExp tempStarRegex = regexQueue.pop();
                         regexQueue.push(tempStarRegex.star());
                         break;
@@ -64,24 +61,62 @@ public class WordGenerator {
                         // Do nothing
                 }
             } else { // its a symbol
-                addSymbol(val);
-                regexQueue.push(new RegExp(val));
+                addSymbol(c);
+                regexQueue.push(new RegExp(String.valueOf(c)));
             }
         }
 
-        // There should be one item left in queue
-        RegExp finalExpression = regexQueue.pop();
+        // There should be one item left in queue if users is performing multiple regex
+        RegExp root = regexQueue.pop();
 
-        return finalExpression.getLanguage(length);
+        return root.getLanguage(length);
     }
 
-    private void addSymbol(String val) {
+    // Depends on generateValidWords(); creates expression (Symbol1|Symbol2|Symbol3)*; steps based on given if its lower than use symbols size;
+    public SortedSet<String> generateFaultyWords(SortedSet<String> validSet, int length){
+        Stack<RegExp> regexQueue = new Stack<>();
+
+        // Convert into regex
+        for (char c : symbols){
+            regexQueue.push(new RegExp(String.valueOf(c)));
+        }
+
+        // Perform OR on every symbol and then Plus it
+        do{
+           RegExp exp1 = regexQueue.pop();
+           RegExp exp2 = regexQueue.pop();
+
+           regexQueue.push(exp2.or(exp1));
+        } while (regexQueue.size() != 1);
+
+        // One should be left this is the final expression
+        RegExp finalExp = regexQueue.pop();
+        RegExp plusExp = finalExp.star();
+
+        // Generate new valid set
+        SortedSet<String> generatedSymbolsSet = plusExp.getLanguage(Math.max(length, symbols.size()));
+
+        return getDifferenceInSet(validSet, generatedSymbolsSet);
+    }
+
+    private SortedSet<String> getDifferenceInSet(SortedSet<String> validSet, SortedSet<String> generatedSymbolsSet) {
+       // compare the once that are similar and remove them
+        SortedSet<String> invalidSet = new TreeSet<>();
+
+        for (String word : generatedSymbolsSet){
+            if (!validSet.contains(word)) invalidSet.add(word);
+        }
+
+        return invalidSet;
+    }
+
+    private void addSymbol(char val) {
         if (!symbols.contains(val)){
             symbols.add(val);
         }
     }
 
-    public List<String> getSymbols() {
+    public List<Character> getSymbols() {
         return symbols;
     }
 }
