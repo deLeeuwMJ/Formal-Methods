@@ -5,7 +5,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import main.model.ParsedRegex;
-import main.model.Transition;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -58,9 +57,9 @@ public class LoggerBox {
         logInfo(new Text(errorMessage), Color.RED);
     }
 
-    public void displayOperations(ParsedRegex regexOperations) {
+    public void displayFormattedRegex(ParsedRegex regexOperations) {
         displayOutput("Given expression: " + regexOperations.getRegexString());
-        displayOutput("Operations: " + regexOperations.getSequence().toString());
+        displayOutput("Formatted: " + regexOperations.getSequence().toString());
     }
 
     public void displayPostfixNotation(Stack<String> postfixResult) {
@@ -76,10 +75,10 @@ public class LoggerBox {
         displayOutput("Tree: " + result);
     }
 
-    public void displayTransitions(List<Transition> result){
-        Collections.reverse(result); // Reverse to correctly output transitions
-        for (Transition t : result) displayOutput("Trans: " + t.toString());
-    }
+//    public void displayTransitions(List<Transition> result){
+//        Collections.reverse(result); // Reverse to correctly output transitions
+//        for (Transition t : result) displayOutput("Trans: " + t.toString());
+//    }
 
     public void displayMachine(String machine) {
         displayOutput("Machine: " + machine);

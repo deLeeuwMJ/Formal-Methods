@@ -70,14 +70,14 @@ public class MainController implements Initializable {
     }
 
     public void onRunButton(ActionEvent actionEvent) {
-//        resetData();
-//
-//        // Parse string into regex operations stack
-//        RegexOperationSequence operationSequence = new RegExParser().parse(regexField.getText());
-//        if (operationSequence.failed()) {
-//            loggerBox.displayError(LoggerBox.LogErrorType.INVALID_REGEX);
-//            return;
-//        } else loggerBox.displayOperations(operationSequence);
+        resetData();
+
+        // Validate input
+        ParsedRegex parsedRegex = new RegExParser().parse(regexField.getText());
+        if (parsedRegex == null) {
+            loggerBox.displayError(LoggerBox.LogErrorType.INVALID_REGEX);
+            return;
+        } else loggerBox.displayFormattedRegex(parsedRegex);
 //
 //        // Parse into postfix notation to remove parenthesis
 //        PostfixNotationParser postfixParser = new PostfixNotationParser();

@@ -2,13 +2,10 @@ package main.ui;
 
 import com.brunomnsilva.smartgraph.graph.Edge;
 import com.brunomnsilva.smartgraph.graph.Vertex;
-import main.model.Automata;
-import main.model.Transition;
-import main.model.VertexType;
+import main.model.StylingType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import static main.Main.graphList;
 import static main.Main.graphView;
@@ -26,32 +23,32 @@ public class DiagramVisualiser {
         edges = new ArrayList<>();
     }
 
-    public void draw(Automata automaton) {
-        reset();
+//    public void draw(Automata automaton) {
+//        reset();
+//
+//        // Start state
+//        addVertex(String.valueOf(automaton.getStartState()), StylingType.START);
+//
+//        // final state
+//        addVertex(String.valueOf(automaton.getFinalState()), StylingType.FINAL);
+//
+//        for (Transition t : automaton.getTransitions()) {
+//
+//            // Add vertices if it doesn't exist
+//            addVertex(String.valueOf(t.from), StylingType.NORMAL);
+//            addVertex(String.valueOf(t.to), StylingType.NORMAL);
+//
+//            // Add edge between vertices
+//            addEdge(
+//                    String.valueOf(t.from),
+//                    String.valueOf(t.to),
+//                    formatSymbol(t.symbol)
+//            );
+//        }
+//        build();
+//    }
 
-        // Start state
-        addVertex(String.valueOf(automaton.getStartState()), VertexType.START);
-
-        // final state
-        addVertex(String.valueOf(automaton.getFinalState()), VertexType.FINAL);
-
-        for (Transition t : automaton.getTransitions()) {
-
-            // Add vertices if it doesn't exist
-            addVertex(String.valueOf(t.from), VertexType.NORMAL);
-            addVertex(String.valueOf(t.to), VertexType.NORMAL);
-
-            // Add edge between vertices
-            addEdge(
-                    String.valueOf(t.from),
-                    String.valueOf(t.to),
-                    formatSymbol(t.symbol)
-            );
-        }
-        build();
-    }
-
-    public void addVertex(String label, VertexType type) {
+    public void addVertex(String label, StylingType type) {
         if (doesVertexExist(label)) return;
 
         Vertex<String> v = graphList.insertVertex(label);

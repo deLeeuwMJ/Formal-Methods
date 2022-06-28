@@ -4,8 +4,8 @@ import java.util.List;
 
 public class ParsedRegex {
 
-    private String regex;
-    private List<Character> sequence;
+    private final String regex;
+    private final List<Character> sequence;
 
     public ParsedRegex(List<Character> sequence, String regex) {
         this.sequence = sequence;

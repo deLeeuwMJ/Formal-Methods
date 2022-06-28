@@ -6,12 +6,11 @@ import main.model.*;
 import java.util.SortedSet;
 import java.util.Stack;
 
-public class DebugClass {
+public class Debug {
 
     public static void main(String[] args) {
         // Validate input
-        ParsedRegex parsedRegex = new RegExParser().parse("(ae)*(bc|d|fg)+");
-
+        ParsedRegex parsedRegex = new RegExParser().parse("(ab)*(c|de)+");
         if (parsedRegex == null) return;
         System.out.println(parsedRegex.getSequence());
 
@@ -23,14 +22,15 @@ public class DebugClass {
         // Generate (in)valid words with postfix
         WordGenerator wordGenerator = new WordGenerator();
         SortedSet<String> validWords = wordGenerator.generateValidWords(postfixResult, 5);
+        SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, 5);
         System.out.println(validWords);
 
-        SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, 5);
-        System.out.println(invalidWords);
 
-        // Build automata
+
+        // Build automata based on postfix expression
 //        AutomataBuilder automataBuilder = new AutomataBuilder();
-//        Automata resultFA = automataBuilder.build(AutomataType.NFA, postfixResult, wordGenerator.getSymbols());
+//        Automata resultNFA = automataBuilder.build(AutomataType.NFA, postfixResult, wordGenerator.getSymbols());
+//        System.out.println(resultNFA.getTransitions());
 
 //        // Convert NFA to DFA
 //        NFAtoDFAConverter nfaConverter = new NFAtoDFAConverter();

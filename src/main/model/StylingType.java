@@ -1,5 +1,5 @@
 package main.model;
 
-public enum VertexType {
+public enum StylingType {
     NORMAL, START, FINAL
 }
