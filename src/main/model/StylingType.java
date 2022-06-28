@@ -1,5 +1,5 @@
 package main.model;
 
 public enum StylingType {
-    NORMAL, START, FINAL
+    NORMAL, START, FINAL, START_FINAL
 }

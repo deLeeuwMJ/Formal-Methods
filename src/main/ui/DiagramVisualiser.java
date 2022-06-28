@@ -2,7 +2,9 @@ package main.ui;
 
 import com.brunomnsilva.smartgraph.graph.Edge;
 import com.brunomnsilva.smartgraph.graph.Vertex;
+import main.model.NDFA;
 import main.model.StylingType;
+import main.model.Transition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,41 +14,49 @@ import static main.Main.graphView;
 
 public class DiagramVisualiser {
 
-    private Vertex<String> startVertex;
+    private final List<Vertex<String>> startVertices;
     private final List<Vertex<String>> finalVertices;
+    private final List<Vertex<String>> startFinalVertices;
     private final List<Vertex<String>> vertices;
     private final List<Edge<String, String>> edges;
 
     public DiagramVisualiser() {
+        startFinalVertices = new ArrayList<>();
+        startVertices = new ArrayList<>();
         finalVertices = new ArrayList<>();
         vertices = new ArrayList<>();
         edges = new ArrayList<>();
     }
 
-//    public void draw(Automata automaton) {
-//        reset();
-//
-//        // Start state
-//        addVertex(String.valueOf(automaton.getStartState()), StylingType.START);
-//
-//        // final state
-//        addVertex(String.valueOf(automaton.getFinalState()), StylingType.FINAL);
-//
-//        for (Transition t : automaton.getTransitions()) {
-//
-//            // Add vertices if it doesn't exist
-//            addVertex(String.valueOf(t.from), StylingType.NORMAL);
-//            addVertex(String.valueOf(t.to), StylingType.NORMAL);
-//
-//            // Add edge between vertices
-//            addEdge(
-//                    String.valueOf(t.from),
-//                    String.valueOf(t.to),
-//                    formatSymbol(t.symbol)
-//            );
-//        }
-//        build();
-//    }
+    public void draw(NDFA ndfa) {
+        reset();
+
+        /* Needs to be seperate to prevent styling issues */
+        for (Transition t : ndfa.getTransitions()) {
+            if (ndfa.getStartStates().contains(t.getOrigin()) && ndfa.getEndStates().contains(t.getOrigin())){
+                addVertex(t.getOrigin(), StylingType.START_FINAL);
+            } else if (ndfa.getStartStates().contains(t.getOrigin())) {
+                addVertex(t.getOrigin(), StylingType.START);
+            } else if (ndfa.getEndStates().contains(t.getOrigin())) {
+                addVertex(String.valueOf(t.getOrigin()), StylingType.FINAL);
+            }
+        }
+
+        for (Transition t : ndfa.getTransitions()) {
+            // Add vertices if it doesn't exist
+            addVertex(String.valueOf(t.getOrigin()), StylingType.NORMAL);
+            addVertex(String.valueOf(t.getDestination()), StylingType.NORMAL);
+
+            // Add edge between vertices
+            addEdge(
+                    String.valueOf(t.getOrigin()),
+                    String.valueOf(t.getDestination()),
+                    formatSymbol(t.getSymbol())
+            );
+
+        }
+        build();
+    }
 
     public void addVertex(String label, StylingType type) {
         if (doesVertexExist(label)) return;
@@ -55,10 +65,13 @@ public class DiagramVisualiser {
 
         switch (type) {
             case START:
-                startVertex = v;
+                startVertices.add(v);
                 break;
             case FINAL:
                 finalVertices.add(v);
+                break;
+            case START_FINAL:
+                startFinalVertices.add(v);
                 break;
             default:
                 // do nothing
@@ -125,8 +138,9 @@ public class DiagramVisualiser {
             build();
         }
 
-        if (startVertex != null) startVertex = null;
+        if (!startVertices.isEmpty()) startVertices.clear();
         if (!finalVertices.isEmpty()) finalVertices.clear();
+        if (!startFinalVertices.isEmpty()) startFinalVertices.clear();
     }
 
     public void build() {
@@ -136,11 +150,16 @@ public class DiagramVisualiser {
 
     private void updateStyling() {
         try {
-            if (startVertex != null) setStartStyle(startVertex);
+            for (Vertex<String> v : startVertices) setStartStyle(v);
             for (Vertex<String> v : finalVertices) setFinalStyle(v);
+            for (Vertex<String> v : startFinalVertices) setStartFinalStyle(v);
         } catch (Exception e) {
             // Do nothing
         }
+    }
+
+    private void setStartFinalStyle(Vertex<String> v) {
+        graphView.getStylableVertex(v).setStyle("-fx-fill: white; -fx-stroke: #8dcd65;");
     }
 
     private void setStartStyle(Vertex<String> v) {

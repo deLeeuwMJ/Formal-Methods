@@ -62,7 +62,7 @@ public class LoggerBox {
         displayOutput("Formatted: " + regexOperations.getSequence().toString());
     }
 
-    public void displayPostfixNotation(Stack<String> postfixResult) {
+    public void displayPostfixNotation(Stack<Character> postfixResult) {
         displayOutput("Postfix: " + postfixResult);
     }
 

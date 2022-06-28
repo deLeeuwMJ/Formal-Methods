@@ -10,7 +10,8 @@ public class Debug {
 
     public static void main(String[] args) {
         // Validate input
-        ParsedRegex parsedRegex = new RegExParser().parse("(ab)*(c|de)+");
+                ParsedRegex parsedRegex = new RegExParser().parse("(ab)*(c|de)+");
+//        ParsedRegex parsedRegex = new RegExParser().parse("(ab)*(c|de)+");
         if (parsedRegex == null) return;
         System.out.println(parsedRegex.getSequence());
 
@@ -24,6 +25,30 @@ public class Debug {
         SortedSet<String> validWords = wordGenerator.generateValidWords(postfixResult, 5);
         SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, 5);
         System.out.println(validWords);
+
+        // Generate NDFA
+        NDFA tempNDFA = new NDFA();
+        tempNDFA.addTransition(new Transition("q1", "q4", "a"));
+        tempNDFA.addTransition(new Transition("q1", "q2", "b"));
+
+        tempNDFA.addTransition(new Transition("q2", "q4", "a"));
+        tempNDFA.addTransition(new Transition("q2", "q1", "b"));
+        tempNDFA.addTransition(new Transition("q2", "q3", "b"));
+        tempNDFA.addTransition(new Transition("q2", "q3", "ε"));
+
+        tempNDFA.addTransition(new Transition("q3", "q5", "a"));
+        tempNDFA.addTransition(new Transition("q3", "q5", "b"));
+
+        tempNDFA.addTransition(new Transition("q4", "q2", "ε"));
+        tempNDFA.addTransition(new Transition("q4", "q3", "a"));
+
+        tempNDFA.addTransition(new Transition("q5", "q4", "a"));
+        tempNDFA.addTransition(new Transition("q5", "q1", "b"));
+
+        tempNDFA.addStartState("q1");
+        tempNDFA.addEndState("q4");
+
+        // Convert NDFA to DFA
 
 
 

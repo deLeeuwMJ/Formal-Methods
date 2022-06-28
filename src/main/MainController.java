@@ -78,44 +78,42 @@ public class MainController implements Initializable {
             loggerBox.displayError(LoggerBox.LogErrorType.INVALID_REGEX);
             return;
         } else loggerBox.displayFormattedRegex(parsedRegex);
-//
-//        // Parse into postfix notation to remove parenthesis
-//        PostfixNotationParser postfixParser = new PostfixNotationParser();
-//        Stack<String> postfixResult = postfixParser.parse(operationSequence);
-//        loggerBox.displayPostfixNotation(postfixResult);
-//
-//        // Generate (in)valid words with postfix
-//        WordGenerator wordGenerator = new WordGenerator();
-//        SortedSet<String> validWords = wordGenerator.generateValidWords(postfixResult, Integer.parseInt(lengthField.getText()));
-//        SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, Integer.parseInt(lengthField.getText()));
-//        loggerBox.displayLanguage(validWords, true);
-//        loggerBox.displayLanguage(invalidWords, false);
-//
-//        // Build expression tree based on postfix
-//        ExpressionTreeConstructor treeBuilder = new ExpressionTreeConstructor();
-//        main.model.Node root = treeBuilder.construct(postfixResult);
-//        String result = treeBuilder.constructString(ExpressionTreeConstructor.PrintOrder.INORDER,root);
-//        loggerBox.displayExpressionTree(result);
-//
-//        // Build automata
-//        AutomataBuilder automataBuilder = new AutomataBuilder();
-//        Automata resultFA = automataBuilder.build(getAutomataType(), postfixResult, wordGenerator.getSymbols());
-//        if (resultFA != null) {
-//            loggerBox.displayTransitions(resultFA.getTransitions());
-//            loggerBox.displayMachine(resultFA.getMachine());
-//
-//            // Draw FSM
-//            diagramVisualiser.draw(resultFA);
-//
-//            // Convert NFA to DFA
-//            NFAtoDFAConverter nfaConverter = new NFAtoDFAConverter();
-//            nfaConverter.convert(resultFA);
-//        }
-//
-//        // Simulate automata
-//        AutomataSimulator automataSimulator = new AutomataSimulator();
-//        boolean matches = automataSimulator.simulate(getLanguageMode(), validWords, inputField.getText());
-//        loggerBox.displayMatch(matches);
+
+        // Parse into postfix notation to remove parenthesis
+        PostfixNotationParser postfixParser = new PostfixNotationParser();
+        Stack<Character> postfixResult = postfixParser.parse(parsedRegex);
+        loggerBox.displayPostfixNotation(postfixResult);
+
+        // Generate (in)valid words with postfix
+        WordGenerator wordGenerator = new WordGenerator();
+        SortedSet<String> validWords = wordGenerator.generateValidWords(postfixResult, Integer.parseInt(lengthField.getText()));
+        SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, Integer.parseInt(lengthField.getText()));
+        loggerBox.displayLanguage(validWords, true);
+        loggerBox.displayLanguage(invalidWords, false);
+
+        // Generate NDFA
+        NDFA tempNDFA = new NDFA();
+        tempNDFA.addTransition(new Transition("q1", "q4", "a"));
+        tempNDFA.addTransition(new Transition("q1", "q2", "b"));
+
+        tempNDFA.addTransition(new Transition("q2", "q4", "a"));
+        tempNDFA.addTransition(new Transition("q2", "q1", "b"));
+        tempNDFA.addTransition(new Transition("q2", "q3", "b"));
+        tempNDFA.addTransition(new Transition("q2", "q3", "ε"));
+
+        tempNDFA.addTransition(new Transition("q3", "q5", "a"));
+        tempNDFA.addTransition(new Transition("q3", "q5", "b"));
+
+        tempNDFA.addTransition(new Transition("q4", "q2", "ε"));
+        tempNDFA.addTransition(new Transition("q4", "q3", "a"));
+
+        tempNDFA.addTransition(new Transition("q5", "q4", "a"));
+        tempNDFA.addTransition(new Transition("q5", "q1", "b"));
+
+        tempNDFA.addStartState("q1");
+        tempNDFA.addEndState("q4");
+
+        diagramVisualiser.draw(tempNDFA);
     }
 
     private void resetData() {
