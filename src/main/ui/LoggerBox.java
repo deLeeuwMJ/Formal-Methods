@@ -60,10 +60,10 @@ public class LoggerBox {
 
     public void displayFormattedRegex(ParsedRegex regexOperations) {
         displayOutput("Given expression: " + regexOperations.getRegexString());
-        displayOutput("Formatted: " + regexOperations.getSequence().toString());
+        displayOutput("Formatted: " + regexOperations.getInfixSequence().toString());
     }
 
-    public void displayPostfixNotation(Stack<Character> postfixResult) {
+    public void displayPostfixNotation(List<Character> postfixResult) {
         displayOutput("Postfix: " + postfixResult);
     }
 

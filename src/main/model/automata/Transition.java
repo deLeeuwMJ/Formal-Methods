@@ -2,13 +2,28 @@ package main.model.automata;
 
 public class Transition {
 
-    private final String origin;
-    private final String destination;
-    private final String symbol;
+    private String origin;
+    private String destination;
+    private String symbol;
+
+    public Transition() {
+    }
 
     public Transition(String origin, String destination, String symbol) {
         this.origin = origin;
         this.destination = destination;
+        this.symbol = symbol;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
 

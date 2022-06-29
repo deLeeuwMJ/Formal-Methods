@@ -1,5 +1,6 @@
 package main.logic;
 
+import main.model.regex.ParsedRegex;
 import main.model.regex.RegExp;
 
 import java.util.*;
@@ -30,11 +31,11 @@ public class WordGenerator {
         regStar = reg1.star
     */
 
-    public SortedSet<String> generateValidWords(Stack<Character> postFixStack, int length) {
+    public SortedSet<String> generateValidWords(ParsedRegex parsedRegex, int length) {
         Stack<RegExp> regexQueue = new Stack<>();
         symbols.clear();
 
-        for (char c : postFixStack) {
+        for (char c : parsedRegex.getPostfixSequence()) {
             if (isRegexOperator(c)) { // Is it an operator
                 switch (c) {
                     case DOT_OPERATOR_SYMBOL:

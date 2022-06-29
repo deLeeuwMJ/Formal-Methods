@@ -2,127 +2,143 @@ package main.logic;
 
 import main.model.automata.NDFA;
 import main.model.automata.Transition;
+import main.model.regex.ParsedRegex;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 import static main.logic.InputValidator.*;
 
 public class ThompsonConstructor {
 
-    private List<Transition> tempList;
-    private List<String> stateList;
+    private String regex;
+    public String startNode = null;
+    public String endNode = null;
+    public String selectedNode = null;
+    public List<String> connect2end = new ArrayList<>();
+    public HashMap<Integer, String> endNodes = new LinkedHashMap<>();
+    public List<Bridge> bridges = new ArrayList<>();
+    public String firstnode = null;
+    public String finalNode = null;
 
-    public ThompsonConstructor() {
-        tempList = new ArrayList<>();
-        stateList = new ArrayList<>();
+    public class Bridge {
+        public String startnode;
+        public String endnode;
+        public String key;
+
+        public Bridge(String startnode, String endnode, String key) {
+            this.startnode = startnode;
+            this.endnode = endnode;
+            this.key = key;
+        }
     }
 
-    public NDFA construct(Stack<Character> postfix){
-        Stack<Transition> queue = new Stack<>();
-        stateList.clear();
-        tempList.clear();
-        NDFA ndfa;
+    public NDFA construct(ParsedRegex parsedRegex) {
+        // Adds a 1 as end flag for the regex
+        regex = parsedRegex.getRegexString() + "1";
+        NDFA ndfa = new NDFA();
 
-        for (char c : postfix) {
-            if (isRegexOperator(c)) { // Is it an operator
-                Transition left, right;
-                stateList.clear();
+        // Main loop for converting regex to NDFA
+        for (int i = 0; i < regex.length(); i++) {
+            char c = regex.charAt(i);
 
-                switch (c) {
-                    case DOT_OPERATOR_SYMBOL:
-                        right = queue.pop();
-                        left = queue.pop();
-
-                        concat(left, right);
-                        break;
-//                    case OR_OPERATOR_SYMBOL:
-//                        right = nfaStack.pop();
-//                        left = nfaStack.pop();
-//
-//                        nfaStack.push(union(left, right));
-//                        break;
-//                    case PLUS_OPERATOR_SYMBOL:
-//                        left = nfaStack.pop();
-//
-//                        nfaStack.push(more(left));
-//                        break;
-//                    case STAR_OPERATOR_SYMBOL:
-//                        left = nfaStack.pop();
-//
-//                        nfaStack.push(kleene(left));
-//                        break;
+            // Checks if a new alphabet has started
+            if (c == '(') {
+                startNode = "q" + i;
+                selectedNode = startNode;
+                if (endNode != null) {
+                    link(endNode, startNode, "");
+                } else {
+                    firstnode = startNode;
                 }
-            } else { // its a symbol
-                queue.push(one(c));
+                continue;
+            }
+
+            // checks if alphabet has ended
+            if (c == ')') {
+                endNode = "q" + i;
+                link(selectedNode, endNode, "");
+                connectEnds(connect2end, endNode);
+                connect2end = new ArrayList<>();
+                selectedNode = endNode;
+                endNodes.put(i, endNode);
+                continue;
+            }
+
+            // Makes 2 links from the start of the alphabet to the end
+            if (c == '*') {
+                if (startNode != null && endNode != null) {
+                    link(startNode, endNode, "");
+                    link(endNode, startNode, "");
+                }
+            }
+
+            // Makes a link from the back to the start of the alphabet
+            if (c == '+') {
+                if (startNode != null && endNode != null) {
+                    link(endNode, startNode, "");
+                }
+            }
+
+            // Creates the alphabet nodes and links staring node to it
+            if (isAlphabet(c)) {
+                List<Character> chars = new ArrayList<>();
+
+                chars.add(c);
+
+                while (true) {
+                    char t = regex.charAt(i + 1);
+                    if (isAlphabet(t)) {
+                        chars.add(t);
+                        i++;
+                    } else {
+                        String n = "q" + i;
+                        link(selectedNode, n, String.valueOf(chars));
+
+                        if (t != '|')
+                            selectedNode = n;
+                        else
+                            connect2end.add(n);
+
+                        break;
+                    }
+                }
+            }
+
+            // Marks the end of the regex sting
+            if (c == '1') {
+                String n = "q" + i;
+                link(selectedNode, n, "");
+                this.finalNode = n;
             }
         }
 
-        while(!queue.isEmpty()){
-            tempList.add(queue.pop());
+        // Converts the bridge object to Customtransition
+        for (Bridge b : bridges) {
+            ndfa.addTransition(new Transition(b.startnode, b.endnode, b.key));
         }
-
-        ndfa = new NDFA(tempList);
-        ndfa.addStartState(tempList.get(0).getOrigin());
-        ndfa.addEndState(tempList.get(tempList.size()-1).getDestination());
+        ndfa.addStartState(this.firstnode);
+        ndfa.addEndState(this.finalNode);
 
         return ndfa;
     }
 
-    private Transition link(String s, String e){
-        return new Transition(s, e, String.valueOf(EPSILON_SYMBOL));
+
+    // Links 2 nodes with a lable for graphviz
+    public void link(String s, String e, String text) {
+        if (text.equals("")) {
+            text = "ε";
+        }
+        this.bridges.add(new Bridge(s, e, text));
     }
 
-    private Transition link(String s, String e, String symbol){
-        return new Transition(s, e, symbol);
+    // Links all nodes with alphabet to the ending node
+    public void connectEnds(List<String> nodes, String end) {
+        if (nodes.isEmpty()) {
+            return;
+        }
+
+        for (String n : nodes) {
+            link(n, end, "");
+        }
     }
-
-    private void addState(String state){
-        if (!stateList.contains(state)) stateList.add(state);
-    }
-
-    private Transition one(char label){
-        String startState = getNewState();
-        addState(startState);
-
-        String endState = getNewState();
-        addState(startState);
-
-        return link(startState, endState, String.valueOf(label));
-    }
-
-    private Transition empty(){
-        String startState = getNewState();
-        addState(startState);
-
-        String endState = getNewState();
-        addState(startState);
-
-        return link(startState, endState);
-    }
-
-    private void concat(Transition left, Transition right) {
-        String lStartState = getNewState();
-        String lNextState = getNewState();
-
-        Transition leftLinked = link(lStartState, lNextState, left.getSymbol());
-        tempList.add(leftLinked);
-
-        String rStartState = getNewState();
-        String rFinalState = getNewState();
-
-        Transition rightLinked = link(rStartState, rFinalState, right.getSymbol());
-        tempList.add(rightLinked);
-
-        Transition lrLinked = link(leftLinked.getDestination(), rightLinked.getOrigin());
-        tempList.add(lrLinked);
-    }
-
-    private String getNewState(){
-        String state = "q" + stateList.size();
-        addState(state);
-        return state;
-    }
-
 }

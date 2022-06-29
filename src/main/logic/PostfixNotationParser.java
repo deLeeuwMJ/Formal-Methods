@@ -29,8 +29,8 @@ public class PostfixNotationParser {
         Using Shunt-Yard Algorithm to get rid of the parenthesis and convert into postfix
         Postfix explanation: https://runestone.academy/ns/books/published/pythonds/BasicDS/InfixPrefixandPostfixExpressions.html
         */
-        for (int i = 0; i < parsedRegex.getSequence().size(); i++) {
-            char val = parsedRegex.getSequence().get(i);
+        for (int i = 0; i < parsedRegex.getInfixSequence().size(); i++) {
+            char val = parsedRegex.getInfixSequence().get(i);
 
             // Check if its an operator;
             if (getPrecedence(val) > 0) {

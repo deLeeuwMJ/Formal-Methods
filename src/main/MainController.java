@@ -83,19 +83,19 @@ public class MainController implements Initializable {
 
         // Parse into postfix notation to remove parenthesis
         PostfixNotationParser postfixParser = new PostfixNotationParser();
-        Stack<Character> postfixResult = postfixParser.parse(parsedRegex);
-        loggerBox.displayPostfixNotation(postfixResult);
+        parsedRegex.setPostfixSequence(postfixParser.parse(parsedRegex));
+        loggerBox.displayPostfixNotation(parsedRegex.getPostfixSequence());
 
         // Generate (in)valid words with postfix
         WordGenerator wordGenerator = new WordGenerator();
-        SortedSet<String> validWords = wordGenerator.generateValidWords(postfixResult, Integer.parseInt(lengthField.getText()));
+        SortedSet<String> validWords = wordGenerator.generateValidWords(parsedRegex, Integer.parseInt(lengthField.getText()));
         SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, Integer.parseInt(lengthField.getText()));
         loggerBox.displayLanguage(validWords, true);
         loggerBox.displayLanguage(invalidWords, false);
 
         // Build Automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
-        FA fa = automataBuilder.build(getAutomataType(), postfixResult);
+        FA fa = automataBuilder.build(getAutomataType(), parsedRegex);
         loggerBox.displayTransitions(fa.getTransitions());
         diagramVisualiser.draw(fa);
 

@@ -1,12 +1,11 @@
 package main.logic;
 
 import main.model.automata.*;
-
-import java.util.Stack;
+import main.model.regex.ParsedRegex;
 
 public class AutomataBuilder {
 
-    public FA build(AutomataType type, Stack<Character> postfix){
+    public FA build(AutomataType type, ParsedRegex parsedRegex){
         FA automata = null;
 
         if (type == AutomataType.DFA){
@@ -16,7 +15,7 @@ public class AutomataBuilder {
             ThompsonConstructor thompson = new ThompsonConstructor();
 
 //            automata = ndfaExample();
-            automata = thompson.construct(postfix);
+            automata = thompson.construct(parsedRegex);
         }
 
         return automata;
