@@ -99,7 +99,7 @@ public class DiagramVisualiser {
                     String stateLabel = e.element();
 
                     if (beginState.equals(from) && endState.equals(to)) {
-                        String newLabel = stateLabel + "," + label;
+                        String newLabel = label + "," + stateLabel;
                         edges.add(graphList.insertEdge(from, to, formatLabel(newLabel)));
                         graphList.removeEdge(e);
                         return;
