@@ -2,9 +2,9 @@ package main.model.automata;
 
 public class Transition {
 
-    private String origin;
-    private String destination;
-    private String symbol;
+    private final String origin;
+    private final String destination;
+    private final String symbol;
 
     public Transition(String origin, String destination, String symbol) {
         this.origin = origin;
@@ -26,6 +26,6 @@ public class Transition {
 
     @Override
     public String toString() {
-        return "{" + origin + "} -(" + symbol + ")-> {" + destination + "}";
+        return "(" + origin + ") --" + symbol + "--> (" + destination + ")";
     }
 }

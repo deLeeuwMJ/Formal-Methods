@@ -33,7 +33,7 @@ public class DiagramVisualiser {
 
         /* Needs to be seperate to prevent styling issues */
         for (Transition t : automata.getTransitions()) {
-            if (automata.getStartStates().contains(t.getOrigin()) && automata.getEndStates().contains(t.getOrigin())){
+            if (automata.getStartStates().contains(t.getOrigin()) && automata.getEndStates().contains(t.getOrigin())) {
                 addVertex(t.getOrigin(), StylingType.START_FINAL);
             } else if (automata.getStartStates().contains(t.getOrigin())) {
                 addVertex(t.getOrigin(), StylingType.START);
@@ -51,7 +51,7 @@ public class DiagramVisualiser {
             addEdge(
                     String.valueOf(t.getOrigin()),
                     String.valueOf(t.getDestination()),
-                    formatSymbol(t.getSymbol())
+                    formatLabel(t.getSymbol())
             );
 
         }
@@ -90,6 +90,22 @@ public class DiagramVisualiser {
     public void addEdge(String from, String to, String label) {
         if (!doesEdgeExist(from, to)) {
             edges.add(graphList.insertEdge(from, to, label));
+        } else {
+            // could be the case that the label is different, if so merge them
+            if (!doesEdgeExistWithSameLabel(from, to, label)) {
+                for (Edge<String, String> e : graphList.edges()) {
+                    String beginState = e.vertices()[0].element();
+                    String endState = e.vertices()[1].element();
+                    String stateLabel = e.element();
+
+                    if (beginState.equals(from) && endState.equals(to)) {
+                        String newLabel = stateLabel + "," + label;
+                        edges.add(graphList.insertEdge(from, to, formatLabel(newLabel)));
+                        graphList.removeEdge(e);
+                        return;
+                    }
+                }
+            }
         }
     }
 
@@ -105,12 +121,25 @@ public class DiagramVisualiser {
         return false;
     }
 
-    private String formatSymbol(String symbol) {
+    private boolean doesEdgeExistWithSameLabel(String from, String to, String label) {
+        for (Edge<String, String> e : edges) {
+            String beginState = e.vertices()[0].element();
+            String endState = e.vertices()[1].element();
+            String stateLabel = e.element();
+
+            if (beginState.equals(from) && endState.equals(to) && stateLabel.equals(label)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String formatLabel(String symbol) {
         String label = String.valueOf(symbol);
 
-        do {
+        while (doesLabelAlreadyExist(label)){
             label += " ";
-        } while (doesLabelAlreadyExist(label));
+        }
 
         return label;
     }

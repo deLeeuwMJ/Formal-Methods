@@ -7,10 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import main.logic.*;
 import main.model.*;
-import main.model.automata.AutomataType;
-import main.model.automata.FA;
-import main.model.automata.NDFA;
-import main.model.automata.Transition;
+import main.model.automata.*;
 import main.model.regex.ParsedRegex;
 import main.ui.DiagramVisualiser;
 import main.ui.LoggerBox;
@@ -48,7 +45,7 @@ public class MainController implements Initializable {
                 regexExample = "a(a|b)+";
                 stringExample = "abb";
                 break;
-            case NFA:
+            case NDFA:
                 regexExample = "(a|b)*";
                 stringExample = "a";
                 break;
@@ -96,29 +93,17 @@ public class MainController implements Initializable {
         loggerBox.displayLanguage(validWords, true);
         loggerBox.displayLanguage(invalidWords, false);
 
-        // Generate NDFA
-        FA tempNDFA = new NDFA();
-        tempNDFA.addTransition(new Transition("q1", "q4", "a"));
-        tempNDFA.addTransition(new Transition("q1", "q2", "b"));
+        // Build Automata
+        AutomataBuilder automataBuilder = new AutomataBuilder();
+        FA fa = automataBuilder.build(AutomataType.DFA, postfixResult);
+        loggerBox.displayTransitions(fa.getTransitions());
+        diagramVisualiser.draw(fa);
 
-        tempNDFA.addTransition(new Transition("q2", "q4", "a"));
-        tempNDFA.addTransition(new Transition("q2", "q1", "b"));
-        tempNDFA.addTransition(new Transition("q2", "q3", "b"));
-        tempNDFA.addTransition(new Transition("q2", "q3", "ε"));
-
-        tempNDFA.addTransition(new Transition("q3", "q5", "a"));
-        tempNDFA.addTransition(new Transition("q3", "q5", "b"));
-
-        tempNDFA.addTransition(new Transition("q4", "q2", "ε"));
-        tempNDFA.addTransition(new Transition("q4", "q3", "a"));
-
-        tempNDFA.addTransition(new Transition("q5", "q4", "a"));
-        tempNDFA.addTransition(new Transition("q5", "q1", "b"));
-
-        tempNDFA.addStartState("q1");
-        tempNDFA.addEndState("q4");
-
-        diagramVisualiser.draw(tempNDFA);
+        // Check if valid
+        if (fa instanceof DFA) {
+            DFA dfa = (DFA) fa;
+            loggerBox.displayMatch(dfa.isAccepted("aab"));
+        }
     }
 
     private void resetData() {

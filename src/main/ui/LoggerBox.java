@@ -4,9 +4,12 @@ import javafx.scene.Node;
 import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import main.model.automata.Transition;
 import main.model.regex.ParsedRegex;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.Stack;
 
@@ -22,7 +25,7 @@ public class LoggerBox {
         NO_FUNCTIONALITY, NO_OPERATOR_SELECTED, INVALID_OPERATOR_ACTION, EMPTY_FIELD, LENGTH_CANT_BE_SMALLER_THAN_TERMINAL_SIZE, INVALID_REGEX;
     }
 
-    public void displayOutput(String message) {
+    private void displayOutput(String message) {
         logInfo(new Text(message), Color.BLACK);
     }
 
@@ -69,21 +72,13 @@ public class LoggerBox {
 
     }
 
-    public void displayExpressionTree(String result){
-        displayOutput("Tree: " + result);
-    }
-
-//    public void displayTransitions(List<Transition> result){
-//        Collections.reverse(result); // Reverse to correctly output transitions
-//        for (Transition t : result) displayOutput("Trans: " + t.toString());
-//    }
-
-    public void displayMachine(String machine) {
-        displayOutput("Machine: " + machine);
+    public void displayTransitions(List<Transition> result){
+        Collections.reverse(result); // Reverse to correctly output transitions
+        for (Transition t : result) displayOutput("Transition: " + t.toString());
     }
 
     public void displayMatch(boolean matches) {
-        displayOutput("Is valid: " + matches);
+        displayOutput("Accepted: " + matches);
     }
 
     private void logInfo(Text text, Color color) {
