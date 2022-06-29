@@ -102,6 +102,7 @@ public class DiagramVisualiser {
                         String newLabel = label + "," + stateLabel;
                         edges.add(graphList.insertEdge(from, to, formatLabel(newLabel)));
                         graphList.removeEdge(e);
+                        edges.remove(e);
                         return;
                     }
                 }

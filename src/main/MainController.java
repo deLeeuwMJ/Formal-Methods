@@ -95,7 +95,7 @@ public class MainController implements Initializable {
 
         // Build Automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
-        FA fa = automataBuilder.build(AutomataType.DFA, postfixResult);
+        FA fa = automataBuilder.build(getAutomataType(), postfixResult);
         loggerBox.displayTransitions(fa.getTransitions());
         diagramVisualiser.draw(fa);
 
