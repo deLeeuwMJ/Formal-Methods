@@ -10,135 +10,173 @@ import static main.logic.InputValidator.*;
 
 public class ThompsonConstructor {
 
-    private String regex;
-    public String startNode = null;
-    public String endNode = null;
-    public String selectedNode = null;
-    public List<String> connect2end = new ArrayList<>();
-    public HashMap<Integer, String> endNodes = new LinkedHashMap<>();
-    public List<Bridge> bridges = new ArrayList<>();
-    public String firstnode = null;
-    public String finalNode = null;
+    public class NFA {
 
-    public class Bridge {
-        public String startnode;
-        public String endnode;
-        public String key;
+        public ArrayList<String> states;
+        public ArrayList<Transition> transitions;
 
-        public Bridge(String startnode, String endnode, String key) {
-            this.startnode = startnode;
-            this.endnode = endnode;
-            this.key = key;
+        public String startState = "q0";
+        public String finalState;
+
+        public NFA(int size) {
+            this.states = new ArrayList<>();
+            this.transitions = new ArrayList<>();
+            this.finalState = "q0";
+            this.setStateSize(size);
+        }
+
+        public NFA(char c) {
+            this.states = new ArrayList<>();
+            this.transitions = new ArrayList<>();
+            this.setStateSize(2);
+            this.finalState = "q1";
+            this.transitions.add(new Transition("q0", "q1", String.valueOf(c)));
+        }
+
+        public void setStateSize(int size) {
+            for (int i = 0; i < size; i++)
+                this.states.add("q" + i);
         }
     }
 
     public NDFA construct(ParsedRegex parsedRegex) {
-        // Adds a 1 as end flag for the regex
-        regex = parsedRegex.getRegexString() + "1";
-        NDFA ndfa = new NDFA();
+        Stack<NFA> nfaStack = new Stack<>();
 
-        // Main loop for converting regex to NDFA
-        for (int i = 0; i < regex.length(); i++) {
-            char c = regex.charAt(i);
+        for (char c : parsedRegex.getPostfixSequence()) {
+            if (isRegexOperator(c)) {
+                NFA nfa1, nfa2;
 
-            // Checks if a new alphabet has started
-            if (c == '(') {
-                startNode = "q" + i;
-                selectedNode = startNode;
-                if (endNode != null) {
-                    link(endNode, startNode, "");
-                } else {
-                    firstnode = startNode;
-                }
-                continue;
-            }
+                switch (c) {
+                    case DOT_OPERATOR_SYMBOL:
+                        nfa2 = nfaStack.pop();
+                        nfa1 = nfaStack.pop();
 
-            // checks if alphabet has ended
-            if (c == ')') {
-                endNode = "q" + i;
-                link(selectedNode, endNode, "");
-                connectEnds(connect2end, endNode);
-                connect2end = new ArrayList<>();
-                selectedNode = endNode;
-                endNodes.put(i, endNode);
-                continue;
-            }
-
-            // Makes 2 links from the start of the alphabet to the end
-            if (c == '*') {
-                if (startNode != null && endNode != null) {
-                    link(startNode, endNode, "");
-                    link(endNode, startNode, "");
-                }
-            }
-
-            // Makes a link from the back to the start of the alphabet
-            if (c == '+') {
-                if (startNode != null && endNode != null) {
-                    link(endNode, startNode, "");
-                }
-            }
-
-            // Creates the alphabet nodes and links staring node to it
-            if (isAlphabet(c)) {
-                List<Character> chars = new ArrayList<>();
-
-                chars.add(c);
-
-                while (true) {
-                    char t = regex.charAt(i + 1);
-                    if (isAlphabet(t)) {
-                        chars.add(t);
-                        i++;
-                    } else {
-                        String n = "q" + i;
-                        link(selectedNode, n, String.valueOf(chars));
-
-                        if (t != '|')
-                            selectedNode = n;
-                        else
-                            connect2end.add(n);
-
+                        nfaStack.push(concat(nfa1, nfa2));
                         break;
-                    }
+                    case OR_OPERATOR_SYMBOL:
+                        nfa2 = nfaStack.pop();
+                        nfa1 = nfaStack.pop();
+
+                        nfaStack.push(union(nfa1, nfa2));
+                        break;
+                    case PLUS_OPERATOR_SYMBOL:
+                        nfa1 = nfaStack.pop();
+
+                        nfaStack.push(plus(nfa1));
+                        break;
+                    case STAR_OPERATOR_SYMBOL:
+                        nfa1 = nfaStack.pop();
+
+                        nfaStack.push(kleene(nfa1));
+                        break;
                 }
-            }
-
-            // Marks the end of the regex sting
-            if (c == '1') {
-                String n = "q" + i;
-                link(selectedNode, n, "");
-                this.finalNode = n;
+            } else {
+                nfaStack.push(new NFA(c));
             }
         }
 
-        // Converts the bridge object to Customtransition
-        for (Bridge b : bridges) {
-            ndfa.addTransition(new Transition(b.startnode, b.endnode, b.key));
-        }
-        ndfa.addStartState(this.firstnode);
-        ndfa.addEndState(this.finalNode);
+        NFA root = nfaStack.pop();
+        root.finalState = newStateLabel(root.states.size() - 1);
+
+        NDFA ndfa = new NDFA(root.transitions);
+        ndfa.addStartState(root.startState);
+        ndfa.addEndState(root.finalState);
 
         return ndfa;
     }
 
-
-    // Links 2 nodes with a lable for graphviz
-    public void link(String s, String e, String text) {
-        if (text.equals("")) {
-            text = "ε";
-        }
-        this.bridges.add(new Bridge(s, e, text));
+    private String newStateLabel(int add) {
+        return "q" + add;
     }
 
-    // Links all nodes with alphabet to the ending node
-    public void connectEnds(List<String> nodes, String end) {
-        if (nodes.isEmpty()) {
-            return;
+    private String newStateLabel(String stateLabel, int add) {
+        String splitNumber = stateLabel.substring(1);
+        int newStateNumber = Integer.parseInt(splitNumber) + add;
+
+        return "q" + newStateNumber;
+    }
+
+    private NFA concat(NFA n, NFA m) {
+        m.states.remove(0); // delete m's initial state
+
+        // copy NFA m's transitions to n, and handles connecting n & m
+        for (Transition t : m.transitions) {
+            n.transitions.add(new Transition(newStateLabel(t.getOrigin(), n.states.size() - 1), newStateLabel(t.getDestination(), n.states.size() - 1), t.getSymbol()));
         }
 
-        for (String n : nodes) {
-            link(n, end, "");
+        // take m and combine to n after erasing initial m state
+        for (String s : m.states) {
+            n.states.add(newStateLabel(s, n.states.size() + 1));
         }
+
+        return n;
+    }
+
+    private NFA union(NFA n, NFA m) {
+        NFA result = new NFA(n.states.size() + m.states.size() + 2);
+
+        // the branching of q0 to beginning of n
+        result.transitions.add(new Transition(newStateLabel(0), newStateLabel(1)));
+
+        // copy existing transitions of n
+        for (Transition t : n.transitions) {
+            result.transitions.add(new Transition(newStateLabel(t.getOrigin(), 1), newStateLabel(t.getDestination(), 1), t.getSymbol()));
+        }
+
+        // transition from last n to final state
+        result.transitions.add(new Transition(newStateLabel(n.states.size()), newStateLabel(n.states.size() + m.states.size() + 1)));
+
+        // the branching of q0 to beginning of m
+        result.transitions.add(new Transition(newStateLabel(0), newStateLabel(n.states.size() + 1)));
+
+        // copy existing transitions of m
+        for (Transition t : m.transitions) {
+            result.transitions.add(new Transition(newStateLabel(t.getOrigin(), n.states.size() + 1), newStateLabel(t.getDestination(), n.states.size() + 1), t.getSymbol()));
+        }
+
+        // transition from last m to final state
+        result.transitions.add(new Transition(newStateLabel(m.states.size() + n.states.size()), newStateLabel(n.states.size() + m.states.size() + 1)));
+
+        return result;
+    }
+
+    private NFA kleene(NFA n) {
+        NFA result = new NFA(n.states.size() + 2);
+
+        // the branching of q0 to beginning of n
+        result.transitions.add(new Transition(newStateLabel(0), newStateLabel(1)));
+
+        // copy existing transitions of n
+        for (Transition t : n.transitions) {
+            result.transitions.add(new Transition(newStateLabel(t.getOrigin(), 1), newStateLabel(t.getDestination(), 1), t.getSymbol()));
+        }
+
+        // add empty transition from final n state to new final state.
+        result.transitions.add(new Transition(newStateLabel(n.states.size()), newStateLabel(n.states.size() + 1)));
+
+        // Loop back from last state of n to initial state of n.
+        result.transitions.add(new Transition(newStateLabel(n.states.size()), newStateLabel(1)));
+
+        // Add empty transition from new initial state to new final state.
+        result.transitions.add(new Transition(newStateLabel(0), newStateLabel(n.states.size() + 1)));
+        return result;
+    }
+
+    private NFA plus(NFA n) {
+        NFA result = new NFA(n.states.size() + 2);
+        result.transitions.add(new Transition(newStateLabel(0), newStateLabel(1)));
+
+        // copy existing transitions
+        for (Transition t : n.transitions) {
+            result.transitions.add(new Transition(newStateLabel(t.getOrigin(), 1), newStateLabel(t.getDestination(), 1), t.getSymbol()));
+        }
+
+        // add empty transition from final n state to new final state.
+        result.transitions.add(new Transition(newStateLabel(n.states.size()), newStateLabel(n.states.size() + 1)));
+
+        // Loop back from last state of n to initial state of n.
+        result.transitions.add(new Transition(newStateLabel(n.states.size()), newStateLabel(1)));
+
+        return result;
     }
 }

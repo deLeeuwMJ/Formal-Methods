@@ -1,5 +1,7 @@
 package main.model.automata;
 
+import static main.logic.InputValidator.EPSILON_SYMBOL;
+
 public class Transition {
 
     private String origin;
@@ -13,6 +15,12 @@ public class Transition {
         this.origin = origin;
         this.destination = destination;
         this.symbol = symbol;
+    }
+
+    public Transition(String origin, String destination) {
+        this.origin = origin;
+        this.destination = destination;
+        this.symbol = String.valueOf(EPSILON_SYMBOL);
     }
 
     public void setOrigin(String origin) {
