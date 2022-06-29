@@ -44,7 +44,7 @@
 
             <RadioButton text="Deterministic" userData="DFA" toggleGroup="$automataType"
                          selected="true"/>
-            <RadioButton text="Nondeterministic" userData="NFA" toggleGroup="$automataType"/>
+            <RadioButton text="Nondeterministic" userData="NDFA" toggleGroup="$automataType"/>
         </HBox>
 
         <Label text="Language:"

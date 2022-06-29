@@ -4,14 +4,12 @@ import java.util.*;
 
 public class NDFA extends FA {
 
-    private final List<Transition> transitions;
-    private final List<String> startStates;
-    private final List<String> endStates;
+    public NDFA(){
+        super();
+    }
 
-    public NDFA() {
-        transitions = new ArrayList<>();
-        startStates = new ArrayList<>();
-        endStates = new ArrayList<>();
+    public NDFA(List<Transition> t) {
+        super(t);
     }
 
     public List<String> getNextStates(String state, String symbol, boolean isUsed) {

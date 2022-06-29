@@ -82,12 +82,12 @@ public class WordGenerator {
         }
 
         // Perform OR on every symbol and then Plus it
-        do{
+        while (regexQueue.size() != 1) {
            RegExp exp1 = regexQueue.pop();
            RegExp exp2 = regexQueue.pop();
 
            regexQueue.push(exp2.or(exp1));
-        } while (regexQueue.size() != 1);
+        }
 
         // One should be left this is the final expression
         RegExp finalExp = regexQueue.pop();

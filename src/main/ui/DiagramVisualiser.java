@@ -31,14 +31,25 @@ public class DiagramVisualiser {
     public void draw(FA automata) {
         reset();
 
-        /* Needs to be seperate to prevent styling issues */
+        /* Needs to be separate to prevent styling issues */
         for (Transition t : automata.getTransitions()) {
-            if (automata.getStartStates().contains(t.getOrigin()) && automata.getEndStates().contains(t.getOrigin())) {
+            String start = t.getOrigin();
+            String end = t.getDestination();
+
+            if (automata.getStartStates().contains(start) && automata.getEndStates().contains(start)) {
                 addVertex(t.getOrigin(), StylingType.START_FINAL);
-            } else if (automata.getStartStates().contains(t.getOrigin())) {
+            } else if (automata.getStartStates().contains(start)) {
                 addVertex(t.getOrigin(), StylingType.START);
-            } else if (automata.getEndStates().contains(t.getOrigin())) {
+            } else if (automata.getEndStates().contains(start)) {
                 addVertex(String.valueOf(t.getOrigin()), StylingType.FINAL);
+            }
+
+            if (automata.getStartStates().contains(end) && automata.getEndStates().contains(end)) {
+                addVertex(t.getDestination(), StylingType.START_FINAL);
+            } else if (automata.getStartStates().contains(end)) {
+                addVertex(t.getDestination(), StylingType.START);
+            } else if (automata.getEndStates().contains(end)) {
+                addVertex(t.getDestination(), StylingType.FINAL);
             }
         }
 
@@ -138,7 +149,7 @@ public class DiagramVisualiser {
     private String formatLabel(String symbol) {
         String label = String.valueOf(symbol);
 
-        while (doesLabelAlreadyExist(label)){
+        while (doesLabelAlreadyExist(label)) {
             label += " ";
         }
 

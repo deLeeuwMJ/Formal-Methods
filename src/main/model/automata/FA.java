@@ -15,6 +15,12 @@ public class FA {
         endStates = new ArrayList<>();
     }
 
+    public FA(List<Transition> t) {
+        transitions = t;
+        startStates = new ArrayList<>();
+        endStates = new ArrayList<>();
+    }
+
     public void addTransition(Transition t) {
         transitions.add(t);
     }
