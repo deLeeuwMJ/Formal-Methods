@@ -12,7 +12,7 @@ public class Debug {
     public static void main(String[] args) {
         // Validate input
 //        ParsedRegex parsedRegex = new RegExParser().parse("(ab)*(c|de)+");
-        ParsedRegex parsedRegex = new RegExParser().parse("a");
+        ParsedRegex parsedRegex = new RegExParser().parse("ab");
         if (parsedRegex == null) return;
         System.out.println(parsedRegex.getSequence());
 
