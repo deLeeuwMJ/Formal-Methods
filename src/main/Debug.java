@@ -1,7 +1,11 @@
 package main;
 
 import main.logic.*;
-import main.model.*;
+import main.model.automata.DFA;
+import main.model.automata.FA;
+import main.model.automata.NDFA;
+import main.model.automata.Transition;
+import main.model.regex.ParsedRegex;
 
 import java.util.SortedSet;
 import java.util.Stack;
@@ -27,30 +31,41 @@ public class Debug {
         System.out.println(validWords);
 
         // Generate NDFA
-        NDFA tempNDFA = new NDFA();
-        tempNDFA.addTransition(new Transition("q1", "q4", "a"));
-        tempNDFA.addTransition(new Transition("q1", "q2", "b"));
+//        FA tempNDFA = new NDFA();
+//        tempNDFA.addTransition(new Transition("q1", "q4", "a"));
+//        tempNDFA.addTransition(new Transition("q1", "q2", "b"));
+//
+//        tempNDFA.addTransition(new Transition("q2", "q4", "a"));
+//        tempNDFA.addTransition(new Transition("q2", "q1", "b"));
+//        tempNDFA.addTransition(new Transition("q2", "q3", "b"));
+//        tempNDFA.addTransition(new Transition("q2", "q3", "ε"));
+//
+//        tempNDFA.addTransition(new Transition("q3", "q5", "a"));
+//        tempNDFA.addTransition(new Transition("q3", "q5", "b"));
+//
+//        tempNDFA.addTransition(new Transition("q4", "q2", "ε"));
+//        tempNDFA.addTransition(new Transition("q4", "q3", "a"));
+//
+//        tempNDFA.addTransition(new Transition("q5", "q4", "a"));
+//        tempNDFA.addTransition(new Transition("q5", "q1", "b"));
+//
+//        tempNDFA.addStartState("q1");
+//        tempNDFA.addEndState("q4");
+//
+//        tempNDFA.printTransitions();
 
-        tempNDFA.addTransition(new Transition("q2", "q4", "a"));
-        tempNDFA.addTransition(new Transition("q2", "q1", "b"));
-        tempNDFA.addTransition(new Transition("q2", "q3", "b"));
-        tempNDFA.addTransition(new Transition("q2", "q3", "ε"));
-
-        tempNDFA.addTransition(new Transition("q3", "q5", "a"));
-        tempNDFA.addTransition(new Transition("q3", "q5", "b"));
-
-        tempNDFA.addTransition(new Transition("q4", "q2", "ε"));
-        tempNDFA.addTransition(new Transition("q4", "q3", "a"));
-
-        tempNDFA.addTransition(new Transition("q5", "q4", "a"));
-        tempNDFA.addTransition(new Transition("q5", "q1", "b"));
-
-        tempNDFA.addStartState("q1");
-        tempNDFA.addEndState("q4");
-
-        // Convert NDFA to DFA
-
-
+        DFA dfa = new DFA();
+        dfa.addTransition(new Transition("q1", "q2", "a"));
+        dfa.addTransition(new Transition("q1", "q1", "b"));
+        dfa.addTransition(new Transition("q2", "q3", "a"));
+        dfa.addTransition(new Transition("q2", "q1", "b"));
+        dfa.addTransition(new Transition("q3", "q2", "a"));
+        dfa.addTransition(new Transition("q3", "q4", "b"));
+        dfa.addTransition(new Transition("q4", "q4", "a"));
+        dfa.addTransition(new Transition("q4", "q4", "b"));
+        dfa.addStartState("q1");
+        dfa.addEndState("q4");
+        System.out.println(dfa.isAccepted("ccb"));
 
         // Build automata based on postfix expression
 //        AutomataBuilder automataBuilder = new AutomataBuilder();

@@ -7,6 +7,11 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import main.logic.*;
 import main.model.*;
+import main.model.automata.AutomataType;
+import main.model.automata.FA;
+import main.model.automata.NDFA;
+import main.model.automata.Transition;
+import main.model.regex.ParsedRegex;
 import main.ui.DiagramVisualiser;
 import main.ui.LoggerBox;
 
@@ -92,7 +97,7 @@ public class MainController implements Initializable {
         loggerBox.displayLanguage(invalidWords, false);
 
         // Generate NDFA
-        NDFA tempNDFA = new NDFA();
+        FA tempNDFA = new NDFA();
         tempNDFA.addTransition(new Transition("q1", "q4", "a"));
         tempNDFA.addTransition(new Transition("q1", "q2", "b"));
 

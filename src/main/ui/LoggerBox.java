@@ -4,11 +4,9 @@ import javafx.scene.Node;
 import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import main.model.ParsedRegex;
+import main.model.regex.ParsedRegex;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.Stack;
 

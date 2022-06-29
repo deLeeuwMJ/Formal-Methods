@@ -1,8 +1,8 @@
-package main.model;
+package main.model.automata;
 
 import java.util.*;
 
-public class NDFA {
+public class NDFA extends FA {
 
     private final List<Transition> transitions;
     private final List<String> startStates;
@@ -46,33 +46,5 @@ public class NDFA {
         }
 
         return new ArrayList<>(nextStates);
-    }
-
-    public void addTransition(Transition t) {
-        transitions.add(t);
-    }
-
-    public void addStartState(String s) {
-        startStates.add(s);
-    }
-
-    public void addEndState(String s) {
-        endStates.add(s);
-    }
-
-    public List<Transition> getTransitions() {
-        return transitions;
-    }
-
-    public List<String> getStartStates() {
-        return startStates;
-    }
-
-    public List<String> getEndStates() {
-        return endStates;
-    }
-
-    public void printTransitions() {
-        for (Transition t : transitions) System.out.println(t.toString());
     }
 }

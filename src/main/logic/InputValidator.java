@@ -1,8 +1,5 @@
 package main.logic;
 
-import main.model.Operator;
-import main.model.ParsedRegex;
-
 public class InputValidator {
 
     public static final char STAR_OPERATOR_SYMBOL = '*';

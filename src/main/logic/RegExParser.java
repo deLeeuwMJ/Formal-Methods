@@ -1,6 +1,6 @@
 package main.logic;
 
-import main.model.ParsedRegex;
+import main.model.regex.ParsedRegex;
 
 import java.util.ArrayList;
 import java.util.List;

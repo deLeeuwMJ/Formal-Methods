@@ -1,6 +1,6 @@
 package main.logic;
 
-import main.model.RegExp;
+import main.model.regex.RegExp;
 
 import java.util.*;
 

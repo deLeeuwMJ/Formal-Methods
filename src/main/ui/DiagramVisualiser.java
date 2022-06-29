@@ -2,9 +2,9 @@ package main.ui;
 
 import com.brunomnsilva.smartgraph.graph.Edge;
 import com.brunomnsilva.smartgraph.graph.Vertex;
-import main.model.NDFA;
-import main.model.StylingType;
-import main.model.Transition;
+import main.model.automata.FA;
+import main.model.visual.StylingType;
+import main.model.automata.Transition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,21 +28,21 @@ public class DiagramVisualiser {
         edges = new ArrayList<>();
     }
 
-    public void draw(NDFA ndfa) {
+    public void draw(FA automata) {
         reset();
 
         /* Needs to be seperate to prevent styling issues */
-        for (Transition t : ndfa.getTransitions()) {
-            if (ndfa.getStartStates().contains(t.getOrigin()) && ndfa.getEndStates().contains(t.getOrigin())){
+        for (Transition t : automata.getTransitions()) {
+            if (automata.getStartStates().contains(t.getOrigin()) && automata.getEndStates().contains(t.getOrigin())){
                 addVertex(t.getOrigin(), StylingType.START_FINAL);
-            } else if (ndfa.getStartStates().contains(t.getOrigin())) {
+            } else if (automata.getStartStates().contains(t.getOrigin())) {
                 addVertex(t.getOrigin(), StylingType.START);
-            } else if (ndfa.getEndStates().contains(t.getOrigin())) {
+            } else if (automata.getEndStates().contains(t.getOrigin())) {
                 addVertex(String.valueOf(t.getOrigin()), StylingType.FINAL);
             }
         }
 
-        for (Transition t : ndfa.getTransitions()) {
+        for (Transition t : automata.getTransitions()) {
             // Add vertices if it doesn't exist
             addVertex(String.valueOf(t.getOrigin()), StylingType.NORMAL);
             addVertex(String.valueOf(t.getDestination()), StylingType.NORMAL);

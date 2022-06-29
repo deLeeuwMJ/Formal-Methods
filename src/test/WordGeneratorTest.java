@@ -1,6 +1,6 @@
 package test;
 
-import main.model.RegExp;
+import main.model.regex.RegExp;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;

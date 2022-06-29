@@ -1,4 +1,4 @@
-package main.model;
+package main.model.regex;
 
 import java.util.List;
 
