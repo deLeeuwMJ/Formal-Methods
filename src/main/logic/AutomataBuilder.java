@@ -5,23 +5,21 @@ import main.model.regex.ParsedRegex;
 
 public class AutomataBuilder {
 
-    public FA build(AutomataType type, ParsedRegex parsedRegex){
-        FA automata = null;
+    public FA build(AutomataType type, ParsedRegex parsedRegex) {
+        ThompsonConstructor thompson = new ThompsonConstructor();
+        FA automata = thompson.construct(parsedRegex);
 
-        if (type == AutomataType.DFA){
-            automata = dfaExample();
-
-        } else if (type == AutomataType.NDFA){
-            ThompsonConstructor thompson = new ThompsonConstructor();
-
-//            automata = ndfaExample();
-            automata = thompson.construct(parsedRegex);
+        // if DFA is selected
+        if (type == AutomataType.DFA) {
+            Ndfa2DfaConverter ndfa2dfa = new Ndfa2DfaConverter();
+            automata.printTransitions();
+            automata = ndfa2dfa.convert((NDFA) automata);
         }
 
         return automata;
     }
 
-    private FA dfaExample(){
+    private FA dfaExample() {
         DFA dfa = new DFA();
 
         dfa.addTransition(new Transition("q1", "q2", "a"));
@@ -38,7 +36,7 @@ public class AutomataBuilder {
         return dfa;
     }
 
-    private FA ndfaExample(){
+    private FA ndfaExample() {
         NDFA ndfa = new NDFA();
 
         ndfa.addTransition(new Transition("q1", "q4", "a"));

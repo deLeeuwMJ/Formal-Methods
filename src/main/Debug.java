@@ -12,7 +12,7 @@ public class Debug {
     public static void main(String[] args) {
         // Validate input
 //        ParsedRegex parsedRegex = new RegExParser().parse("(ab)*(c|de)+");
-        ParsedRegex parsedRegex = new RegExParser().parse("(a|b)+");
+        ParsedRegex parsedRegex = new RegExParser().parse("a(b|c)*");
         if (parsedRegex == null) return;
         System.out.println(parsedRegex.getInfixSequence());
 
@@ -29,7 +29,7 @@ public class Debug {
 
         // Build Automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
-        FA fa = automataBuilder.build(AutomataType.NDFA, parsedRegex);
+        FA fa = automataBuilder.build(AutomataType.DFA, parsedRegex);
         fa.printTransitions();
 
         // Check if valid

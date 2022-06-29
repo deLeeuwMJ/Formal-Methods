@@ -40,6 +40,7 @@ public class ThompsonConstructor {
     }
 
     public NDFA construct(ParsedRegex parsedRegex) {
+        List<Character> letters = new ArrayList<>();
         Stack<NFA> nfaStack = new Stack<>();
 
         for (char c : parsedRegex.getPostfixSequence()) {
@@ -71,6 +72,7 @@ public class ThompsonConstructor {
                         break;
                 }
             } else {
+                if (!letters.contains(c)) letters.add(c);
                 nfaStack.push(new NFA(c));
             }
         }
@@ -81,6 +83,7 @@ public class ThompsonConstructor {
         NDFA ndfa = new NDFA(root.transitions);
         ndfa.addStartState(root.startState);
         ndfa.addEndState(root.finalState);
+        ndfa.addAllLetters(letters);
 
         return ndfa;
     }

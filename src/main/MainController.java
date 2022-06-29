@@ -102,7 +102,7 @@ public class MainController implements Initializable {
         // Check if valid
         if (fa instanceof DFA) {
             DFA dfa = (DFA) fa;
-            loggerBox.displayMatch(dfa.isAccepted("aab"));
+            loggerBox.displayMatch(dfa.isAccepted(inputField.getText()));
         }
     }
 
