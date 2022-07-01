@@ -9,10 +9,12 @@ public class FA {
 
     final List<Character> letters;
     final List<Transition> transitions;
+    final List<String> states;
     final List<String> startStates;
     final List<String> endStates;
 
     public FA() {
+        states = new ArrayList<>();
         transitions = new ArrayList<>();
         startStates = new ArrayList<>();
         endStates = new ArrayList<>();
@@ -21,9 +23,14 @@ public class FA {
 
     public FA(List<Transition> t) {
         transitions = t;
+        states = new ArrayList<>();
         startStates = new ArrayList<>();
         endStates = new ArrayList<>();
         letters = new ArrayList<>();
+    }
+
+    public void addAllStates(List<String> list) {
+        states.addAll(list);
     }
 
     public void addAllLetters(List<Character> list) {
@@ -57,6 +64,10 @@ public class FA {
 
     public List<Character> getLetters() {
         return letters;
+    }
+
+    public List<String> getStates() {
+        return states;
     }
 
     public void printTransitions() {

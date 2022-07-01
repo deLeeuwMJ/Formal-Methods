@@ -12,7 +12,7 @@ public class Debug {
     public static void main(String[] args) {
         // Validate input
 //        ParsedRegex parsedRegex = new RegExParser().parse("(ab)*(c|de)+");
-        ParsedRegex parsedRegex = new RegExParser().parse("a(b|c)*");
+        ParsedRegex parsedRegex = new RegExParser().parse("(a|b)");
         if (parsedRegex == null) return;
         System.out.println(parsedRegex.getInfixSequence());
 
@@ -35,7 +35,7 @@ public class Debug {
         // Check if valid
         if (fa instanceof DFA) {
             DFA dfa = (DFA) fa;
-            System.out.println(dfa.isAccepted("aab"));
+            System.out.println(dfa.isAccepted("ab"));
         }
     }
 }

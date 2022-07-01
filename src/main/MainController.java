@@ -42,8 +42,8 @@ public class MainController implements Initializable {
         AutomataType type = AutomataType.valueOf(automataType.getSelectedToggle().getUserData().toString());
         switch (type) {
             case DFA:
-                regexExample = "a(a|b)+";
-                stringExample = "abb";
+                regexExample = "(b|c)";
+                stringExample = "b";
                 break;
             case NDFA:
                 regexExample = "(a|b)*";

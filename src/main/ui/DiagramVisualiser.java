@@ -19,6 +19,7 @@ public class DiagramVisualiser {
     private final List<Vertex<String>> startFinalVertices;
     private final List<Vertex<String>> vertices;
     private final List<Edge<String, String>> edges;
+    private Vertex<String> trapVertex;
 
     public DiagramVisualiser() {
         startFinalVertices = new ArrayList<>();
@@ -42,6 +43,8 @@ public class DiagramVisualiser {
                 addVertex(t.getOrigin(), StylingType.START);
             } else if (automata.getEndStates().contains(start)) {
                 addVertex(String.valueOf(t.getOrigin()), StylingType.FINAL);
+            } else if (start.equals("TRAP")){
+                addVertex(String.valueOf(t.getOrigin()), StylingType.TRAP);
             }
 
             if (automata.getStartStates().contains(end) && automata.getEndStates().contains(end)) {
@@ -50,6 +53,8 @@ public class DiagramVisualiser {
                 addVertex(t.getDestination(), StylingType.START);
             } else if (automata.getEndStates().contains(end)) {
                 addVertex(t.getDestination(), StylingType.FINAL);
+            } else if (start.equals("TRAP")){
+                addVertex(String.valueOf(t.getDestination()), StylingType.TRAP);
             }
         }
 
@@ -84,6 +89,8 @@ public class DiagramVisualiser {
             case START_FINAL:
                 startFinalVertices.add(v);
                 break;
+            case TRAP:
+                trapVertex = v;
             default:
                 // do nothing
         }
@@ -111,6 +118,10 @@ public class DiagramVisualiser {
 
                     if (beginState.equals(from) && endState.equals(to)) {
                         String newLabel = label + "," + stateLabel;
+
+                        // Remove whitespaces
+                        newLabel = newLabel.replaceAll("\\s+","");
+
                         edges.add(graphList.insertEdge(from, to, formatLabel(newLabel)));
                         graphList.removeEdge(e);
                         edges.remove(e);
@@ -182,6 +193,7 @@ public class DiagramVisualiser {
         if (!startVertices.isEmpty()) startVertices.clear();
         if (!finalVertices.isEmpty()) finalVertices.clear();
         if (!startFinalVertices.isEmpty()) startFinalVertices.clear();
+        if (trapVertex != null) trapVertex = null;
     }
 
     public void build() {
@@ -194,6 +206,7 @@ public class DiagramVisualiser {
             for (Vertex<String> v : startVertices) setStartStyle(v);
             for (Vertex<String> v : finalVertices) setFinalStyle(v);
             for (Vertex<String> v : startFinalVertices) setStartFinalStyle(v);
+            if (trapVertex != null) setTrapStyle(trapVertex);
         } catch (Exception e) {
             // Do nothing
         }
@@ -209,5 +222,9 @@ public class DiagramVisualiser {
 
     private void setFinalStyle(Vertex<String> v) {
         graphView.getStylableVertex(v).setStyle("-fx-fill: #ddf0d1; -fx-stroke: #8dcd65;");
+    }
+
+    private void setTrapStyle(Vertex<String> v) {
+        graphView.getStylableVertex(v).setStyle("-fx-fill: #FCECC5; -fx-stroke: #F8D377;");
     }
 }

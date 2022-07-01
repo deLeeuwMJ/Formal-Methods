@@ -4,19 +4,6 @@ import java.util.*;
 
 public class DFA extends FA {
 
-    private final List<String> startNdfaStates;
-    private final List<String> endNdfaStates;
-
-    public DFA() {
-        startNdfaStates = new ArrayList<>();
-        endNdfaStates = new ArrayList<>();
-    }
-
-    public DFA(NDFA ndfa) {
-        startNdfaStates = ndfa.getStartStates();
-        endNdfaStates = ndfa.getEndStates();
-    }
-
     public boolean isAccepted(String word) {
         // Initialize the first state (should always be q0)
         String currentState = "q0";
