@@ -4,16 +4,25 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import main.logic.*;
-import main.model.*;
-import main.model.automata.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import main.logic.AutomataBuilder;
+import main.logic.PostfixNotationParser;
+import main.logic.RegExParser;
+import main.logic.WordGenerator;
+import main.model.LanguageMode;
+import main.model.automata.AutomataType;
+import main.model.automata.DFA;
+import main.model.automata.FA;
 import main.model.regex.ParsedRegex;
 import main.ui.DiagramVisualiser;
 import main.ui.LoggerBox;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ResourceBundle;
+import java.util.SortedSet;
 
 public class MainController implements Initializable {
 

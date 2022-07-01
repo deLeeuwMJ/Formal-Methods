@@ -1,6 +1,9 @@
 package main.model.automata;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 public class NDFA extends FA {
 

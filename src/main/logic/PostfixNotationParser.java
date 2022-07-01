@@ -2,7 +2,7 @@ package main.logic;
 
 import main.model.regex.ParsedRegex;
 
-import java.util.*;
+import java.util.Stack;
 
 import static main.logic.InputValidator.*;
 

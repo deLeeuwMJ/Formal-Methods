@@ -2,7 +2,10 @@ package main.model.regex;
 
 import main.model.Operator;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Voorbeeld class voor het representeren van reguliere expressies

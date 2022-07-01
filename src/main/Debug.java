@@ -1,11 +1,15 @@
 package main;
 
-import main.logic.*;
-import main.model.automata.*;
+import main.logic.AutomataBuilder;
+import main.logic.PostfixNotationParser;
+import main.logic.RegExParser;
+import main.logic.WordGenerator;
+import main.model.automata.AutomataType;
+import main.model.automata.DFA;
+import main.model.automata.FA;
 import main.model.regex.ParsedRegex;
 
 import java.util.SortedSet;
-import java.util.Stack;
 
 public class Debug {
 

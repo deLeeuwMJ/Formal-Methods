@@ -3,9 +3,7 @@ package main.logic;
 import main.model.automata.*;
 import main.model.regex.ParsedRegex;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class AutomataBuilder {
 

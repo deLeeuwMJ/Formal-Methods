@@ -4,7 +4,9 @@ import main.model.automata.NDFA;
 import main.model.automata.Transition;
 import main.model.regex.ParsedRegex;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 import static main.logic.InputValidator.*;
 

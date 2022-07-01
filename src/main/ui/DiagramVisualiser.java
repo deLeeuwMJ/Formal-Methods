@@ -3,8 +3,8 @@ package main.ui;
 import com.brunomnsilva.smartgraph.graph.Edge;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 import main.model.automata.FA;
-import main.model.visual.StylingType;
 import main.model.automata.Transition;
+import main.model.visual.StylingType;
 
 import java.util.ArrayList;
 import java.util.List;

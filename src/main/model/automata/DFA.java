@@ -1,7 +1,5 @@
 package main.model.automata;
 
-import java.util.*;
-
 public class DFA extends FA {
 
     public boolean isAccepted(String word) {
