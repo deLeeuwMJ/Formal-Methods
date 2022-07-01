@@ -1,5 +1,7 @@
 package main.model.automata;
 
+import java.util.List;
+
 public class DFA extends FA {
 
     public boolean isAccepted(String word) {
@@ -20,5 +22,10 @@ public class DFA extends FA {
 
         // Check whether the state where the word ends up in is an end state
         return endStates.contains(currentState);
+    }
+
+    @Override
+    public void addAllLetters(List<Character> list) {
+        letters.addAll(list);
     }
 }

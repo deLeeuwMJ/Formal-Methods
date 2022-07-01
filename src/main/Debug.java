@@ -7,6 +7,7 @@ import main.logic.WordGenerator;
 import main.model.automata.AutomataType;
 import main.model.automata.DFA;
 import main.model.automata.FA;
+import main.model.automata.MDFA;
 import main.model.regex.ParsedRegex;
 
 import java.util.SortedSet;
@@ -16,7 +17,7 @@ public class Debug {
     public static void main(String[] args) {
         // Validate input
 //        ParsedRegex parsedRegex = new RegExParser().parse("(ab)*(c|de)+");
-        ParsedRegex parsedRegex = new RegExParser().parse("(a|b)");
+        ParsedRegex parsedRegex = new RegExParser().parse("(a|b)+");
         if (parsedRegex == null) return;
         System.out.println(parsedRegex.getInfixSequence());
 
@@ -33,7 +34,7 @@ public class Debug {
 
         // Build Automata
         AutomataBuilder automataBuilder = new AutomataBuilder();
-        FA fa = automataBuilder.build(AutomataType.DFA, parsedRegex);
+        FA fa = automataBuilder.build(AutomataType.MDFA, parsedRegex);
         fa.printTransitions();
 
         // Check if valid

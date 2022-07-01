@@ -9,65 +9,26 @@ public class AutomataBuilder {
 
     public FA build(AutomataType type, ParsedRegex parsedRegex) {
         ThompsonConstructor thompson = new ThompsonConstructor();
+        Ndfa2DfaConverter ndfa2dfa = new Ndfa2DfaConverter();
+        DfaMinimizer dfa = new DfaMinimizer();
+
         FA automata = thompson.construct(parsedRegex);
 
-        // if DFA is selected
-        if (type == AutomataType.DFA) {
-            Ndfa2DfaConverter ndfa2dfa = new Ndfa2DfaConverter();
-            automata = ndfa2dfa.convert((NDFA) automata);
-//            automata = ndfa2dfa.convert((NDFA) ndfaExample2());
+        switch (type) {
+            case DFA: // NFA > DFA
+                automata = ndfa2dfa.convert((NDFA) automata);
+                break;
+            case MDFA: // NFA > DFA > MFA
+//                automata = dfa.minimize(ndfa2dfa.convert((NDFA) automata));
+                automata = dfa.minimize((DFA) minimizableDfaExample());
+                break;
         }
 
         return automata;
     }
 
-    private FA dfaExample() {
-        DFA dfa = new DFA();
-
-        dfa.addTransition(new Transition("q1", "q2", "a"));
-        dfa.addTransition(new Transition("q1", "q1", "b"));
-        dfa.addTransition(new Transition("q2", "q3", "a"));
-        dfa.addTransition(new Transition("q2", "q1", "b"));
-        dfa.addTransition(new Transition("q3", "q2", "a"));
-        dfa.addTransition(new Transition("q3", "q4", "b"));
-        dfa.addTransition(new Transition("q4", "q4", "a"));
-        dfa.addTransition(new Transition("q4", "q4", "b"));
-        dfa.addStartState("q1");
-        dfa.addEndState("q4");
-
-        return dfa;
-    }
-
+    /* https://www.javatpoint.com/automata-conversion-from-nfa-to-dfa Example 1*/
     private FA ndfaExample() {
-        NDFA ndfa = new NDFA();
-
-        ndfa.addTransition(new Transition("q1", "q4", "a"));
-        ndfa.addTransition(new Transition("q1", "q2", "b"));
-
-        ndfa.addTransition(new Transition("q2", "q4", "a"));
-        ndfa.addTransition(new Transition("q2", "q1", "b"));
-        ndfa.addTransition(new Transition("q2", "q3", "b"));
-        ndfa.addTransition(new Transition("q2", "q3", "ε"));
-
-        ndfa.addTransition(new Transition("q3", "q5", "a"));
-        ndfa.addTransition(new Transition("q3", "q5", "b"));
-
-        ndfa.addTransition(new Transition("q4", "q2", "ε"));
-        ndfa.addTransition(new Transition("q4", "q3", "a"));
-
-        ndfa.addTransition(new Transition("q5", "q4", "a"));
-        ndfa.addTransition(new Transition("q5", "q1", "b"));
-
-        ndfa.addAllLetters(Arrays.asList('a', 'b'));
-        ndfa.addStartState("q1");
-        ndfa.addEndState("q4");
-        ndfa.addAllStates(Arrays.asList("q1", "q2", "q3", "q4", "q5"));
-
-
-        return ndfa;
-    }
-
-    private FA ndfaExample2() {
         NDFA ndfa = new NDFA();
 
         ndfa.addTransition(new Transition("q0", "q0", "a"));
@@ -88,5 +49,30 @@ public class AutomataBuilder {
         ndfa.addEndState("q2");
 
         return ndfa;
+    }
+
+    /* https://www.javatpoint.com/minimization-of-dfa */
+    private FA minimizableDfaExample() {
+        DFA dfa = new DFA();
+
+        dfa.addTransition(new Transition("q0", "q1", "a"));
+        dfa.addTransition(new Transition("q0", "q3", "b"));
+
+        dfa.addTransition(new Transition("q1", "q0", "a"));
+        dfa.addTransition(new Transition("q1", "q3", "b"));
+
+        dfa.addTransition(new Transition("q3", "q5", "a"));
+        dfa.addTransition(new Transition("q3", "q5", "b"));
+
+        dfa.addTransition(new Transition("q5", "q5", "a"));
+        dfa.addTransition(new Transition("q5", "q5", "b"));
+
+        dfa.addAllStates(Arrays.asList("q0", "q1", "q3", "q5"));
+        dfa.addAllLetters(Arrays.asList('a', 'b'));
+        dfa.addStartState("q1");
+        dfa.addEndState("q3");
+        dfa.addEndState("q5");
+
+        return dfa;
     }
 }

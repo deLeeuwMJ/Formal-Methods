@@ -42,9 +42,11 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <RadioButton text="Deterministic" userData="DFA" toggleGroup="$automataType"
-                         selected="true"/>
-            <RadioButton text="Nondeterministic" userData="NDFA" toggleGroup="$automataType"/>
+            <RadioButton text="NDFA" userData="NDFA" toggleGroup="$automataType" selected="true"/>
+
+            <RadioButton text="DFA" userData="DFA" toggleGroup="$automataType"/>
+
+            <RadioButton text="M-DFA" userData="MDFA" toggleGroup="$automataType"/>
         </HBox>
 
         <Label text="Language:"

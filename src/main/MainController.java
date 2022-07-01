@@ -16,6 +16,7 @@ import main.model.LanguageMode;
 import main.model.automata.AutomataType;
 import main.model.automata.DFA;
 import main.model.automata.FA;
+import main.model.automata.MDFA;
 import main.model.regex.ParsedRegex;
 import main.ui.DiagramVisualiser;
 import main.ui.LoggerBox;
@@ -50,6 +51,7 @@ public class MainController implements Initializable {
         String regexExample, stringExample = regexExample = "";
         AutomataType type = AutomataType.valueOf(automataType.getSelectedToggle().getUserData().toString());
         switch (type) {
+            case MDFA:
             case DFA:
                 regexExample = "(b|c)";
                 stringExample = "b";
