@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import main.ui.EnumChoiceBox?>
 <GridPane fx:controller="main.MainController"
           xmlns:fx="http://javafx.com/fxml"
           prefHeight="-Infinity"
@@ -21,6 +22,7 @@
               style="-fx-padding: 16 16 16 16;">
 
         <fx:define>
+            <ToggleGroup fx:id="inputType"/>
             <ToggleGroup fx:id="automataType"/>
             <ToggleGroup fx:id="languageMode"/>
         </fx:define>
@@ -30,8 +32,7 @@
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0; -fx-font-weight: bold; -fx-wrap-text:true; -fx-font-size: 26;"/>
 
-
-        <Label text="Automata:"
+        <Label text="Input source:"
                GridPane.rowIndex="1"
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
@@ -42,14 +43,11 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <RadioButton text="NDFA" userData="NDFA" toggleGroup="$automataType" selected="true"/>
-
-            <RadioButton text="DFA" userData="DFA" toggleGroup="$automataType"/>
-
-            <RadioButton text="M-DFA" userData="MDFA" toggleGroup="$automataType"/>
+            <RadioButton text="Example" userData="EXAMPLE" toggleGroup="$inputType" selected="true"/>
+            <RadioButton text="Custom" userData="USER" toggleGroup="$inputType"/>
         </HBox>
 
-        <Label text="Language:"
+        <Label text="Result automata:"
                GridPane.rowIndex="2"
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
@@ -60,12 +58,12 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <RadioButton text="Start" userData="START" toggleGroup="$languageMode" selected="true"/>
-            <RadioButton text="Contains" userData="CONTAINS" toggleGroup="$languageMode"/>
-            <RadioButton text="Ends" userData="ENDS" toggleGroup="$languageMode"/>
+            <RadioButton text="NDFA" userData="NDFA" toggleGroup="$automataType" selected="true"/>
+            <RadioButton text="DFA" userData="DFA" toggleGroup="$automataType"/>
+            <RadioButton text="M-DFA" userData="MDFA" toggleGroup="$automataType"/>
         </HBox>
 
-        <Label text="RegEx:"
+        <Label text="Custom language:"
                GridPane.rowIndex="3"
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
@@ -76,18 +74,45 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
+            <RadioButton fx:id="noneRadioButton" text="None" userData="NONE" toggleGroup="$languageMode" selected="true"/>
+            <RadioButton fx:id="startRadioButton" text="Start" userData="START" toggleGroup="$languageMode" disable="true"/>
+            <RadioButton fx:id="containRadioButton" text="Contains" userData="CONTAINS" toggleGroup="$languageMode" disable="true"/>
+            <RadioButton fx:id="endRadioButton" text="Ends" userData="ENDS" toggleGroup="$languageMode" disable="true"/>
+        </HBox>
+
+        <Label text="User input:"
+               GridPane.rowIndex="4"
+               GridPane.columnIndex="0"
+               style="-fx-padding: 0 0 16 0;"/>
+
+        <EnumChoiceBox fx:id="exampleChoiceBox"
+                       enumType="main.model.example.NdfaExampleId"
+                       prefHeight="11.0"
+                       prefWidth="105.0"
+                       GridPane.rowIndex="4"
+                       GridPane.columnIndex="1"
+                       style="-fx-padding: 0 0 16 0;"/>
+
+        <HBox fx:id="userInput"
+              visible="false"
+              spacing="10"
+              GridPane.rowIndex="4"
+              GridPane.columnIndex="1"
+              alignment="CENTER_LEFT"
+              style="-fx-padding: 0 0 16 0;">
+
             <TextField fx:id="regexField"/>
             <TextField fx:id="lengthField" maxWidth="64"/>
         </HBox>
 
-        <Label text="String:"
-               GridPane.rowIndex="4"
+        <Label text="Validate String:"
+               GridPane.rowIndex="5"
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
 
 
         <HBox spacing="10"
-              GridPane.rowIndex="4"
+              GridPane.rowIndex="5"
               GridPane.columnIndex="1"
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
@@ -97,8 +122,8 @@
         </HBox>
 
         <columnConstraints>
-            <ColumnConstraints percentWidth="20"/>
-            <ColumnConstraints percentWidth="80"/>
+            <ColumnConstraints percentWidth="30"/>
+            <ColumnConstraints percentWidth="70"/>
         </columnConstraints>
 
     </GridPane>

@@ -1,13 +1,13 @@
 package main;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import main.logic.AutomataBuilder;
 import main.logic.PostfixNotationParser;
 import main.logic.RegExParser;
@@ -18,20 +18,25 @@ import main.model.automata.DFA;
 import main.model.automata.FA;
 import main.model.automata.MDFA;
 import main.model.regex.ParsedRegex;
+import main.model.visual.InputType;
 import main.ui.DiagramVisualiser;
+import main.ui.EnumChoiceBox;
 import main.ui.LoggerBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
 
-public class MainController implements Initializable {
+public class MainController implements Initializable, ChangeListener<Toggle> {
 
     @FXML
     public Button runButton, resetButton, setExample;
     public TextField lengthField, inputField, regexField;
-    public ToggleGroup automataType, languageMode;
+    public ToggleGroup inputType, automataType, languageMode;
     public ListView<Node> logList;
+    public EnumChoiceBox exampleChoiceBox;
+    public HBox userInput;
+    public RadioButton noneRadioButton, startRadioButton, containRadioButton, endRadioButton;
 
     // Helper classes
     private DiagramVisualiser diagramVisualiser;
@@ -41,6 +46,18 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         diagramVisualiser = new DiagramVisualiser();
         loggerBox = new LoggerBox(logList);
+
+        inputType.selectedToggleProperty().addListener(this);
+    }
+
+    private void initListeners() {
+        inputType.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+            public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+
+
+
+            }
+        });
     }
 
     public void onExampleButton(ActionEvent actionEvent) {
@@ -128,5 +145,28 @@ public class MainController implements Initializable {
 
     private LanguageMode getLanguageMode() {
         return LanguageMode.valueOf(languageMode.getSelectedToggle().getUserData().toString());
+    }
+
+    @Override
+    public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+        if (inputType.getSelectedToggle() != null) {
+            switch (InputType.valueOf(inputType.getSelectedToggle().getUserData().toString())){
+                case EXAMPLE:
+                    updateVisibility(true);
+                    break;
+                case USER:
+                    updateVisibility(false);
+                    break;
+            }
+        }
+    }
+
+    private void updateVisibility(boolean val){
+        exampleChoiceBox.setVisible(val);
+        userInput.setVisible(!val);
+        noneRadioButton.setSelected(true); // always reset to first option
+        startRadioButton.setDisable(val);
+        containRadioButton.setDisable(val);
+        endRadioButton.setDisable(val);
     }
 }

@@ -23,7 +23,7 @@ public class Main extends Application {
 
     private static final String APP_TITLE = "Formele methoden";
     private static final String CSS_PATH = "main/main.css";
-    private static final Integer APP_WIDTH = 1280;
+    private static final Integer APP_WIDTH = 1440;
     private static final Integer APP_HEIGHT = 720;
 
     public static SmartGraphPanel<String, String> graphView;
