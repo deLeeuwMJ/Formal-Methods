@@ -65,7 +65,33 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
     public void onRunButton(ActionEvent actionEvent) {
         resetData();
 
+        String input = regexField.getText();
+
         if (getInputType() == InputType.USER) {
+            switch (getLanguageMode()){
+                case START:
+                    DFA testDfaStartsWith = new DFA();
+                    testDfaStartsWith = testDfaStartsWith.startsWith("aab");
+                    diagramVisualiser.draw(testDfaStartsWith);
+                    testDfaStartsWith.isAccepted("aab");
+                    return;
+                case CONTAINS:
+                    DFA testDfaShouldContain = new DFA();
+                    testDfaShouldContain = testDfaShouldContain.contains("aab");
+                    diagramVisualiser.draw(testDfaShouldContain);
+                    testDfaShouldContain.isAccepted("aab");
+                    return;
+                case ENDS:
+                    DFA testDfaEndsWith = new DFA();
+                    testDfaEndsWith = testDfaEndsWith.endsWith("aab");
+                    diagramVisualiser.draw(testDfaEndsWith);
+                    testDfaEndsWith.isAccepted("aab");
+                   return;
+                case NONE:
+                default:
+                    break;
+            }
+
             // Validate input
             ParsedRegex parsedRegex = new RegExParser().parse(regexField.getText());
             if (parsedRegex == null) {

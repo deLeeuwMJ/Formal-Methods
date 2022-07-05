@@ -1,10 +1,13 @@
 package main.model.automata;
 
+import main.logic.Ndfa2DfaConverter;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class DFA extends FA {
 
-    public DFA(){
+    public DFA() {
         super();
     }
 
@@ -35,5 +38,97 @@ public class DFA extends FA {
     @Override
     public void addAllLetters(List<Character> list) {
         letters.addAll(list);
+    }
+
+    public DFA startsWith(String input) {
+        NDFA ndfa = new NDFA();
+
+        for (int i = 0; i < input.length(); i++) {
+
+            String currentState = "q" + (i + 1);
+            String nextState = "q" + (i + 2);
+            String symbol = input;
+
+            ndfa.addTransition(new Transition(currentState, nextState, symbol));
+            ndfa.addState(currentState);
+        }
+
+        String endState = "q" + (input.length());
+        ndfa.addTransition(new Transition(endState, endState, "a"));
+        ndfa.addTransition(new Transition(endState, endState, "b"));
+
+        ndfa.addStartState("q1");
+        ndfa.addEndState(endState);
+        ndfa.getStartStates().add("q1");
+        ndfa.getEndStates().add(endState);
+
+        ndfa.addAllLetters(Arrays.asList('a', 'b'));
+
+        Ndfa2DfaConverter ndfa2DfaConverter = new Ndfa2DfaConverter();
+        return ndfa2DfaConverter.convert(ndfa);
+    }
+
+    public DFA endsWith(String input) {
+        NDFA ndfa = new NDFA();
+
+        // (a|b)*aab
+
+        for (int i = 0; i < input.length(); i++) {
+
+            String currentState = "q" + (i);
+            String nextState = "q" + (i + 1);
+            String symbol = String.valueOf(input.charAt(i));
+
+            ndfa.addTransition(new Transition(currentState, nextState, symbol));
+
+//            String returnSymbol = symbol.equals("a") ? "b" : "a";
+//            ndfa.addTransition(new Transition(currentState, "q1", returnSymbol));
+            ndfa.addState(currentState);
+            ndfa.addState(nextState);
+        }
+
+        String startState = ndfa.getStates().get(0);
+        String endState = "q" + (ndfa.getStates().size() - 1);
+        ndfa.addTransition(new Transition(endState, startState, "a"));
+        ndfa.addTransition(new Transition(endState, startState, "b"));
+
+        ndfa.addStartState(startState);
+        ndfa.addEndState(endState);
+
+        ndfa.addAllLetters(Arrays.asList('a', 'b'));
+
+        Ndfa2DfaConverter ndfa2DfaConverter = new Ndfa2DfaConverter();
+        return ndfa2DfaConverter.convert(ndfa);
+    }
+
+    public DFA contains(String input) {
+        NDFA ndfa = new NDFA();
+
+        for (int i = 0; i < input.length(); i++) {
+
+            String currentState = "q" + (i + 1);
+            String nextState = "q" + (i + 2);
+            String symbol = input;
+
+            ndfa.addTransition(new Transition(currentState, nextState, symbol));
+
+            String returnSymbol = symbol == "a" ? "b" : "a";
+            ndfa.addTransition(new Transition(currentState, "q1", returnSymbol));
+            ndfa.addState(currentState);
+        }
+
+        String endState = "q" + (input.length() + 1);
+        ndfa.addTransition(new Transition(endState, endState, "a"));
+        ndfa.addTransition(new Transition(endState, endState, "b"));
+
+        ndfa.addStartState("q1");
+        ndfa.addEndState(endState);
+        ndfa.getStartStates().add("q1");
+        ndfa.getEndStates().add(endState);
+
+        ndfa.addAllLetters(Arrays.asList('a', 'b'));
+
+        Ndfa2DfaConverter ndfa2DfaConverter = new Ndfa2DfaConverter();
+        return ndfa2DfaConverter.convert(ndfa);
     }
 }

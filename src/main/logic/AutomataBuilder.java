@@ -57,37 +57,4 @@ public class AutomataBuilder {
 
         return automata;
     }
-
-    private FA dfaExample(){
-        DFA dfa = new DFA();
-
-        dfa.addTransition(new Transition("q1", "q2", "a"));
-        dfa.addTransition(new Transition("q1", "q1", "b"));
-
-        dfa.addTransition(new Transition("q2", "q3", "a"));
-        dfa.addTransition(new Transition("q2", "q1", "b"));
-
-        dfa.addTransition(new Transition("q3", "q2", "a"));
-        dfa.addTransition(new Transition("q3", "q4", "b"));
-
-        dfa.addTransition(new Transition("q4", "q4", "a"));
-        dfa.addTransition(new Transition("q4", "q4", "b"));
-
-        dfa.addStartState("q1");
-        dfa.addEndState("q4");
-
-        return dfa;
-    }
-
-    private void testDfaStartsEndsContains()
-    {
-        DFA testDfaStartsWith = new DFA();
-        testDfaStartsWith.startsWith("aab");
-
-        DFA testDfaEndsWith = new DFA();
-        testDfaEndsWith.endsWith("aab");
-
-        DFA testDfaShouldContain = new DFA();
-        testDfaShouldContain.Contains("aab");
-    }
 }
