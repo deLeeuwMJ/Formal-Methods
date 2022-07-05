@@ -79,8 +79,6 @@
                          selected="true"/>
             <RadioButton fx:id="startRadioButton" text="Start" userData="START" toggleGroup="$languageMode"
                          disable="true"/>
-            <RadioButton fx:id="containRadioButton" text="Contains" userData="CONTAINS" toggleGroup="$languageMode"
-                         disable="true"/>
             <RadioButton fx:id="endRadioButton" text="Ends" userData="ENDS" toggleGroup="$languageMode" disable="true"/>
         </HBox>
 
@@ -109,7 +107,7 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <TextField fx:id="regexField" text="ab(c|d)+(e)*"/>
+            <TextField fx:id="regexField"/>
             <TextField fx:id="lengthField" maxWidth="64" text="5"/>
         </HBox>
 

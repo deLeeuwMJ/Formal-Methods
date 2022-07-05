@@ -18,7 +18,7 @@ public class RegExParser {
         }
 
         // Check parenthesis
-        if (!evenAmountOfParenthesis(regex)){
+        if (!evenAmountOfParenthesis(regex)){ // todo Parenthesis needs to be an even number
             System.out.println("Invalid Regular Expression Parenthesis Input.");
             return null;
         }

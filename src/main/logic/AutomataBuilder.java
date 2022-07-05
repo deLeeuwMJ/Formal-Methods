@@ -1,5 +1,6 @@
 package main.logic;
 
+import main.model.LanguageMode;
 import main.model.automata.AutomataType;
 import main.model.automata.DFA;
 import main.model.automata.FA;
@@ -10,7 +11,7 @@ import main.model.regex.ParsedRegex;
 
 public class AutomataBuilder {
 
-    public FA build(AutomataType type, ParsedRegex parsedRegex) {
+    public FA build(AutomataType type, LanguageMode language, ParsedRegex parsedRegex) {
         ThompsonConstructor thompson = new ThompsonConstructor();
         Ndfa2DfaConverter ndfa2dfa = new Ndfa2DfaConverter();
         DfaMinimizer dfa = new DfaMinimizer();
@@ -20,6 +21,13 @@ public class AutomataBuilder {
         switch (type) {
             case DFA: // NFA > DFA
                 automata = ndfa2dfa.convert((NDFA) automata);
+
+                if (language == LanguageMode.START) {
+                    automata.modifyTransitions(FA.ModifyTransitions.FINAL_ITSELF);
+                } else if (language == LanguageMode.ENDS) {
+                    automata.modifyTransitions(FA.ModifyTransitions.FINAL_TO_START);
+                }
+
                 break;
             case MDFA: // NFA > DFA > MFA
                 automata = dfa.minimize(ndfa2dfa.convert((NDFA) automata));
@@ -43,7 +51,7 @@ public class AutomataBuilder {
                 DfaExampleId dfaId = (DfaExampleId) id;
                 if (dfaId.name().contains("PRE")) {
                     automata = exampleLoader.load(type, dfaId);
-                } else if (!dfaId.name().contains("MDFA")){
+                } else if (!dfaId.name().contains("MDFA")) {
                     automata = ndfa2dfa.convert((NDFA) exampleLoader.load(type, id));
                 }
                 break;

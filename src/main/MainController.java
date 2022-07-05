@@ -27,15 +27,15 @@ import main.ui.EnumChoiceBox;
 import main.ui.LoggerBox;
 
 import java.net.URL;
+import java.util.LinkedHashSet;
+import java.util.Queue;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
 
 public class MainController implements Initializable, ChangeListener<Toggle> {
 
-    public static final String DEFAULT_VALIDATE_STRING = "abab";
-
     @FXML
-    public RadioButton noneRadioButton, startRadioButton, containRadioButton, endRadioButton, mdfaRadiobutton;
+    public RadioButton noneRadioButton, startRadioButton, endRadioButton, mdfaRadiobutton;
     public Button runButton, resetButton;
     public TextField lengthField, inputField, regexField;
     public ToggleGroup inputType, automataType, languageMode;
@@ -54,6 +54,7 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
 
         inputType.selectedToggleProperty().addListener(this);
         automataType.selectedToggleProperty().addListener(this);
+        languageMode.selectedToggleProperty().addListener(this);
         exampleChoiceBox.getSelectionModel().selectFirst();
     }
 
@@ -68,32 +69,22 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
         String input = regexField.getText();
 
         if (getInputType() == InputType.USER) {
-            switch (getLanguageMode()){
+            switch (getLanguageMode()) {
                 case START:
-                    DFA testDfaStartsWith = new DFA();
-                    testDfaStartsWith = testDfaStartsWith.startsWith("aab");
-                    diagramVisualiser.draw(testDfaStartsWith);
-                    testDfaStartsWith.isAccepted("aab");
-                    return;
-                case CONTAINS:
-                    DFA testDfaShouldContain = new DFA();
-                    testDfaShouldContain = testDfaShouldContain.contains("aab");
-                    diagramVisualiser.draw(testDfaShouldContain);
-                    testDfaShouldContain.isAccepted("aab");
-                    return;
+                    String sLetters = generateOrKleeneFromLetter(input);
+                    input = input + sLetters; //r aab(a|b)*
+                    break;
                 case ENDS:
-                    DFA testDfaEndsWith = new DFA();
-                    testDfaEndsWith = testDfaEndsWith.endsWith("aab");
-                    diagramVisualiser.draw(testDfaEndsWith);
-                    testDfaEndsWith.isAccepted("aab");
-                   return;
+                    String eLetters = generateOrKleeneFromLetter(input);
+                    input = eLetters + input; //r (a|b)*aab
+                    break;
                 case NONE:
                 default:
-                    break;
+                    input = regexField.getText();
             }
 
             // Validate input
-            ParsedRegex parsedRegex = new RegExParser().parse(regexField.getText());
+            ParsedRegex parsedRegex = new RegExParser().parse(input);
             if (parsedRegex == null) {
                 loggerBox.displayError(LoggerBox.LogErrorType.INVALID_REGEX);
                 return;
@@ -106,14 +97,14 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
 
             // Generate (in)valid words with postfix
             WordGenerator wordGenerator = new WordGenerator();
-            SortedSet<String> validWords = wordGenerator.generateValidWords(parsedRegex, Integer.parseInt(lengthField.getText()));
+            SortedSet<String> validWords = wordGenerator.generateValidWords(parsedRegex, Integer.parseInt(lengthField.getText())); //todo lengthfield only allow
             SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, Integer.parseInt(lengthField.getText()));
             loggerBox.displayLanguage(validWords, true);
             loggerBox.displayLanguage(invalidWords, false);
 
             // Build Automata
             AutomataBuilder automataBuilder = new AutomataBuilder();
-            FA fa = automataBuilder.build(getAutomataType(), parsedRegex);
+            FA fa = automataBuilder.build(getAutomataType(), getLanguageMode(), parsedRegex);
             loggerBox.displayTransitions(fa.getTransitions());
             diagramVisualiser.draw(fa);
 
@@ -127,7 +118,7 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
             AutomataBuilder automataBuilder = new AutomataBuilder();
             FA fa = automataBuilder.build(getAutomataType(), (ExampleId) exampleChoiceBox.getSelectionModel().getSelectedItem());
 
-            if (fa == null){
+            if (fa == null) {
                 loggerBox.displayError(LoggerBox.LogErrorType.EXAMPLE_NOT_MEANT_FOR_THIS_AUTOMATA);
                 return;
             }
@@ -138,28 +129,64 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
             // Check if valid
             if (fa instanceof DFA) {
                 DFA dfa = (DFA) fa;
-                loggerBox.displayMatch(dfa.isAccepted(inputField.getText()));
+                loggerBox.displayMatch(dfa.isAccepted(inputField.getText())); //todo validate if input contains letters from given expression
             }
         }
+    }
+
+    private String generateOrKleeneFromLetter(String input) {
+        StringBuilder builder = new StringBuilder("(");
+        LinkedHashSet<Character> seenLetters = new LinkedHashSet<>();
+
+        for (int i = 0; i < input.length(); i++) {
+            char inputChar = input.charAt(i);
+            String inputCharString = String.valueOf(inputChar);
+
+            if (!seenLetters.contains(inputCharString)) {
+                if (seenLetters.add(inputChar)) seenLetters.add(inputChar);
+                builder.append(inputCharString);
+                if (i < input.length() - 1) builder.append("|");
+
+            }
+        }
+
+        builder.append(")*");
+        return builder.toString();
     }
 
     @Override
     public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
         switch (newValue.getUserData().toString()) {
+            case "NONE":
+                regexField.setText("ab(c|d)+(e)*");
+                break;
+            case "START":
+            case "ENDS":
+                regexField.setText("abc");
+                break;
             case "EXAMPLE":
                 updateFieldVisibility(true);
+                updateLanguageVisibility(true);
                 break;
             case "USER":
                 updateFieldVisibility(false);
+                regexField.setText("ab(c|d)+(e)*");
                 break;
             case "NDFA":
                 updateChoiceBoxVisibility(NdfaExampleId.values(), true);
+                updateLanguageVisibility(true);
                 break;
             case "MDFA":
             case "DFA":
                 updateChoiceBoxVisibility(DfaExampleId.values(), false);
+                if (getInputType() != InputType.EXAMPLE) updateLanguageVisibility(false);
                 break;
         }
+    }
+
+    private void updateLanguageVisibility(boolean val) {
+        startRadioButton.setDisable(val);
+        endRadioButton.setDisable(val);
     }
 
     private void updateChoiceBoxVisibility(ExampleId[] values, boolean val) {
@@ -168,10 +195,10 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
         updateValidateField(val);
     }
 
-    private void updateValidateField(boolean val){
+    private void updateValidateField(boolean val) {
         if (val) {
             inputField.clear();
-        } else inputField.setText(DEFAULT_VALIDATE_STRING);
+        }
         inputField.setDisable(val);
     }
 
@@ -179,9 +206,6 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
         noneRadioButton.setSelected(true); // always reset to first choice
         exampleChoiceBox.setVisible(val);
         userInput.setVisible(!val);
-        startRadioButton.setDisable(val);
-        containRadioButton.setDisable(val);
-        endRadioButton.setDisable(val);
         mdfaRadiobutton.setDisable(!val);
         updateValidateField(val);
         resetData();

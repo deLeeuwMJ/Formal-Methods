@@ -29,6 +29,8 @@ public class Ndfa2DfaConverter {
 
         // Keep iterating until there are no more changes possible
         while (prevSize < currSize) {
+//            prevSize = newStatesList.size(); //temp
+
             transitionList = iterate(ndfa, newStatesList);
             newStatesList = combineStates(transitionList, newStatesList);
 
@@ -40,6 +42,8 @@ public class Ndfa2DfaConverter {
 
             // Must be last in order
             newStatesList = reachableOnly;
+
+//            currSize = newStatesList.size(); //temp
         }
 
         // Create DFA()
@@ -61,9 +65,13 @@ public class Ndfa2DfaConverter {
             dfa.addTransition(new Transition(t.start, t.end, t.letter));
         }
 
+        // Add letters
+        dfa.addAllLetters(ndfa.getLetters());
+
         return dfa;
     }
 
+    // Todo debug why elminates non reachable after size >= 5
     private List<String> eliminateNonReachable(List<TableTransition> transitions, List<String> combinedList) {
         // Uses linkedHashSet to easily identify duplicates
         LinkedHashSet<String> seenStates = new LinkedHashSet<>();

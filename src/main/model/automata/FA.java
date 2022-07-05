@@ -3,6 +3,7 @@ package main.model.automata;
 import main.logic.Ndfa2DfaConverter;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static main.logic.InputValidator.EPSILON_SYMBOL;
@@ -79,4 +80,33 @@ public class FA {
     public void printTransitions() {
         for (Transition t : transitions) System.out.println(t.toString());
     }
+
+    public enum ModifyTransitions {
+        FINAL_TO_START, FINAL_ITSELF
+    }
+
+    //todo reset seenletters for every endstate
+    //todo check transitions from endstate for current letter
+    public void modifyTransitions(ModifyTransitions m) {
+        LinkedHashSet<Character> seenLetters = new LinkedHashSet<>();
+        List<Transition> copyList = new ArrayList<>(transitions);
+
+        for (Transition t : copyList) {
+            if (getEndStates().contains(t.getDestination())) {
+                for (int i = 0; i < letters.size() - 1; i++) { // -1 to prevent use of epsilon
+                    Character c = letters.get(i);
+
+                    if (!seenLetters.contains(c)) {
+                        if (seenLetters.add(c)) seenLetters.add(c);
+                        if (m == ModifyTransitions.FINAL_ITSELF) {
+                            transitions.add(new Transition(t.getDestination(), t.getDestination(), String.valueOf(c)));
+                        } else if (m == ModifyTransitions.FINAL_TO_START) {
+                            transitions.add(new Transition(t.getDestination(), getStartStates().get(0), String.valueOf(c)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
