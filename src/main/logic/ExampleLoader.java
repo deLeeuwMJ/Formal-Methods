@@ -30,13 +30,13 @@ public class ExampleLoader {
 
         switch (id) {
             case SIMPLE_NDFA:
-                ndfa.addTransition(new Transition("q0", "q0", "a"));
-                ndfa.addTransition(new Transition("q0", "q1", "b"));
+                ndfa.addTransition(new Transition("q0", "q1", "a"));
+                ndfa.addTransition(new Transition("q1", "q2", "b"));
 
-                ndfa.addAllStates(Arrays.asList("q0", "q1"));
+                ndfa.addAllStates(Arrays.asList("q0", "q1", "q2"));
                 ndfa.addAllLetters(Arrays.asList('a', 'b'));
                 ndfa.addStartState("q0");
-                ndfa.addEndState("q1");
+                ndfa.addEndState("q2");
 
                 break;
         }
