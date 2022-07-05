@@ -81,8 +81,6 @@ public class FA {
         FINAL_TO_START, FINAL_ITSELF
     }
 
-    //todo reset seenletters for every endstate
-    //todo check transitions from endstate for current letter
     public void modifyTransitions(ModifyTransitions m) {
         List<Transition> copyList = new ArrayList<>(transitions);
         HashMap<String, List<Transition>> lookupTransitionTable = new HashMap<>();

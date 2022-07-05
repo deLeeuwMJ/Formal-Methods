@@ -71,7 +71,7 @@ public class Ndfa2DfaConverter {
         return dfa;
     }
 
-    // Todo debug why elminates non reachable after size >= 5
+    // Todo debug why elminates non reachable after size >= 5 or multiple dot operations
     private List<String> eliminateNonReachable(List<TableTransition> transitions, List<String> combinedList) {
         // Uses linkedHashSet to easily identify duplicates
         LinkedHashSet<String> seenStates = new LinkedHashSet<>();
