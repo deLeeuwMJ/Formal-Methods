@@ -1,10 +1,6 @@
 package main.model.automata;
 
-import main.logic.Ndfa2DfaConverter;
-
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 import static main.logic.InputValidator.EPSILON_SYMBOL;
 
@@ -88,25 +84,52 @@ public class FA {
     //todo reset seenletters for every endstate
     //todo check transitions from endstate for current letter
     public void modifyTransitions(ModifyTransitions m) {
-        LinkedHashSet<Character> seenLetters = new LinkedHashSet<>();
         List<Transition> copyList = new ArrayList<>(transitions);
+        HashMap<String, List<Transition>> lookupTransitionTable = new HashMap<>();
 
-        for (Transition t : copyList) {
-            if (getEndStates().contains(t.getDestination())) {
-                for (int i = 0; i < letters.size() - 1; i++) { // -1 to prevent use of epsilon
-                    Character c = letters.get(i);
+        // Get all possible Transitions from end state;
+        for (String endState : getEndStates()) {
+            List<Transition> allTransitionsContainsEndState = new ArrayList<>();
+            for (Transition t : copyList) {
+                if (endState.equals(t.getOrigin()) || endState.equals(t.getDestination())) {
+                    allTransitionsContainsEndState.add(t);
+                }
+            }
+            lookupTransitionTable.put(endState, allTransitionsContainsEndState);
+        }
 
-                    if (!seenLetters.contains(c)) {
-                        if (seenLetters.add(c)) seenLetters.add(c);
-                        if (m == ModifyTransitions.FINAL_ITSELF) {
-                            transitions.add(new Transition(t.getDestination(), t.getDestination(), String.valueOf(c)));
-                        } else if (m == ModifyTransitions.FINAL_TO_START) {
-                            transitions.add(new Transition(t.getDestination(), getStartStates().get(0), String.valueOf(c)));
-                        }
+        HashMap<String, LinkedHashSet<String>> lookupInOutTable = new HashMap<>();
+
+
+        // retrieve all symbols going in and out
+        for (String endState : getEndStates()) {
+            List<Transition> dependableTransitions = lookupTransitionTable.get(endState);
+            LinkedHashSet<String> goingOut = new LinkedHashSet<>();
+
+            // Get all characters out
+            for (Transition t : dependableTransitions) {
+                if (t.getOrigin().equals(endState)) {
+                    if (goingOut.add(t.getSymbol())) goingOut.add(t.getSymbol());
+                }
+            }
+
+            lookupInOutTable.put(endState, goingOut);
+        }
+
+        // Create new states
+        for (String endState : getEndStates()) {
+            LinkedHashSet<String> goingInOut = lookupInOutTable.get(endState);
+            for (int i = 0; i < letters.size() - 1; i++) {
+                String letter = String.valueOf(letters.get(i));
+
+                if (!goingInOut.contains(letter)) {
+                    if (m == ModifyTransitions.FINAL_ITSELF) {
+                        transitions.add(new Transition(endState, endState, letter));
+                    } else if (m == ModifyTransitions.FINAL_TO_START) {
+                        transitions.add(new Transition(endState, getStartStates().get(0), letter));
                     }
                 }
             }
         }
     }
-
 }

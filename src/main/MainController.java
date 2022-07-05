@@ -35,7 +35,7 @@ import java.util.SortedSet;
 public class MainController implements Initializable, ChangeListener<Toggle> {
 
     @FXML
-    public RadioButton noneRadioButton, startRadioButton, endRadioButton, mdfaRadiobutton;
+    public RadioButton noneRadioButton, startRadioButton, endRadioButton, mdfaRadiobutton, ndfaRadioButton;
     public Button runButton, resetButton;
     public TextField lengthField, inputField, regexField;
     public ToggleGroup inputType, automataType, languageMode;
@@ -162,7 +162,7 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
                 break;
             case "START":
             case "ENDS":
-                regexField.setText("abc");
+                regexField.setText("ab");
                 break;
             case "EXAMPLE":
                 updateFieldVisibility(true);
@@ -171,6 +171,7 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
             case "USER":
                 updateFieldVisibility(false);
                 regexField.setText("ab(c|d)+(e)*");
+                automataType.selectToggle(ndfaRadioButton);
                 break;
             case "NDFA":
                 updateChoiceBoxVisibility(NdfaExampleId.values(), true);

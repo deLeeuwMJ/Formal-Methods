@@ -59,7 +59,7 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <RadioButton text="NDFA" userData="NDFA" toggleGroup="$automataType" selected="true"/>
+            <RadioButton fx:id="ndfaRadioButton" text="NDFA" userData="NDFA" toggleGroup="$automataType" selected="true"/>
             <RadioButton text="DFA" userData="DFA" toggleGroup="$automataType"/>
             <RadioButton fx:id="mdfaRadiobutton" text="M-DFA" userData="MDFA" toggleGroup="$automataType"/>
         </HBox>
