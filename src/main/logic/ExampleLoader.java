@@ -3,35 +3,55 @@ package main.logic;
 import main.model.automata.*;
 import main.model.example.DfaExampleId;
 import main.model.example.ExampleId;
-import main.model.example.MdfaExampleId;
 import main.model.example.NdfaExampleId;
 
 import java.util.Arrays;
 
 public class ExampleLoader {
 
-    public FA load(AutomataType automataType, ExampleId id){
+    public FA load(AutomataType automataType, ExampleId id) {
         FA automata = null;
-        switch (automataType){
+
+        switch (automataType) {
             case NDFA:
                 automata = loadNdfa((NdfaExampleId) id);
                 break;
+            case MDFA:
             case DFA:
                 automata = loadDfa((DfaExampleId) id);
-                break;
-            case MDFA:
-                automata = loadMdfa((MdfaExampleId) id);
                 break;
         }
 
         return automata;
     }
 
-    private NDFA loadNdfa(NdfaExampleId id){
+    private NDFA loadNdfa(NdfaExampleId id) {
         NDFA ndfa = new NDFA();
 
         switch (id) {
-            case NDFA_1: // https://www.javatpoint.com/automata-conversion-from-nfa-to-dfa Example 1
+            case SIMPLE_NDFA:
+                ndfa.addTransition(new Transition("q0", "q0", "a"));
+                ndfa.addTransition(new Transition("q0", "q1", "b"));
+
+                ndfa.addAllStates(Arrays.asList("q0", "q1"));
+                ndfa.addAllLetters(Arrays.asList('a', 'b'));
+                ndfa.addStartState("q0");
+                ndfa.addEndState("q1");
+
+                break;
+        }
+
+        return ndfa;
+    }
+
+    private FA loadDfa(DfaExampleId id) {
+        FA automata = null;
+
+        switch (id) {
+            case PRE_NDFA_2_DFA: // https://www.javatpoint.com/automata-conversion-from-nfa-to-dfa Example 1
+            case POST_NDFA_2_DFA:
+                NDFA ndfa = new NDFA();
+
                 ndfa.addTransition(new Transition("q0", "q0", "a"));
                 ndfa.addTransition(new Transition("q0", "q1", "b"));
 
@@ -48,28 +68,12 @@ public class ExampleLoader {
                 ndfa.addAllLetters(Arrays.asList('a', 'b'));
                 ndfa.addStartState("q0");
                 ndfa.addEndState("q2");
+
+                automata = ndfa;
                 break;
-        }
-
-        return ndfa;
-    }
-
-    private DFA loadDfa(DfaExampleId id){
-        DFA dfa = new DFA();
-
-        switch (id ) {
-            case DFA_1:
-                break;
-        }
-
-        return dfa;
-    }
-
-    private DFA loadMdfa(MdfaExampleId id){
-        DFA dfa = new DFA();
-
-        switch (id ) {
-            case MDFA_1: // https://www.javatpoint.com/minimization-of-dfa
+            case PRE_DFA_2_MDFA:
+            case POST_DFA_2_MDFA:
+                DFA dfa = new DFA();
                 dfa.addTransition(new Transition("q0", "q1", "a"));
                 dfa.addTransition(new Transition("q0", "q3", "b"));
 
@@ -87,9 +91,11 @@ public class ExampleLoader {
                 dfa.addStartState("q1");
                 dfa.addEndState("q3");
                 dfa.addEndState("q5");
+
+                automata = dfa;
                 break;
         }
 
-        return dfa;
+        return automata;
     }
 }

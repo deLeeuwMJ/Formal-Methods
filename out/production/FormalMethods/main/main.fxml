@@ -12,6 +12,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import main.ui.EnumChoiceBox?>
+<?import javafx.scene.layout.StackPane?>
 <GridPane fx:controller="main.MainController"
           xmlns:fx="http://javafx.com/fxml"
           prefHeight="-Infinity"
@@ -60,7 +61,7 @@
 
             <RadioButton text="NDFA" userData="NDFA" toggleGroup="$automataType" selected="true"/>
             <RadioButton text="DFA" userData="DFA" toggleGroup="$automataType"/>
-            <RadioButton text="M-DFA" userData="MDFA" toggleGroup="$automataType"/>
+            <RadioButton fx:id="mdfaRadiobutton" text="M-DFA" userData="MDFA" toggleGroup="$automataType"/>
         </HBox>
 
         <Label text="Custom language:"
@@ -74,9 +75,12 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <RadioButton fx:id="noneRadioButton" text="None" userData="NONE" toggleGroup="$languageMode" selected="true"/>
-            <RadioButton fx:id="startRadioButton" text="Start" userData="START" toggleGroup="$languageMode" disable="true"/>
-            <RadioButton fx:id="containRadioButton" text="Contains" userData="CONTAINS" toggleGroup="$languageMode" disable="true"/>
+            <RadioButton fx:id="noneRadioButton" text="None" userData="NONE" toggleGroup="$languageMode"
+                         selected="true"/>
+            <RadioButton fx:id="startRadioButton" text="Start" userData="START" toggleGroup="$languageMode"
+                         disable="true"/>
+            <RadioButton fx:id="containRadioButton" text="Contains" userData="CONTAINS" toggleGroup="$languageMode"
+                         disable="true"/>
             <RadioButton fx:id="endRadioButton" text="Ends" userData="ENDS" toggleGroup="$languageMode" disable="true"/>
         </HBox>
 
@@ -85,13 +89,17 @@
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
 
-        <EnumChoiceBox fx:id="exampleChoiceBox"
-                       enumType="main.model.example.NdfaExampleId"
-                       prefHeight="11.0"
-                       prefWidth="105.0"
-                       GridPane.rowIndex="4"
-                       GridPane.columnIndex="1"
-                       style="-fx-padding: 0 0 16 0;"/>
+        <StackPane GridPane.rowIndex="4"
+                   GridPane.columnIndex="1"
+                   alignment="CENTER_LEFT"
+                   style="-fx-padding: 0 0 16 0;">
+
+            <EnumChoiceBox fx:id="exampleChoiceBox"
+                           value=""
+                           enumType="main.model.example.NdfaExampleId"
+                           prefWidth="175.0"/>
+        </StackPane>
+
 
         <HBox fx:id="userInput"
               visible="false"
@@ -101,8 +109,8 @@
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <TextField fx:id="regexField"/>
-            <TextField fx:id="lengthField" maxWidth="64"/>
+            <TextField fx:id="regexField" text="ab(c|d)+(e)*"/>
+            <TextField fx:id="lengthField" maxWidth="64" text="5"/>
         </HBox>
 
         <Label text="Validate String:"
@@ -110,14 +118,13 @@
                GridPane.columnIndex="0"
                style="-fx-padding: 0 0 16 0;"/>
 
-
         <HBox spacing="10"
               GridPane.rowIndex="5"
               GridPane.columnIndex="1"
               alignment="CENTER_LEFT"
               style="-fx-padding: 0 0 16 0;">
 
-            <TextField fx:id="inputField"/>
+            <TextField fx:id="inputField" disable="true"/>
 
         </HBox>
 
@@ -134,16 +141,13 @@
 
         <Button fx:id="runButton"
                 text="Run"
+                minWidth="100"
                 onAction="#onRunButton"/>
-
-        <Button fx:id="setExample"
-                text="Load Example"
-                onAction="#onExampleButton"/>
 
         <Button fx:id="resetButton"
                 text="Reset"
+                minWidth="100"
                 onAction="#onResetButton"/>
-
     </HBox>
 
     <VBox GridPane.rowIndex="2"

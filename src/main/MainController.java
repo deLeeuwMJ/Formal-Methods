@@ -2,6 +2,7 @@ package main;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,7 +17,9 @@ import main.model.LanguageMode;
 import main.model.automata.AutomataType;
 import main.model.automata.DFA;
 import main.model.automata.FA;
-import main.model.automata.MDFA;
+import main.model.example.DfaExampleId;
+import main.model.example.ExampleId;
+import main.model.example.NdfaExampleId;
 import main.model.regex.ParsedRegex;
 import main.model.visual.InputType;
 import main.ui.DiagramVisualiser;
@@ -29,14 +32,16 @@ import java.util.SortedSet;
 
 public class MainController implements Initializable, ChangeListener<Toggle> {
 
+    public static final String DEFAULT_VALIDATE_STRING = "abab";
+
     @FXML
-    public Button runButton, resetButton, setExample;
+    public RadioButton noneRadioButton, startRadioButton, containRadioButton, endRadioButton, mdfaRadiobutton;
+    public Button runButton, resetButton;
     public TextField lengthField, inputField, regexField;
     public ToggleGroup inputType, automataType, languageMode;
     public ListView<Node> logList;
     public EnumChoiceBox exampleChoiceBox;
     public HBox userInput;
-    public RadioButton noneRadioButton, startRadioButton, containRadioButton, endRadioButton;
 
     // Helper classes
     private DiagramVisualiser diagramVisualiser;
@@ -48,50 +53,8 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
         loggerBox = new LoggerBox(logList);
 
         inputType.selectedToggleProperty().addListener(this);
-    }
-
-    private void initListeners() {
-        inputType.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
-            public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
-
-
-
-            }
-        });
-    }
-
-    public void onExampleButton(ActionEvent actionEvent) {
-        int steps = 5;
-
-        clearFields();
-
-        String regexExample, stringExample = regexExample = "";
-        AutomataType type = AutomataType.valueOf(automataType.getSelectedToggle().getUserData().toString());
-        switch (type) {
-            case MDFA:
-            case DFA:
-                regexExample = "(b|c)";
-                stringExample = "b";
-                break;
-            case NDFA:
-                regexExample = "(a|b)*";
-                stringExample = "a";
-                break;
-        }
-
-        setFields(regexExample, steps, stringExample);
-    }
-
-    private void setFields(String regex, int steps, String string) {
-        regexField.setText(regex);
-        lengthField.setText(String.valueOf(steps));
-        inputField.setText(string);
-    }
-
-    private void clearFields() {
-        regexField.clear();
-        lengthField.clear();
-        inputField.clear();
+        automataType.selectedToggleProperty().addListener(this);
+        exampleChoiceBox.getSelectionModel().selectFirst();
     }
 
     public void onResetButton(ActionEvent actionEvent) {
@@ -102,41 +65,104 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
     public void onRunButton(ActionEvent actionEvent) {
         resetData();
 
-        // Validate input
-        ParsedRegex parsedRegex = new RegExParser().parse(regexField.getText());
-        if (parsedRegex == null) {
-            loggerBox.displayError(LoggerBox.LogErrorType.INVALID_REGEX);
-            return;
-        } else loggerBox.displayFormattedRegex(parsedRegex);
+        if (getInputType() == InputType.USER) {
+            // Validate input
+            ParsedRegex parsedRegex = new RegExParser().parse(regexField.getText());
+            if (parsedRegex == null) {
+                loggerBox.displayError(LoggerBox.LogErrorType.INVALID_REGEX);
+                return;
+            } else loggerBox.displayFormattedRegex(parsedRegex);
 
-        // Parse into postfix notation to remove parenthesis
-        PostfixNotationParser postfixParser = new PostfixNotationParser();
-        parsedRegex.setPostfixSequence(postfixParser.parse(parsedRegex));
-        loggerBox.displayPostfixNotation(parsedRegex.getPostfixSequence());
+            // Parse into postfix notation to remove parenthesis
+            PostfixNotationParser postfixParser = new PostfixNotationParser();
+            parsedRegex.setPostfixSequence(postfixParser.parse(parsedRegex));
+            loggerBox.displayPostfixNotation(parsedRegex.getPostfixSequence());
 
-        // Generate (in)valid words with postfix
-        WordGenerator wordGenerator = new WordGenerator();
-        SortedSet<String> validWords = wordGenerator.generateValidWords(parsedRegex, Integer.parseInt(lengthField.getText()));
-        SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, Integer.parseInt(lengthField.getText()));
-        loggerBox.displayLanguage(validWords, true);
-        loggerBox.displayLanguage(invalidWords, false);
+            // Generate (in)valid words with postfix
+            WordGenerator wordGenerator = new WordGenerator();
+            SortedSet<String> validWords = wordGenerator.generateValidWords(parsedRegex, Integer.parseInt(lengthField.getText()));
+            SortedSet<String> invalidWords = wordGenerator.generateFaultyWords(validWords, Integer.parseInt(lengthField.getText()));
+            loggerBox.displayLanguage(validWords, true);
+            loggerBox.displayLanguage(invalidWords, false);
 
-        // Build Automata
-        AutomataBuilder automataBuilder = new AutomataBuilder();
-        FA fa = automataBuilder.build(getAutomataType(), parsedRegex);
-        loggerBox.displayTransitions(fa.getTransitions());
-        diagramVisualiser.draw(fa);
+            // Build Automata
+            AutomataBuilder automataBuilder = new AutomataBuilder();
+            FA fa = automataBuilder.build(getAutomataType(), parsedRegex);
+            loggerBox.displayTransitions(fa.getTransitions());
+            diagramVisualiser.draw(fa);
 
-        // Check if valid
-        if (fa instanceof DFA) {
-            DFA dfa = (DFA) fa;
-            loggerBox.displayMatch(dfa.isAccepted(inputField.getText()));
+            // Check if valid
+            if (fa instanceof DFA) {
+                DFA dfa = (DFA) fa;
+                loggerBox.displayMatch(dfa.isAccepted(inputField.getText()));
+            }
+        } else if (getInputType() == InputType.EXAMPLE) {
+            // Build Automata
+            AutomataBuilder automataBuilder = new AutomataBuilder();
+            FA fa = automataBuilder.build(getAutomataType(), (ExampleId) exampleChoiceBox.getSelectionModel().getSelectedItem());
+
+            if (fa == null){
+                loggerBox.displayError(LoggerBox.LogErrorType.EXAMPLE_NOT_MEANT_FOR_THIS_AUTOMATA);
+                return;
+            }
+
+            loggerBox.displayTransitions(fa.getTransitions());
+            diagramVisualiser.draw(fa);
+
+            // Check if valid
+            if (fa instanceof DFA) {
+                DFA dfa = (DFA) fa;
+                loggerBox.displayMatch(dfa.isAccepted(inputField.getText()));
+            }
         }
     }
 
-    private void resetData() {
-        loggerBox.reset();
-        diagramVisualiser.reset();
+    @Override
+    public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+        switch (newValue.getUserData().toString()) {
+            case "EXAMPLE":
+                updateFieldVisibility(true);
+                break;
+            case "USER":
+                updateFieldVisibility(false);
+                break;
+            case "NDFA":
+                updateChoiceBoxVisibility(NdfaExampleId.values(), true);
+                break;
+            case "MDFA":
+            case "DFA":
+                updateChoiceBoxVisibility(DfaExampleId.values(), false);
+                break;
+        }
+    }
+
+    private void updateChoiceBoxVisibility(ExampleId[] values, boolean val) {
+        exampleChoiceBox.setItems(FXCollections.observableArrayList(values));
+        exampleChoiceBox.getSelectionModel().selectFirst();
+        updateValidateField(val);
+    }
+
+    private void updateValidateField(boolean val){
+        if (val) {
+            inputField.clear();
+        } else inputField.setText(DEFAULT_VALIDATE_STRING);
+        inputField.setDisable(val);
+    }
+
+    private void updateFieldVisibility(boolean val) {
+        noneRadioButton.setSelected(true); // always reset to first choice
+        exampleChoiceBox.setVisible(val);
+        userInput.setVisible(!val);
+        startRadioButton.setDisable(val);
+        containRadioButton.setDisable(val);
+        endRadioButton.setDisable(val);
+        mdfaRadiobutton.setDisable(!val);
+        updateValidateField(val);
+        resetData();
+    }
+
+    private InputType getInputType() {
+        return InputType.valueOf(inputType.getSelectedToggle().getUserData().toString());
     }
 
     private AutomataType getAutomataType() {
@@ -147,26 +173,13 @@ public class MainController implements Initializable, ChangeListener<Toggle> {
         return LanguageMode.valueOf(languageMode.getSelectedToggle().getUserData().toString());
     }
 
-    @Override
-    public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-        if (inputType.getSelectedToggle() != null) {
-            switch (InputType.valueOf(inputType.getSelectedToggle().getUserData().toString())){
-                case EXAMPLE:
-                    updateVisibility(true);
-                    break;
-                case USER:
-                    updateVisibility(false);
-                    break;
-            }
-        }
+    private void clearFields() {
+        regexField.clear();
+        inputField.clear();
     }
 
-    private void updateVisibility(boolean val){
-        exampleChoiceBox.setVisible(val);
-        userInput.setVisible(!val);
-        noneRadioButton.setSelected(true); // always reset to first option
-        startRadioButton.setDisable(val);
-        containRadioButton.setDisable(val);
-        endRadioButton.setDisable(val);
+    private void resetData() {
+        loggerBox.reset();
+        diagramVisualiser.reset();
     }
 }

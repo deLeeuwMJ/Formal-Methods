@@ -4,6 +4,14 @@ import java.util.List;
 
 public class DFA extends FA {
 
+    public DFA(){
+        super();
+    }
+
+    public DFA(List<Transition> t) {
+        super(t);
+    }
+
     public boolean isAccepted(String word) {
         // Initialize the first state (should always be q0)
         String currentState = "q0";

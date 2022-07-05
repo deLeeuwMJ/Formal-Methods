@@ -1,9 +1,12 @@
 package main.logic;
 
-import main.model.automata.*;
+import main.model.automata.AutomataType;
+import main.model.automata.DFA;
+import main.model.automata.FA;
+import main.model.automata.NDFA;
+import main.model.example.DfaExampleId;
+import main.model.example.ExampleId;
 import main.model.regex.ParsedRegex;
-
-import java.util.Arrays;
 
 public class AutomataBuilder {
 
@@ -20,28 +23,38 @@ public class AutomataBuilder {
                 break;
             case MDFA: // NFA > DFA > MFA
                 automata = dfa.minimize(ndfa2dfa.convert((NDFA) automata));
-//                automata = dfa.minimize((DFA) minimizableDfaExample());
                 break;
         }
 
         return automata;
     }
 
+    public FA build(AutomataType type, ExampleId id) {
+        Ndfa2DfaConverter ndfa2dfa = new Ndfa2DfaConverter();
+        ExampleLoader exampleLoader = new ExampleLoader();
+        DfaMinimizer dfa = new DfaMinimizer();
+        FA automata = null;
 
-    private FA ndfaExample() {
-        NDFA ndfa = new NDFA();
+        switch (type) {
+            case NDFA: // REGEX > NDFA
+                automata = exampleLoader.load(type, id);
+                break;
+            case DFA: // NDFA > DFA
+                DfaExampleId dfaId = (DfaExampleId) id;
+                if (dfaId.name().contains("PRE")) {
+                    automata = exampleLoader.load(type, dfaId);
+                } else if (!dfaId.name().contains("MDFA")){
+                    automata = ndfa2dfa.convert((NDFA) exampleLoader.load(type, id));
+                }
+                break;
+            case MDFA: // DFA > MDFA
+                DfaExampleId mdfaId = (DfaExampleId) id;
+                if (!mdfaId.name().contains("PRE") && mdfaId.name().contains("MDFA")) {
+                    automata = dfa.minimize((DFA) exampleLoader.load(type, id));
+                }
+                break;
+        }
 
-
-
-        return ndfa;
-    }
-
-
-    private FA minimizableDfaExample() {
-        DFA dfa = new DFA();
-
-
-
-        return dfa;
+        return automata;
     }
 }

@@ -2,7 +2,6 @@ package main.logic;
 
 import main.model.automata.DFA;
 import main.model.automata.FA;
-import main.model.automata.MDFA;
 import main.model.automata.Transition;
 import main.ui.ConsoleTable;
 
@@ -70,7 +69,7 @@ public class DfaMinimizer {
         printSet(dfa, allTransitions);
 
         // Create MDFA
-        MDFA mdfa = new MDFA(new ArrayList<>(allTransitions));
+        DFA mdfa = new DFA(new ArrayList<>(allTransitions));
         mdfa.addAllStates(getStates(allTransitions));
 
         // Mark states

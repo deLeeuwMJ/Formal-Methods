@@ -21,7 +21,7 @@ public class LoggerBox {
     }
 
     public enum LogErrorType {
-        NO_FUNCTIONALITY, NO_OPERATOR_SELECTED, INVALID_OPERATOR_ACTION, EMPTY_FIELD, LENGTH_CANT_BE_SMALLER_THAN_TERMINAL_SIZE, INVALID_REGEX;
+        NOT_IMPLEMENTED, NO_OPERATOR_SELECTED, INVALID_OPERATOR_ACTION, EMPTY_FIELD, LENGTH_CANT_BE_SMALLER_THAN_TERMINAL_SIZE, INVALID_REGEX, EXAMPLE_NOT_MEANT_FOR_THIS_AUTOMATA
     }
 
     private void displayOutput(String message) {
@@ -35,7 +35,7 @@ public class LoggerBox {
             case EMPTY_FIELD:
                 errorMessage = "Er is geen waarde ingevoerd";
                 break;
-            case NO_FUNCTIONALITY:
+            case NOT_IMPLEMENTED:
                 errorMessage = "Deze interactie heeft nog geen functionaliteit";
                 break;
             case NO_OPERATOR_SELECTED:
@@ -49,6 +49,9 @@ public class LoggerBox {
                 break;
             case INVALID_REGEX:
                 errorMessage = "Er is een incorrecte regex opgegeven";
+                break;
+            case EXAMPLE_NOT_MEANT_FOR_THIS_AUTOMATA:
+                errorMessage = "Voorbeeld behoort niet bij deze automaat";
                 break;
             default:
                 errorMessage = "Er is een fout opgetreden";

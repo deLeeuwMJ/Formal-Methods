@@ -7,7 +7,6 @@ import main.logic.WordGenerator;
 import main.model.automata.AutomataType;
 import main.model.automata.DFA;
 import main.model.automata.FA;
-import main.model.automata.MDFA;
 import main.model.regex.ParsedRegex;
 
 import java.util.SortedSet;

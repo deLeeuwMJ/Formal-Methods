@@ -15,10 +15,6 @@
     -fx-padding: 0 -1 -1 -1;
 }
 
-.choice-box {
-    -fx-pref-width: 175;
-}
-
 .text-area {
     -fx-pref-width: 350;
     -fx-pref-height: 125;
