@@ -22,10 +22,10 @@ public class AutomataBuilder {
             case DFA: // NFA > DFA
                 automata = ndfa2dfa.convert((NDFA) automata);
 
-                if (language == LanguageMode.START) {
+                if (language == LanguageMode.START || language == LanguageMode.NONE) {
                     automata.modifyTransitions(FA.ModifyTransitions.FINAL_ITSELF);
                 } else if (language == LanguageMode.ENDS) {
-                    automata.modifyTransitions(FA.ModifyTransitions.FINAL_TO_START);
+//                    automata.modifyTransitions(FA.ModifyTransitions.FINAL_TO_START);
                 }
 
                 break;

@@ -71,7 +71,7 @@ public class ExampleLoader {
 
                 automata = ndfa;
                 break;
-            case PRE_DFA_2_MDFA:
+            case PRE_DFA_2_MDFA: // https://www.javatpoint.com/minimization-of-dfa
             case POST_DFA_2_MDFA:
                 DFA dfa = new DFA();
                 dfa.addTransition(new Transition("q0", "q1", "a"));

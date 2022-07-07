@@ -98,7 +98,6 @@ public class FA {
 
         HashMap<String, LinkedHashSet<String>> lookupInOutTable = new HashMap<>();
 
-
         // retrieve all symbols going in and out
         for (String endState : getEndStates()) {
             List<Transition> dependableTransitions = lookupTransitionTable.get(endState);

@@ -1,6 +1,7 @@
 package main.logic;
 
 import main.model.automata.DFA;
+import main.model.automata.FA;
 import main.model.automata.NDFA;
 import main.model.automata.Transition;
 import main.ui.ConsoleTable;
@@ -20,17 +21,29 @@ public class Ndfa2DfaConverter {
         }
     }
 
-    public DFA convert(NDFA ndfa) {
-        List<TableTransition> transitionList = iterate(ndfa, ndfa.getStates());
-        List<String> newStatesList = combineStates(transitionList, ndfa.getStates());
+    private static class StateTransitionTable {
+        private final List<TableTransition> in;
+        private final List<TableTransition> out;
 
-        int prevSize = ndfa.getStates().size();
+        public StateTransitionTable(List<TableTransition> inTransitions, List<TableTransition> outTransitions) {
+            in = inTransitions;
+            out = outTransitions;
+        }
+
+        public boolean hasInAndOutTransitions() {
+            return !in.isEmpty() && !out.isEmpty();
+        }
+    }
+
+    public DFA convert(NDFA ndfa) {
+        List<TableTransition> transitionList = new ArrayList<>();
+        List<String> newStatesList = ndfa.getStates();
+
+        int prevSize = 0;
         int currSize = newStatesList.size();
 
         // Keep iterating until there are no more changes possible
         while (prevSize < currSize) {
-//            prevSize = newStatesList.size(); //temp
-
             transitionList = iterate(ndfa, newStatesList);
             newStatesList = combineStates(transitionList, newStatesList);
 
@@ -42,8 +55,6 @@ public class Ndfa2DfaConverter {
 
             // Must be last in order
             newStatesList = reachableOnly;
-
-//            currSize = newStatesList.size(); //temp
         }
 
         // Create DFA()
@@ -68,10 +79,47 @@ public class Ndfa2DfaConverter {
         // Add letters
         dfa.addAllLetters(ndfa.getLetters());
 
+        // Add fixes
+//        dfa.modifyTransitions(FA.ModifyTransitions.FINAL_ITSELF);
+
         return dfa;
     }
 
-    // Todo debug why elminates non reachable after size >= 5 or multiple dot operations
+    // Todo remove all states that only have states going out and not going in
+    private List<String> eliminateInvalid(List<TableTransition> tableTransitions, List<String> statesList) {
+        HashMap<String, StateTransitionTable> stateTable = new HashMap<>();
+
+        // Get in and out transitions
+        for (String state : statesList) {
+            List<TableTransition> inTransitions = new ArrayList<>();
+            List<TableTransition> outTransitions = new ArrayList<>();
+
+            for (TableTransition t : tableTransitions) {
+                if (state.equals(t.start)) {
+                    inTransitions.add(t);
+                }
+
+                if (state.equals(t.end)) {
+                    outTransitions.add(t);
+                }
+            }
+
+            stateTable.put(state, new StateTransitionTable(inTransitions, outTransitions));
+        }
+
+        // Eliminate transitions with only states going out
+        List<String> newStates = new ArrayList<>();
+        for (String state : statesList) {
+            StateTransitionTable table = stateTable.get(state);
+
+            if (!table.hasInAndOutTransitions()) {
+                newStates.add(state);
+            }
+        }
+
+        return newStates;
+    }
+
     private List<String> eliminateNonReachable(List<TableTransition> transitions, List<String> combinedList) {
         // Uses linkedHashSet to easily identify duplicates
         LinkedHashSet<String> seenStates = new LinkedHashSet<>();
@@ -147,7 +195,13 @@ public class Ndfa2DfaConverter {
                 for (String s : nextStatesStack.poll()) if (newEndStates.add(s)) newEndStates.add(s);
             }
 
-            result = newEndStates.toString();
+            if (newEndStates.size() > 1) {
+                result = newEndStates.toString();
+            } else if (newEndStates.isEmpty()){
+                result = "TRAP";
+            } else { // one state
+                result = newEndStates.toString().substring(1, newEndStates.toString().length() - 1);
+            }
 
         } else { // Is single state
 

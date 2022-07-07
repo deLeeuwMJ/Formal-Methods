@@ -85,13 +85,22 @@ public class ThompsonConstructor {
         NDFA ndfa = new NDFA(root.transitions);
         ndfa.addStartState(root.startState);
         ndfa.addEndState(root.finalState);
-        ndfa.addAllStates(removeInvalidStates(root.states, root.finalState));
+        ndfa.addAllStates(removeInvalidStates(generateStates(root.finalState), root.finalState)); //todo wrong states origin starts here
         ndfa.addAllLetters(letters);
 
         return ndfa;
     }
 
-    private List<String> removeInvalidStates(ArrayList<String> states, String end) {
+    private List<String> generateStates(String finalState) {
+        ArrayList<String> stateList = new ArrayList<>();
+        int finalStateNum = Integer.parseInt(finalState.substring(1));
+
+        for (int i = 0; i <= finalStateNum; i++) stateList.add("q" + i);
+
+        return stateList;
+    }
+
+    private List<String> removeInvalidStates(List<String> states, String end) {
         ArrayList<String> newList = new ArrayList<>();
         int finalStateNum = Integer.parseInt(end.substring(1));
 

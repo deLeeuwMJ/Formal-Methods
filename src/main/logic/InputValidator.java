@@ -35,14 +35,9 @@ public class InputValidator {
 
         int parenthesisCounter = 0;
         for (char c : regex.toCharArray()) {
-            if (c == ')') {
-                if (parenthesisCounter % 2 == 0) { // always need to be even parenthesis count
-                    return false;
-                } else parenthesisCounter--;
-            } else if (c == '(') {
-                parenthesisCounter++;
-            }
+            if (c == ')' || c == '(') parenthesisCounter++;
         }
-        return true;
+
+        return parenthesisCounter % 2 == 0;
     }
 }
